@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableDiscoveryClient // eureka 서버에 지정
-@EnableJpaAuditing // 시간 체크
+@EnableJpaAuditing
 public class UserServiceApplication {
 
 	public static void main(String[] args) {

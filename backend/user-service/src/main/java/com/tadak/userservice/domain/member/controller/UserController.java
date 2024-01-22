@@ -1,10 +1,12 @@
 package com.tadak.userservice.domain.member.controller;
 
-import com.tadak.userservice.domain.member.dto.request.MemberDto;
+import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +23,12 @@ public class UserController {
         return "hello";
     }
 
+    /**
+     * 회원 가입
+     */
     @PostMapping("/signup")
-    public ResponseEntity<MemberDto> signup(@Valid @RequestBody MemberDto memberdto) {
-        MemberDto member = memberService.signup(memberdto);
-        return ResponseEntity.ok(member);
+    public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        SignupResponseDto result = memberService.signup(signupRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }

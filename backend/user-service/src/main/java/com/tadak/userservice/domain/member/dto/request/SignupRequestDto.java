@@ -13,13 +13,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberDto {
+public class SignupRequestDto {
 
     @NotNull
     @Size(min = 3, max = 50)
@@ -38,25 +36,12 @@ public class MemberDto {
     private State state;
 
     // MemberDto -> Member
-    public static Member toEntity(MemberDto memberDto){
+    public static Member toEntity(SignupRequestDto memberDto){
         return Member.builder()
                 .email(memberDto.getEmail())
                 .username(memberDto.getUsername())
                 .password(memberDto.getPassword())
                 .state(State.ACTIVE)
-                .build();
-    }
-
-    // Member -> MemberDto
-    public static MemberDto from(Member member){
-        if (member == null){
-            return null;
-        }
-
-        return MemberDto.builder()
-                .username(member.getUsername())
-                .email(member.getEmail())
-                .state(member.getState())
                 .build();
     }
 }
