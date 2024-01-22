@@ -3,9 +3,11 @@ package com.tadak.userservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableDiscoveryClient // eureka 서버에 지정
+@EnableJpaAuditing // 시간 체크
 public class UserServiceApplication {
 
 	public static void main(String[] args) {

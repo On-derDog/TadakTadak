@@ -15,3 +15,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
+
+jwt:
+  header: Authorization
+  secret: WkhJMjVlYXo4V25xdGxaNW12WFdTRTZTamMwekt5V0FFNHVjdmFUOUM0R2tKQTVCTEw0WTlsYWo5OE5DdGpaWg==
+  access-validity-in-seconds: 7200
+  refresh-validity-in-seconds: 7200
