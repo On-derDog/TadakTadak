@@ -1,14 +1,16 @@
 import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
+import { InputForm } from "../components/InputForm";
+import { Button } from "../components/Button";
 
 const SigninPage = () => {
+    const navigate = useNavigate();
     const [inputs,setInputs] = useState({
         email: '',
         password : '',
     });
-
     const {email,password} = inputs
-    const navigate = useNavigate();
+
 
     const onChange = (e) => {
         const {value, name} = e.target;
@@ -19,19 +21,21 @@ const SigninPage = () => {
         console.log(inputs);
     }
 
-    const onSignin = (e) =>{
-        console.log("값확정",inputs)
-        setTimeout(() => navigate("/"), 2000);
-    }
-
-    const onSignUp = (e) =>{
-        console.log("회원가입",inputs)
-        setTimeout(() => navigate("/signup"), 2000);
-    }
-
-    const onSignKaKaoUp = (e) =>{
-        console.log("카카오 회원가입",inputs)
-        setTimeout(() => navigate("/signupkakao"), 2000);
+    const onButtonClick = (action) => {
+        console.log(action ,inputs);
+        switch(action){
+            case "onSignIn":
+                setTimeout(()=> navigate("/"),2000);
+                break;
+            case "onSignUp":
+                setTimeout(()=> navigate("/signup"),2000);
+                break;
+            case "onSignUpKakao":
+                setTimeout(()=> navigate("/signupkakao"),2000);
+                break;
+            default:
+                console.error("error")
+        }
     }
 
     return(
@@ -43,22 +47,21 @@ const SigninPage = () => {
             </section>  
 
             {/* email input */}
-            <span>이메일</span>
-            <input onChange={onChange} type = 'text'  name="email" value={email} placeholder="이메일을 입력해주세요"></input>
+            <InputForm onChange={onChange} type = 'text' title="이메일"  name="email" value={email} placeholder="이메일을 입력해주세요"/>
 
             <br/>
 
             {/* pw input */}
-             <span>비밀번호</span>
-            <input onChange={onChange} 
-            type = 'password' name="password" value={password} placeholder="비밀번호을 입력해주세요"></input>
+            <InputForm onChange={onChange} 
+            type = 'password' title="비밀번호"  name="password" value={password} placeholder="비밀번호을 입력해주세요"/>
 
             <br/>
-            <button onClick={onSignin}>로그인</button>
+            <Button onClick={ () => onButtonClick("onSignIn")} label={"로그인"}></Button>
             <br/>
-            <button onClick={onSignUp}>회원가입</button>
+            <Button onClick={ () => onButtonClick("onSignUp")} label={"회원가입"}></Button>
             <br/>
-            <button onClick={onSignKaKaoUp}>카카오톡으로 로그인</button>
+            <Button onClick={ () => onButtonClick("onSignUpKakao")} label={"카카오 로그인"}></Button>
+
 
         </main>
     )
