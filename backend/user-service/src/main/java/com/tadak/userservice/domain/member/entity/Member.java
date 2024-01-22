@@ -7,8 +7,10 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,6 +35,9 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private State state;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @CreatedDate
     private LocalDateTime createdAt;

@@ -2,6 +2,7 @@ package com.tadak.userservice.domain.member.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tadak.userservice.domain.member.entity.Member;
+import com.tadak.userservice.domain.member.entity.Role;
 import com.tadak.userservice.domain.member.entity.State;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -32,16 +35,11 @@ public class SignupRequestDto {
     @Size(min = 3, max = 100)
     private String password;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull
+    @Size(min = 3, max = 100)
+    private String passwordConfirm;
+
     @Enumerated(EnumType.STRING)
     private State state;
-
-    // MemberDto -> Member
-    public static Member toEntity(SignupRequestDto memberDto){
-        return Member.builder()
-                .email(memberDto.getEmail())
-                .username(memberDto.getUsername())
-                .password(memberDto.getPassword())
-                .state(State.ACTIVE)
-                .build();
-    }
 }

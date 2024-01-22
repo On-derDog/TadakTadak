@@ -1,7 +1,9 @@
 package com.tadak.userservice.domain.member.controller;
 
+import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
+import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +32,14 @@ public class UserController {
     public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         SignupResponseDto result = memberService.signup(signupRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    /**
+     * 로그인
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Void> authorize(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        memberService.login(loginRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
