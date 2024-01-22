@@ -61,10 +61,6 @@ const SigninPage = () => {
             <br/>
             <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
             <br/>
-
-            
-            <Button onClick={ () => onButtonClick("onSignupKakao")} label={"카카오 로그인"}></Button>
-
             <KakaoButton/>
         </main>
     )
