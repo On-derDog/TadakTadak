@@ -2,6 +2,7 @@ import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
+import { KakaoButton } from "../components/auth/KakaoButton";
 
 const SigninPage = () => {
     const navigate = useNavigate();
@@ -24,13 +25,13 @@ const SigninPage = () => {
     const onButtonClick = (action) => {
         console.log(action ,inputs);
         switch(action){
-            case "onSignIn":
+            case "onSignin":
                 setTimeout(()=> navigate("/"),2000);
                 break;
-            case "onSignUp":
+            case "onSignup":
                 setTimeout(()=> navigate("/signup"),2000);
                 break;
-            case "onSignUpKakao":
+            case "onSignupKakao":
                 setTimeout(()=> navigate("/signupkakao"),2000);
                 break;
             default:
@@ -56,13 +57,15 @@ const SigninPage = () => {
             type = 'password' title="비밀번호"  name="password" value={password} placeholder="비밀번호을 입력해주세요"/>
 
             <br/>
-            <Button onClick={ () => onButtonClick("onSignIn")} label={"로그인"}></Button>
+            <Button onClick={ () => onButtonClick("onSignin")} label={"로그인"}></Button>
             <br/>
-            <Button onClick={ () => onButtonClick("onSignUp")} label={"회원가입"}></Button>
+            <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
             <br/>
-            <Button onClick={ () => onButtonClick("onSignUpKakao")} label={"카카오 로그인"}></Button>
 
+            
+            <Button onClick={ () => onButtonClick("onSignupKakao")} label={"카카오 로그인"}></Button>
 
+            <KakaoButton/>
         </main>
     )
 };
