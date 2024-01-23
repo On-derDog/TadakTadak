@@ -4,12 +4,13 @@ interface ChatMessage {
 	id: number;
 	message: string;
 	writer: string;
+	createdAt: Date;
 }
 
 interface ChatStore {
 	messages: ChatMessage[];
 	inputMessage: string;
-	addMessage: (message: string, writer: string) => void;
+	addMessage: (message: string, writer: string, createdAt: Date) => void;
 	setInputMessage: (value: string) => void;
 	handleSendMessage: () => void;
 }
@@ -17,12 +18,12 @@ interface ChatStore {
 const useChatStore = create<ChatStore>((set) => ({
 	messages: [],
 	inputMessage: '',
-	addMessage: (message: string, writer: string): void => {
+	addMessage: (message: string, writer: string, createdAt: Date): void => {
 		set((state) => ({
 			...state,
 			messages: [
 				...state.messages,
-				{ id: state.messages.length + 1, message, writer },
+				{ id: state.messages.length + 1, message, writer, createdAt },
 			],
 		}));
 	},
@@ -38,6 +39,7 @@ const useChatStore = create<ChatStore>((set) => ({
 							id: state.messages.length + 1,
 							message: state.inputMessage,
 							writer: 'User',
+							createdAt: new Date(),
 						},
 					],
 					inputMessage: '',
