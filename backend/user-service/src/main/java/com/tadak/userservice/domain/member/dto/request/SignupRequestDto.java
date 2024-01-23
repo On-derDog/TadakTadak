@@ -42,4 +42,5 @@ public class SignupRequestDto {
 
     @Enumerated(EnumType.STRING)
     private State state;
+
 }

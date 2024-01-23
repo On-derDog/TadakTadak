@@ -42,9 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 //                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority().getAuthorityType()))
 //                .collect(Collectors.toList());
 
-        Collection<? extends GrantedAuthority> authorities = Collections.singleton(
-                new SimpleGrantedAuthority("ROLE_" + member.getRole().name())
-        );
+        Collection<? extends GrantedAuthority> authorities = getGrantedAuthorities(member);
 
         for (GrantedAuthority authority : authorities) {
             log.info("authority = {}", authority);
@@ -53,5 +51,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new User(member.getEmail(),
                 member.getPassword(),
                 authorities);
+    }
+
+    private static Collection<? extends GrantedAuthority> getGrantedAuthorities(Member member) {
+        log.info("member getRole = {}", member.getRole().name());
+        return Collections.singleton(
+//                new SimpleGrantedAuthority("ROLE_" + member.getRole().name())
+                new SimpleGrantedAuthority(member.getRole().name())
+        );
     }
 }

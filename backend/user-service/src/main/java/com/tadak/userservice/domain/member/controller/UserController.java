@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,7 +21,12 @@ public class UserController {
 
     private final MemberService memberService;
 
+    /**
+     * 권한 체크
+     */
     @GetMapping("/hello")
+    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public String hello() {
         return "hello";
     }
@@ -38,8 +44,7 @@ public class UserController {
      * 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<Void> authorize(@Valid @RequestBody LoginRequestDto loginRequestDto) {
-        memberService.login(loginRequestDto);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<TokenResponseDto> authorize(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        return memberService.login(loginRequestDto);
     }
 }
