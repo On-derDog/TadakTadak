@@ -57,7 +57,9 @@ const RecentChat: React.FC = () => {
 				});
 
 				const isLastMessageForWriter =
-					index === array.length - 1 || array[index + 1].writer !== item.writer;
+					index === array.length - 1 ||
+					array[index + 1].writer !== item.writer ||
+					array[index + 1].createdAt !== item.createdAt;
 
 				const shouldDisplayYear = formattedDate !== currentFormattedDate;
 
