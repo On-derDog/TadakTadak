@@ -1,8 +1,6 @@
 package com.tadak.userservice.domain.member.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tadak.userservice.domain.member.entity.Member;
-import com.tadak.userservice.domain.member.entity.Role;
 import com.tadak.userservice.domain.member.entity.State;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @Builder

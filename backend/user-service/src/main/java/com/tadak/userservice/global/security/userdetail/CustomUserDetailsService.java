@@ -1,7 +1,6 @@
 package com.tadak.userservice.global.security.userdetail;
 
 import com.tadak.userservice.domain.member.entity.Member;
-import com.tadak.userservice.domain.member.entity.Role;
 import com.tadak.userservice.domain.member.entity.State;
 import com.tadak.userservice.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
