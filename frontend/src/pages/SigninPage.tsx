@@ -1,29 +1,42 @@
-import React,{useState} from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
 import { KakaoButton } from "../components/auth/KakaoButton";
+import { create } from "zustand";
+
+interface UserInfo {
+    email: string;
+    password: string;
+    username: string;
+    updateEmail: (email: UserInfo['email']) => void
+    updatePassword: (password: UserInfo['password']) => void
+}
+
+const UserInfoStore = create<UserInfo>((set) => ({
+  email: '',
+  password: '',
+  updateEmail: (email) => set(() => ({ email: email })),
+  updatePassword: (password) => set(() => ({ password: password })),
+}))
 
 const SigninPage = () => {
     const navigate = useNavigate();
-    const [inputs,setInputs] = useState({
-        email: '',
-        password : '',
-    });
-    const {email,password} = inputs
+    const { email, password, updateEmail,updatePassword } = UserInfoStore();
 
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value, name } = e.target;
+      console.log(value, name);
 
-    const onChange = (e) => {
-        const {value, name} = e.target;
-        setInputs({
-            ...inputs,
-            [name]: value,
-        });
-        console.log(inputs);
-    }
+      if (name === 'email') {
+          updateEmail(value);
+      } else if (name === 'password') {
+          updatePassword(value);
+      }
+  };
 
-    const onButtonClick = (action) => {
-        console.log(action ,inputs);
+    const onButtonClick = (action:string) => {
+        console.log(action, email, password);
         switch(action){
             case "onSignin":
                 setTimeout(()=> navigate("/"),2000);
@@ -48,12 +61,14 @@ const SigninPage = () => {
             </section>  
 
             {/* email input */}
-            <InputForm onChange={onChange} type = 'text' title="이메일"  name="email" value={email} placeholder="이메일을 입력해주세요"/>
+            <InputForm onChange={onChange}type = 'text' title="이메일"  name="email" value={email} placeholder="이메일을 입력해주세요"/>
 
             <br/>
 
+            
+
             {/* pw input */}
-            <InputForm onChange={onChange} 
+            <InputForm onChange={onChange}
             type = 'password' title="비밀번호"  name="password" value={password} placeholder="비밀번호을 입력해주세요"/>
 
             <br/>
