@@ -1,29 +1,14 @@
 import useChatStore from '../../stores/useChatStore';
-import RecentChat from './RecentChat';
+import Chat from './Chat';
+import ChatRecent from './ChatRecent';
 
 const ChatForm: React.FC = () => {
-	const { messages, inputMessage, setInputMessage, handleSendMessage } =
-		useChatStore();
-
-	const formatTime = (createdAt: Date) => {
-		return createdAt.toLocaleTimeString('ko-KR', {
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: true,
-		});
-	};
+	const { inputMessage, setInputMessage, handleSendMessage } = useChatStore();
 
 	return (
 		<>
-			<RecentChat />
-			<section>
-				{messages.map((message) => (
-					<div key={message.id}>
-						<strong>{message.writer}: </strong> {message.message}{' '}
-						{formatTime(message.createdAt)}
-					</div>
-				))}
-			</section>
+			<ChatRecent />
+			<Chat />
 			<div>
 				<input
 					type="text"
