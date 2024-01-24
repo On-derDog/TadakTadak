@@ -71,12 +71,10 @@ public class MemberService {
 
         TokenResponseDto token = tokenProvider.createToken(authentication);
 
-        RefreshToken refreshToken = getRefreshToken(member, token);
-        if (!refreshTokenRepository.exists(token.getRefreshToken())){
-            refreshTokenRepository.save(refreshToken);
-        }
+        // TODO: refreshToken 이미 redis에 존재하고 있으면 추가로 저장하지 않는 로직 생성하기 (refreshToken 정보를 어떻게 들고있을지가 중요)
 
-//        refreshTokenRepository.save(refreshToken);
+        RefreshToken refreshToken = getRefreshToken(member, token);
+        refreshTokenRepository.save(refreshToken);
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -84,7 +82,7 @@ public class MemberService {
         httpHeaders.add(JwtFilter.ACCESS_AUTHORIZATION_HEADER, "Bearer " + token.getAccessToken());
         httpHeaders.add(JwtFilter.REFRESH_AUTHORIZATION_HEADER, "Bearer " + token.getRefreshToken());
 
-        return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(token, httpHeaders, HttpStatus.OK);
     }
 
     /**

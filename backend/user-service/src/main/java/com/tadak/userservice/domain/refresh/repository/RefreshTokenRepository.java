@@ -35,10 +35,10 @@ public class RefreshTokenRepository {
         return Optional.of(new RefreshToken(refreshToken, memberId));
     }
 
-    public boolean exists(String refreshToken) {
+    public boolean existsByRefreshToken(String refreshToken) {
         ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
-        Long memberId = valueOperations.get(refreshToken);
-        log.info("redis MemberId = {}", memberId);
+        Long memberIdToString = valueOperations.get(refreshToken);
+        log.info("redis memberId = {}", memberIdToString);
         return valueOperations.get(refreshToken) != null;
     }
 }
