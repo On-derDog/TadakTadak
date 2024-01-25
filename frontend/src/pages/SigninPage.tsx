@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
 import { KakaoButton } from "../components/auth/KakaoButton";
-import { useStore, create } from "zustand";
+import { useStore } from "zustand";
 import { userInfoStore } from "../stores/UserInfoStore";
-import { devtools } from 'zustand/middleware'
 
-const SigninPage = () => {
+const SigninPage:React.FC = () => {
     const navigate = useNavigate();
     const userInfo = useStore(userInfoStore);
 
