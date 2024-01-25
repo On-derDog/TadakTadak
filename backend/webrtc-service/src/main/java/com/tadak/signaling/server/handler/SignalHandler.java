@@ -53,8 +53,8 @@ public class SignalHandler extends TextWebSocketHandler {
         }catch (Exception e){
             logger.debug("에러 발생:"+e.getMessage());
         }
-
     }
+
     private void sendMessage(WebSocketSession session,WebSocketMessage message){
         try{
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
