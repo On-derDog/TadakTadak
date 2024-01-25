@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class WebSocketMessage {
-    private String userId; //보내는 유저의 id
+    private String fromUserId; //보내는 유저의 id
     private String type; //메시지 타입
     private String roomId;
     private Object candidate; //상태
