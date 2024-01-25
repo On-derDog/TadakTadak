@@ -39,10 +39,12 @@ public class SignalHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         try{
+            String roomId = session.getUri().toString().split("/signal/")[1];
+            logger.debug("roomId:"+roomId);
             WebSocketMessage webSocketMessage = WebSocketMessage.builder()
                     .fromUserId("Server") //임시
                     .type(MSG_TYPE_JOIN)
-                    .roomId("1")
+                    .roomId(roomId)
                     .candidate(null)
                     .sdp(null)
                     .build();
@@ -77,10 +79,22 @@ public class SignalHandler extends TextWebSocketHandler {
             logger.debug(message.getType()+"/"+message.getFromUserId());
             String userId = message.getFromUserId();
             String roomId = message.getRoomId();
-
             ChatroomDto findRoom = rooms.get(roomId);
 
+            if(findRoom==null) {
+                Map<String,WebSocketSession> clients = new HashMap<>();
+                findRoom = ChatroomDto.builder()
+                    .roomId(roomId)
+                    .clients(clients)
+                    .build();
+                //임시적으로 방 만들기
+                rooms.put(roomId,findRoom);
+            }
+
+
             switch (message.getType()){
+                case MSG_TYPE_OFFER:
+                case MSG_TYPE_ANSWER:
                 case MSG_TYPE_ICE: // 상대방을 찾는 상황
                     Object candidate = message.getCandidate();
                     Object sdp = message.getSdp();
@@ -106,6 +120,7 @@ public class SignalHandler extends TextWebSocketHandler {
                     logger.debug(userId+"가 방에 참여하였습니다"+message.getRoomId());
                     // room에 user 추가
                     rtcService.addClients(findRoom,userId,session);
+                    break;
 
                 case MSG_TYPE_LEAVE:
                     Optional<String> client = rtcService.getClients(findRoom).keySet().stream()

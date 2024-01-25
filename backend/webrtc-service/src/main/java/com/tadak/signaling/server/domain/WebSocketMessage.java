@@ -15,5 +15,5 @@ public class WebSocketMessage {
     private String type; //메시지 타입
     private String roomId;
     private Object candidate; //상태
-    private Object sdp; //sdp 정보
+    private Object sdp; //sdp 정보( sdp란 비디오의 해상도 , 오디오 전송 또는 수신 여부 등등)
 }
