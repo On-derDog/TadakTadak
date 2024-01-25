@@ -77,8 +77,18 @@ const VideoCall: React.FC = () => {
     websocketRef.current = websocket;
 
     websocket.onopen = () => {
-      console.log('Connected to signaling server');
-    };
+		console.log('Connected to signaling server');
+	  
+		const message = {
+		  fromUserId: '1',
+		  type: 'ice',
+		  roomId: '1',
+		  candidate: null,
+		  sdp: null
+		};
+	  
+		websocketRef.current!.send(JSON.stringify(message));
+	  };
 
     websocket.onmessage = (event) => {
       const message = JSON.parse(event.data);
