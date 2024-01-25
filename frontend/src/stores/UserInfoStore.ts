@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, SetState } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface UserInfo {
@@ -10,22 +10,30 @@ interface UserInfo {
   updateUsername: (username: UserInfo['username']) => void;
 }
 
-export const UserInfoStore = create<UserInfo>()(
-    devtools(
-      (set, get) => ({
-        email: '',
-        password: '',
-        username: '',
-        updateEmail: (email) => set({ email }),
-        updatePassword: (password) => set({ password }),
-        updateUsername: (username) => set({ username }),
-      }),
-      {
-          name: 'userInfo'
-      }
-    )
+const myMiddlewares = (f: any, storeName: string) => devtools(persist(f, { name: storeName }));
+
+const createUserInfoStoreDev = create<UserInfo>()(  
+  devtools(
+    (set) => ({
+      email: '',
+      password: '',
+      username: '',
+      updateEmail: (email) => set({ email }),
+      updatePassword: (password) => set({ password }),
+      updateUsername: (username) => set({ username }),
+    })
+  ,{name: 'userInfo'}
+));
+
+const createUserInfoStore = create<UserInfo>()(  
+    (set, get) => ({
+      email: '',
+      password: '',
+      username: '',
+      updateEmail: (email) => set({ email }),
+      updatePassword: (password) => set({ password }),
+      updateUsername: (username) => set({ username }),
+    }),
 );
 
-if (import.meta.env.PROD) {
-  devtools(UserInfoStore); 
-}
+export const UserInfoStore = import.meta.env.PROD ? createUserInfoStore : createUserInfoStoreDev;
