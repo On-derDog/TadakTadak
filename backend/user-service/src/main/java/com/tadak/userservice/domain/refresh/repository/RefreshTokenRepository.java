@@ -1,10 +1,29 @@
 package com.tadak.userservice.domain.refresh.repository;
 
 import com.tadak.userservice.domain.refresh.entity.RefreshToken;
-import org.springframework.data.repository.CrudRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {
+import java.util.concurrent.TimeUnit;
 
+@Repository
+@Slf4j
+@RequiredArgsConstructor
+public class RefreshTokenRepository {
+
+    private final RedisTemplate<String, String> redisTemplate;
+
+    public void save(final RefreshToken refreshToken) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(refreshToken.getEmail(), refreshToken.getRefreshToken());
+        redisTemplate.expire(refreshToken.getEmail(), 60L * 60L * 24 * 7L, TimeUnit.SECONDS);
+    }
+
+    public String getValues(String email){
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        return valueOperations.get(email);
+    }
 }

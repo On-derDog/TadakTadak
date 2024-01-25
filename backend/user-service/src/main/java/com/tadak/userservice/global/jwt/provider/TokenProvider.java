@@ -1,6 +1,8 @@
 package com.tadak.userservice.global.jwt.provider;
 
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
+import com.tadak.userservice.domain.refresh.entity.RefreshToken;
+import com.tadak.userservice.domain.refresh.repository.RefreshTokenRepository;
 import com.tadak.userservice.global.security.userdetail.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -30,16 +32,19 @@ public class TokenProvider implements InitializingBean {
     private final long refreshTokenValidationTime;
     private Key key;
     private final CustomUserDetailsService customUserDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-validity-in-seconds}") long accessTokenValidationTime,
             @Value("${jwt.refresh-validity-in-seconds}") long refreshTokenValidationTime,
-            CustomUserDetailsService customUserDetailsService) {
+            CustomUserDetailsService customUserDetailsService,
+            RefreshTokenRepository refreshTokenRepository) {
         this.secret = secret;
         this.accessTokenValidationTime = accessTokenValidationTime;
         this.refreshTokenValidationTime = refreshTokenValidationTime;
         this.customUserDetailsService = customUserDetailsService;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
@@ -137,5 +142,21 @@ public class TokenProvider implements InitializingBean {
             log.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
+    }
+
+    /**
+     * redis key email로 value값 찾아오는 메서드
+     * @param email
+     */
+    public String getAuthoritiesKey(String email){
+        return refreshTokenRepository.getValues(email);
+    }
+
+    public void saveRefreshToken(String refreshToken, String email){
+        RefreshToken result = RefreshToken.builder()
+                .email(email)
+                .refreshToken(refreshToken)
+                .build();
+        refreshTokenRepository.save(result);
     }
 }

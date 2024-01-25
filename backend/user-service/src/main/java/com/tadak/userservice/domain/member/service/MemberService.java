@@ -35,7 +35,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepositoryImpl;
 
     @Transactional
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -58,7 +58,6 @@ public class MemberService {
 
     //TODO: login 로직 수정하기
     public ResponseEntity<TokenResponseDto> login(LoginRequestDto loginRequestDto) {
-        //TODO: findByEmail을 하지말고 token 정보로만 확인하기!
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 email이 존재하지 않습니다."));
 
@@ -73,10 +72,9 @@ public class MemberService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        //TODO: refreshToken 이미 redis에 존재하고 있으면 추가로 저장하지 않는 로직 생성하기 (refreshToken 정보를 어떻게 들고있을지가 중요)
-
+        // key = email, value = refreshToken
         RefreshToken resultRefreshToken = getRefreshToken(member, refreshToken);
-        refreshTokenRepository.save(resultRefreshToken);
+        refreshTokenRepositoryImpl.save(resultRefreshToken);
 
         HttpHeaders httpHeaders = new HttpHeaders();
 

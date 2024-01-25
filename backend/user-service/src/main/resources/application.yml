@@ -23,5 +23,5 @@ eureka:
 jwt:
   header: Authorization
   secret: WkhJMjVlYXo4V25xdGxaNW12WFdTRTZTamMwekt5V0FFNHVjdmFUOUM0R2tKQTVCTEw0WTlsYWo5OE5DdGpaWg==
-  access-validity-in-seconds: 60
+  access-validity-in-seconds: 1800
   refresh-validity-in-seconds: 86400

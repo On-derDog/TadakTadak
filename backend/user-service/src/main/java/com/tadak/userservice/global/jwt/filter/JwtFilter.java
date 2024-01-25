@@ -42,16 +42,28 @@ public class JwtFilter extends GenericFilterBean {
         else if (!tokenProvider.validateToken(accessToken) && refreshToken != null){
             boolean refreshTokenValid = tokenProvider.validateToken(refreshToken);
             if (refreshTokenValid){
-                Authentication authentication = tokenProvider.getAuthentication(refreshToken);
-                String reAccessToken = tokenProvider.createAccessToken(authentication);
-                HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-                httpServletResponse.addHeader(ACCESS_AUTHORIZATION_HEADER, "Bearer " + reAccessToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.info("ReAccessToken Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+                Authentication authMember = tokenProvider.getAuthentication(refreshToken); // authentication으로 Member email가져오기
+                String valueRefreshToken = tokenProvider.getAuthoritiesKey(authMember.getName()); // redis에 저장된 refreshToken 값
+                log.info("valueRefreshToken = {} ", valueRefreshToken);
+                log.info("input refreshToken = {} ", refreshToken);
+                if (valueRefreshToken.equals(refreshToken)){ // 현재 받은 refreshToken이랑 redis에 저장된 refreshToken 값 비교
+                    Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+                    String reAccessToken = tokenProvider.createAccessToken(authentication);
+                    String reRefreshToken = tokenProvider.createRefreshToken(authentication);
+                    HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+                    httpServletResponse.addHeader(ACCESS_AUTHORIZATION_HEADER, "Bearer " + reAccessToken);
+//                    httpServletResponse.addHeader(REFRESH_AUTHORIZATION_HEADER, "Bearer " + reRefreshToken);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+//                    tokenProvider.saveRefreshToken(reRefreshToken, authentication.getName()); // 새로 발급받은 refreshToken 저장 ?
+                    log.info("ReAccessToken Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+                } else {
+                    log.info("현재 최신화된 refreshToken이 아닙니다.");
+                }
             }
         }
         else {
-            log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
+            log.info("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);

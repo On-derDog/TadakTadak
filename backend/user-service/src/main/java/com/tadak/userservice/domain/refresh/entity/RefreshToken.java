@@ -11,7 +11,6 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "refreshToken", timeToLive = 60L * 60L)
 public class RefreshToken {
 
     //TODO : Key 정보를 email하기
