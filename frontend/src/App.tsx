@@ -7,7 +7,7 @@ import SignupPage from './pages/SignupPage';
 import SigninPage from './pages/SigninPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
 import TestPage from './test/TestPage';
-import VideoCall from './components/video/VideoCall';
+import VideoCall from './components/video/Video';
 
 const router = createBrowserRouter([
 	{
