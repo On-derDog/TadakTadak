@@ -1,5 +1,4 @@
-import { Children } from "react";
-import { create, SetState } from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface UserInfo {
@@ -20,22 +19,13 @@ const createUserInfoStore = (set) => ({
   updateUsername: (username: string) => set({ username }),
 });
 
-export const userInfoStore = create<UserInfo>()(
-  import.meta.env.DEV
-    ? devtools(
-      createUserInfoStore ,
-        { name: 'userInfo' }
-      )
-    : createUserInfoStore 
-);
+let userInfoStoreTemp;
 
-// const createUserInfoStoreDemo = create<UserInfo>()(  
-//     (set) => ({
-//       email: '',
-//       password: '',
-//       username: '',
-//       updateEmail: (email) => set({ email }),
-//       updatePassword: (password) => set({ password }),
-//       updateUsername: (username) => set({ username }),
-//     }),
-// );
+//devtools
+if (import.meta.env.DEV) {
+  userInfoStoreTemp = create<UserInfo>()(devtools(createUserInfoStore, { name: 'userInfo' }));
+} else {
+  userInfoStoreTemp = create<UserInfo>()(createUserInfoStore);
+}
+
+export const userInfoStore = userInfoStoreTemp;

@@ -4,12 +4,12 @@ import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
 import { KakaoButton } from "../components/auth/KakaoButton";
 import { useStore, create } from "zustand";
-import { UserInfoStore } from "../stores/UserInfoStore";
+import { userInfoStore } from "../stores/UserInfoStore";
 import { devtools } from 'zustand/middleware'
 
 const SigninPage = () => {
     const navigate = useNavigate();
-    const userInfo = useStore(UserInfoStore);
+    const userInfo = useStore(userInfoStore);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target;
