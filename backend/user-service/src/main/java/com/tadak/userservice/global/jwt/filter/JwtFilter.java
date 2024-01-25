@@ -38,27 +38,23 @@ public class JwtFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
         }
-        // accessToken이 만료되었을 경우 refresh Token으로 재발급 받기
+        // accessToken이 만료되었거나 accessToken값이 없을 경우 refresh Token으로 재발급 받기
         else if (!tokenProvider.validateToken(accessToken) && refreshToken != null){
             boolean refreshTokenValid = tokenProvider.validateToken(refreshToken);
             if (refreshTokenValid){
                 Authentication authMember = tokenProvider.getAuthentication(refreshToken); // authentication으로 Member email가져오기
                 String valueRefreshToken = tokenProvider.getAuthoritiesKey(authMember.getName()); // redis에 저장된 refreshToken 값
-                log.info("valueRefreshToken = {} ", valueRefreshToken);
-                log.info("input refreshToken = {} ", refreshToken);
                 if (valueRefreshToken.equals(refreshToken)){ // 현재 받은 refreshToken이랑 redis에 저장된 refreshToken 값 비교
                     Authentication authentication = tokenProvider.getAuthentication(refreshToken);
                     String reAccessToken = tokenProvider.createAccessToken(authentication);
                     String reRefreshToken = tokenProvider.createRefreshToken(authentication);
                     HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
                     httpServletResponse.addHeader(ACCESS_AUTHORIZATION_HEADER, "Bearer " + reAccessToken);
-//                    httpServletResponse.addHeader(REFRESH_AUTHORIZATION_HEADER, "Bearer " + reRefreshToken);
+                    httpServletResponse.addHeader(REFRESH_AUTHORIZATION_HEADER, "Bearer " + reRefreshToken);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//                    tokenProvider.saveRefreshToken(reRefreshToken, authentication.getName()); // 새로 발급받은 refreshToken 저장 ?
+                    tokenProvider.saveRefreshToken(reRefreshToken, authentication.getName()); // 새로 발급받은 refreshToken 저장
                     log.info("ReAccessToken Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
-                } else {
-                    log.info("현재 최신화된 refreshToken이 아닙니다.");
                 }
             }
         }

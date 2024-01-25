@@ -35,7 +35,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepositoryImpl;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -63,28 +63,45 @@ public class MemberService {
 
         validMemberState(member); // member State 검증
 
+        Authentication authentication = getAuthentication(loginRequestDto);
+
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken;
+
+        if (!refreshTokenRepository.existsByEmail(authentication.getName())) {
+            refreshToken = tokenProvider.createRefreshToken(authentication);
+
+            RefreshToken resultRefreshToken = getRefreshToken(member, refreshToken);
+            refreshTokenRepository.save(resultRefreshToken);
+        } else {
+            refreshToken = refreshTokenRepository.getValues(authentication.getName());
+        }
+
+        HttpHeaders httpHeaders = createResponseHeaders(accessToken, refreshToken); // header 정보 넣어주기!
+        TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
+        return new ResponseEntity<>(tokenResponseDto, httpHeaders, HttpStatus.OK);
+    }
+
+    // login Member 정보 받아오기
+    private Authentication getAuthentication(LoginRequestDto loginRequestDto) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(), loginRequestDto.getPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
+    }
 
-        String accessToken = tokenProvider.createAccessToken(authentication);
-        String refreshToken = tokenProvider.createRefreshToken(authentication);
-
-        // key = email, value = refreshToken
-        RefreshToken resultRefreshToken = getRefreshToken(member, refreshToken);
-        refreshTokenRepositoryImpl.save(resultRefreshToken);
-
+    /**
+     * Header 부분에 token 넣어주기
+     * @param accessToken
+     * @param refreshToken
+     */
+    private HttpHeaders createResponseHeaders(String accessToken, String refreshToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
-
-        // Token 정보 Header 부분에 넣기
         httpHeaders.add(JwtFilter.ACCESS_AUTHORIZATION_HEADER, "Bearer " + accessToken);
         httpHeaders.add(JwtFilter.REFRESH_AUTHORIZATION_HEADER, "Bearer " + refreshToken);
-
-        TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
-
-        return new ResponseEntity<>(tokenResponseDto, httpHeaders, HttpStatus.OK);
+        return httpHeaders;
     }
 
     /**

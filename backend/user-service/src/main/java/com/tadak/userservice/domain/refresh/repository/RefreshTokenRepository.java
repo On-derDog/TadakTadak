@@ -26,4 +26,10 @@ public class RefreshTokenRepository {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         return valueOperations.get(email);
     }
+
+    public boolean existsByEmail(String email){
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        String refreshToken = valueOperations.get(email);
+        return refreshToken != null && !refreshToken.isEmpty();
+    }
 }
