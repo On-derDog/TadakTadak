@@ -1,57 +1,112 @@
-import React, { useEffect, useRef } from 'react';
-import SimplePeer from 'simple-peer';
-import io from 'socket.io-client';
+import { useEffect, useRef, useState } from 'react';
 
 const VideoCall: React.FC = () => {
-	const localVideoRef = useRef<HTMLVideoElement>(null);
-	const remoteVideoRef = useRef<HTMLVideoElement>(null);
-	let peer: SimplePeer.Instance | null = null;
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const websocketRef = useRef<WebSocket | null>(null);
 
-	useEffect(() => {
-		const serverUrl = 'http://localhost:8080/signal/1';
-		const socket = io.connect(serverUrl);
+  useEffect(() => {
+    const startMedia = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        setLocalStream(stream);
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+        }
+        createPeerConnection();
+      } catch (error) {
+        console.error('Error accessing media devices.', error);
+      }
+    };
 
-		navigator.mediaDevices
-			.getUserMedia({ video: true, audio: true })
-			.then((stream) => {
-				if (localVideoRef.current) {
-					localVideoRef.current.srcObject = stream;
-				}
+    startMedia();
 
-				peer = new SimplePeer({ initiator: true, stream });
+    return () => {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+      if (peerConnectionRef.current) {
+        peerConnectionRef.current.close();
+      }
+      if (websocketRef.current) {
+        websocketRef.current.close();
+      }
+    };
+  }, []);
 
-				peer.on('signal', (signal: any) => {
-					socket.emit('signal', { signal });
-				});
+  const createPeerConnection = () => {
+    const peerConnection = new RTCPeerConnection();
 
-				peer.on('data', (data: any) => {
-					console.log('Received:', data);
-				});
+    peerConnectionRef.current = peerConnection;
 
-				peer.on('stream', (remoteStream: MediaProvider | null) => {
-					if (remoteVideoRef.current) {
-						remoteVideoRef.current.srcObject = remoteStream;
-					}
-				});
-			})
-			.catch((error) => {
-				console.error('Error accessing media devices:', error);
-			});
+    if (localStream) {
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+    }
 
-		return () => {
-			if (peer) {
-				peer.destroy();
-			}
-			socket.disconnect();
-		};
-	}, []);
+    peerConnection.ontrack = (event) => {
+      if (remoteVideoRef.current && event.streams.length) {
+        setRemoteStream(event.streams[0]);
+        remoteVideoRef.current.srcObject = event.streams[0];
+      }
+    };
 
-	return (
-		<div>
-			<video ref={localVideoRef} autoPlay muted playsInline />
-			<video ref={remoteVideoRef} autoPlay playsInline />
-		</div>
-	);
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+          websocketRef.current.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+        }
+      }
+    };
+  };
+
+  const startCall = async () => {
+    if (peerConnectionRef.current) {
+      const offer = await peerConnectionRef.current.createOffer();
+      await peerConnectionRef.current.setLocalDescription(offer);
+      if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+        websocketRef.current.send(JSON.stringify({ type: 'offer', offer: offer }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    const websocket = new WebSocket('ws://http://localhost:8080/signal/1');
+    websocketRef.current = websocket;
+
+    websocket.onopen = () => {
+      console.log('Connected to signaling server');
+    };
+
+    websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'answer' && peerConnectionRef.current) {
+        peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(message.answer));
+      } else if (message.type === 'candidate' && peerConnectionRef.current) {
+        peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(message.candidate));
+      }
+    };
+
+    return () => {
+      if (websocketRef.current) {
+        websocketRef.current.close();
+      }
+    };
+  }, []);
+
+  return (
+    <div>
+      <div>
+        <video ref={localVideoRef} autoPlay muted playsInline></video>
+      </div>
+      <div>
+        <video ref={remoteVideoRef} autoPlay playsInline></video>
+      </div>
+      <button onClick={startCall}>Start Call</button>
+    </div>
+  );
 };
 
 export default VideoCall;
