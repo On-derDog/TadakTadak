@@ -73,7 +73,7 @@ const VideoCall: React.FC = () => {
   };
 
   useEffect(() => {
-    const websocket = new WebSocket('ws://http://localhost:8080/signal/1');
+    const websocket = new WebSocket('ws://localhost:8080/signal/1');
     websocketRef.current = websocket;
 
     websocket.onopen = () => {
