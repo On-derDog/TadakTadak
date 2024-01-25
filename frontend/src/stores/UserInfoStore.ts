@@ -1,3 +1,4 @@
+import { Children } from "react";
 import { create, SetState } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -10,36 +11,31 @@ interface UserInfo {
   updateUsername: (username: UserInfo['username']) => void;
 }
 
-export const createUserInfoStoreDev = create<UserInfo>()(
+const createUserInfoStore = (set) => ({
+  email: '',
+  password: '',
+  username: '',
+  updateEmail: (email: string) => set({ email }),
+  updatePassword: (password: string) => set({ password }),
+  updateUsername: (username: string) => set({ username }),
+});
+
+export const userInfoStore = create<UserInfo>()(
   import.meta.env.DEV
     ? devtools(
-        (set) => ({
-          email: '',
-          password: '',
-          username: '',
-          updateEmail: (email) => set({ email }),
-          updatePassword: (password) => set({ password }),
-          updateUsername: (username) => set({ username }),
-        }),
+      createUserInfoStore ,
         { name: 'userInfo' }
       )
-    : (set) => ({
-        email: '',
-        password: '',
-        username: '',
-        updateEmail: (email) => set({ email }),
-        updatePassword: (password) => set({ password }),
-        updateUsername: (username) => set({ username }),
-      })
+    : createUserInfoStore 
 );
 
-const createUserInfoStore = create<UserInfo>()(  
-    (set) => ({
-      email: '',
-      password: '',
-      username: '',
-      updateEmail: (email) => set({ email }),
-      updatePassword: (password) => set({ password }),
-      updateUsername: (username) => set({ username }),
-    }),
-);
+// const createUserInfoStoreDemo = create<UserInfo>()(  
+//     (set) => ({
+//       email: '',
+//       password: '',
+//       username: '',
+//       updateEmail: (email) => set({ email }),
+//       updatePassword: (password) => set({ password }),
+//       updateUsername: (username) => set({ username }),
+//     }),
+// );
