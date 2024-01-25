@@ -1,18 +1,22 @@
 package com.tadak.userservice.domain.refresh.entity;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@RedisHash(value = "refreshToken", timeToLive = 60L * 60L)
 public class RefreshToken {
 
+    //TODO : Key 정보를 email하기
+
     @Id
+    private String email;
     private String refreshToken;
-    private Long memberId;
 }

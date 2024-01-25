@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -49,44 +48,51 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenResponseDto createToken(Authentication authentication) {
+    // AccessToken 생성 메서드
+    public String createAccessToken(Authentication authentication) {
+        long now = System.currentTimeMillis();
+        long validityMillis = this.accessTokenValidationTime * 1000;
+
+        Date validity = new Date(now + validityMillis);
+
+        return generateToken(authentication, validity);
+    }
+
+    // RefreshToken 생성 메서드
+    public String createRefreshToken(Authentication authentication) {
+        long now = System.currentTimeMillis();
+        long refreshValidityMillis = this.refreshTokenValidationTime * 1000;
+
+        Date refreshValidity = new Date(now + refreshValidityMillis);
+
+        // Refresh 토큰 생성
+        return generateToken(authentication, refreshValidity);
+    }
+
+    // 토큰을 생성하는 공통 메서드
+    private String generateToken(Authentication authentication, Date expiration) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         log.info("authorities = {}", authorities);
 
-        long now = System.currentTimeMillis();
-        long validityMillis = this.accessTokenValidationTime * 1000;
-        long refreshValidityMillis = this.refreshTokenValidationTime * 1000;
-
-        Date validity = new Date(now + validityMillis);
-        Date refreshValidity = new Date(now + refreshValidityMillis);
-
         Claims claims = Jwts.claims()
                 .setSubject(authentication.getName());
 
-        // Access Token 생성
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
+                .setExpiration(expiration)
                 .compact();
+    }
 
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setClaims(claims)
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(refreshValidity)
-                .compact();
-
+    public TokenResponseDto createTokenResponseDto(String accessToken, String refreshToken) {
         return TokenResponseDto.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .createAt(LocalDateTime.now())
                 .build();
     }
 

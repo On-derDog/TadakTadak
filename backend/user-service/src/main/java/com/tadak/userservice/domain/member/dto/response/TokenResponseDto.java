@@ -14,12 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenResponseDto {
-    @JsonIgnore
+
     private String grantType; // bearer 사용
-    @JsonIgnore
     private String accessToken;
-    @JsonIgnore
     private String refreshToken;
-    @CreatedDate
-    private LocalDateTime createAt; // 토큰 발급 시간
 }

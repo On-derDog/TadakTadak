@@ -35,7 +35,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
@@ -57,7 +56,9 @@ public class MemberService {
         return SignupResponseDto.from(member);
     }
 
+    //TODO: login 로직 수정하기
     public ResponseEntity<TokenResponseDto> login(LoginRequestDto loginRequestDto) {
+        //TODO: findByEmail을 하지말고 token 정보로만 확인하기!
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 email이 존재하지 않습니다."));
 
@@ -69,20 +70,23 @@ public class MemberService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        TokenResponseDto token = tokenProvider.createToken(authentication);
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        // TODO: refreshToken 이미 redis에 존재하고 있으면 추가로 저장하지 않는 로직 생성하기 (refreshToken 정보를 어떻게 들고있을지가 중요)
+        //TODO: refreshToken 이미 redis에 존재하고 있으면 추가로 저장하지 않는 로직 생성하기 (refreshToken 정보를 어떻게 들고있을지가 중요)
 
-        RefreshToken refreshToken = getRefreshToken(member, token);
-        refreshTokenRepository.save(refreshToken);
+        RefreshToken resultRefreshToken = getRefreshToken(member, refreshToken);
+        refreshTokenRepository.save(resultRefreshToken);
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
         // Token 정보 Header 부분에 넣기
-        httpHeaders.add(JwtFilter.ACCESS_AUTHORIZATION_HEADER, "Bearer " + token.getAccessToken());
-        httpHeaders.add(JwtFilter.REFRESH_AUTHORIZATION_HEADER, "Bearer " + token.getRefreshToken());
+        httpHeaders.add(JwtFilter.ACCESS_AUTHORIZATION_HEADER, "Bearer " + accessToken);
+        httpHeaders.add(JwtFilter.REFRESH_AUTHORIZATION_HEADER, "Bearer " + refreshToken);
 
-        return new ResponseEntity<>(token, httpHeaders, HttpStatus.OK);
+        TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
+
+        return new ResponseEntity<>(tokenResponseDto, httpHeaders, HttpStatus.OK);
     }
 
     /**
@@ -122,14 +126,11 @@ public class MemberService {
 
     /**
      * reFresh token 추출
-     * @param member
-     * @param token
      */
-    private static RefreshToken getRefreshToken(Member member, TokenResponseDto token) {
-        RefreshToken refreshToken = RefreshToken.builder()
-                .refreshToken(token.getRefreshToken())
-                .memberId(member.getId())
+    private static RefreshToken getRefreshToken(Member member, String refreshToken) {
+        return RefreshToken.builder()
+                .refreshToken(refreshToken)
+                .email(member.getEmail())
                 .build();
-        return refreshToken;
     }
 }

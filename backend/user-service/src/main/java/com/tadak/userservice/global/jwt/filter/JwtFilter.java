@@ -43,7 +43,7 @@ public class JwtFilter extends GenericFilterBean {
             boolean refreshTokenValid = tokenProvider.validateToken(refreshToken);
             if (refreshTokenValid){
                 Authentication authentication = tokenProvider.getAuthentication(refreshToken);
-                String reAccessToken = tokenProvider.createToken(authentication).getAccessToken();
+                String reAccessToken = tokenProvider.createAccessToken(authentication);
                 HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
                 httpServletResponse.addHeader(ACCESS_AUTHORIZATION_HEADER, "Bearer " + reAccessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
