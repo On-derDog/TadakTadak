@@ -10,23 +10,31 @@ interface UserInfo {
   updateUsername: (username: UserInfo['username']) => void;
 }
 
-const myMiddlewares = (f: any, storeName: string) => devtools(persist(f, { name: storeName }));
-
-const createUserInfoStoreDev = create<UserInfo>()(  
-  devtools(
-    (set) => ({
-      email: '',
-      password: '',
-      username: '',
-      updateEmail: (email) => set({ email }),
-      updatePassword: (password) => set({ password }),
-      updateUsername: (username) => set({ username }),
-    })
-  ,{name: 'userInfo'}
-));
+export const createUserInfoStoreDev = create<UserInfo>()(
+  import.meta.env.DEV
+    ? devtools(
+        (set) => ({
+          email: '',
+          password: '',
+          username: '',
+          updateEmail: (email) => set({ email }),
+          updatePassword: (password) => set({ password }),
+          updateUsername: (username) => set({ username }),
+        }),
+        { name: 'userInfo' }
+      )
+    : (set) => ({
+        email: '',
+        password: '',
+        username: '',
+        updateEmail: (email) => set({ email }),
+        updatePassword: (password) => set({ password }),
+        updateUsername: (username) => set({ username }),
+      })
+);
 
 const createUserInfoStore = create<UserInfo>()(  
-    (set, get) => ({
+    (set) => ({
       email: '',
       password: '',
       username: '',
@@ -35,5 +43,3 @@ const createUserInfoStore = create<UserInfo>()(
       updateUsername: (username) => set({ username }),
     }),
 );
-
-export const UserInfoStore = import.meta.env.PROD ? createUserInfoStore : createUserInfoStoreDev;
