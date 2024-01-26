@@ -6,7 +6,7 @@ const WebSock = () => {
     const access = 'your_access_token';
 
     const stomp = new Client({
-      brokerURL: 'ws://localhost:8080/signal/1',
+      brokerURL: 'ws://localhost:8080/stomp/signal',
       connectHeaders: {
         Authorization: `Bearer ${access}`,
       },
@@ -31,12 +31,12 @@ const WebSock = () => {
 
       // Publish
       stomp.publish({
-        destination: '/pub/signal/join',
+        destination: '/pub/join',
         body: JSON.stringify(signalMessage),
       });
 
       // Subscribe
-      const subscription = stomp.subscribe('/sub/signal/1', (message) => {
+      const subscription = stomp.subscribe('/sub/1', (message) => {
         console.log('Received message:', message.body);
       });
     };
