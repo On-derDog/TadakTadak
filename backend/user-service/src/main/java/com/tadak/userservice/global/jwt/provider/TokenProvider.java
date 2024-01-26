@@ -3,6 +3,8 @@ package com.tadak.userservice.global.jwt.provider;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.refresh.entity.RefreshToken;
 import com.tadak.userservice.domain.refresh.repository.RefreshTokenRepository;
+import com.tadak.userservice.global.error.ErrorCode;
+import com.tadak.userservice.global.jwt.exception.NotFoundTokenException;
 import com.tadak.userservice.global.security.userdetail.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -111,7 +113,7 @@ public class TokenProvider implements InitializingBean {
 
         // claims auth 체크 부분!
         if (claims.get(AUTHORITIES_KEY) == null){
-            throw new IllegalStateException("Token Provider 권한 정보가 없는 토큰입니다!.");
+            throw new NotFoundTokenException(ErrorCode.NOT_FOUND_TOKEN_ERROR);
         }
 
         Collection<? extends GrantedAuthority> authorities =

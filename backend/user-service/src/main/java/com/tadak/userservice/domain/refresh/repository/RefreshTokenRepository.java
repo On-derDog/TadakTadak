@@ -32,4 +32,8 @@ public class RefreshTokenRepository {
         String refreshToken = valueOperations.get(email);
         return refreshToken != null && !refreshToken.isEmpty();
     }
+
+    public void deleteEmail(String email) {
+        redisTemplate.delete(email);
+    }
 }

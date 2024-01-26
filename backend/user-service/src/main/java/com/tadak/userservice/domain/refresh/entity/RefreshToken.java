@@ -13,8 +13,6 @@ import org.springframework.data.redis.core.RedisHash;
 @Builder
 public class RefreshToken {
 
-    //TODO : Key 정보를 email하기
-
     @Id
     private String email;
     private String refreshToken;

@@ -7,9 +7,11 @@ import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.entity.Member;
 import com.tadak.userservice.domain.member.entity.Role;
 import com.tadak.userservice.domain.member.entity.State;
+import com.tadak.userservice.domain.member.exception.*;
 import com.tadak.userservice.domain.member.repository.MemberRepository;
 import com.tadak.userservice.domain.refresh.entity.RefreshToken;
 import com.tadak.userservice.domain.refresh.repository.RefreshTokenRepository;
+import com.tadak.userservice.global.error.ErrorCode;
 import com.tadak.userservice.global.jwt.filter.JwtFilter;
 import com.tadak.userservice.global.jwt.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +43,11 @@ public class MemberService {
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
         // 추후 Exception custom
         if (memberRepository.existsByEmail(signupRequestDto.getEmail())){
-            throw new IllegalAccessError("해당 이메일은 현재 존재합니다.");
+            throw new DuplicateMemberEmailException(ErrorCode.DUPLICATE_MEMBER_EMAIL_ERROR);
         }
 
         if (memberRepository.existsByUsername(signupRequestDto.getUsername())){
-            throw new IllegalAccessError("해당 유저이름은 현재 존재합니다.");
+            throw new DuplicateMemberUsernameException(ErrorCode.DUPLICATE_MEMBER_USERNAME_ERROR);
         }
 
         passwordConfirm(signupRequestDto.getPassword(), signupRequestDto.getPasswordConfirm());
@@ -59,7 +61,7 @@ public class MemberService {
     //TODO: login 로직 수정하기
     public ResponseEntity<TokenResponseDto> login(LoginRequestDto loginRequestDto) {
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 email이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER_ERROR));
 
         validMemberState(member); // member State 검증
 
@@ -92,6 +94,15 @@ public class MemberService {
         return authentication;
     }
 
+    @Transactional
+    public void logout(String email, String loginEmail) {
+        if (!validLoginMember(email, loginEmail)){
+            throw new NotMatchLogoutException(ErrorCode.NOT_MATCH_LOGOUT_EXCEPTION);
+        }
+
+        refreshTokenRepository.deleteEmail(email);
+    }
+
     /**
      * Header 부분에 token 넣어주기
      * @param accessToken
@@ -111,7 +122,7 @@ public class MemberService {
      */
     private void passwordConfirm(String password, String passwordConfirm) {
         if (!password.equals(passwordConfirm)){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new NotMatchPasswordException(ErrorCode.NOT_MATCH_PASSWORD_ERROR);
         }
     }
 
@@ -121,8 +132,15 @@ public class MemberService {
      */
     private static void validMemberState(Member member) {
         if (member.getState() == State.DELETE){
-            throw new IllegalArgumentException("현재 비활성화된 계정입니다.");
+            throw new MemberStateException(ErrorCode.NOT_VALID_MEMBER_STATE_ERROR);
         }
+    }
+
+    /**
+     * loginMember 검증
+     */
+    private boolean validLoginMember(String email, String loginEmail) {
+        return email.equals(loginEmail);
     }
 
     /**
@@ -148,4 +166,5 @@ public class MemberService {
                 .email(member.getEmail())
                 .build();
     }
+
 }
