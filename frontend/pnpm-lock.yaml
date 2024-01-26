@@ -2792,6 +2792,14 @@ packages:
     engines: { node: '>=0.10.0' }
     dev: true
 
+  /eventsource@2.0.2:
+    resolution:
+      {
+        integrity: sha512-IzUmBGPR3+oUG9dUeXynyNmf91/3zUSJg1lCktzKw47OXuhco54U3r9B7O4XX+Rb1Itm9OZ2b0RkTs10bICOxA==,
+      }
+    engines: { node: '>=12.0.0' }
+    dev: false
+
   /fast-deep-equal@3.1.3:
     resolution:
       {
@@ -2842,6 +2850,16 @@ packages:
     dependencies:
       reusify: 1.0.4
     dev: true
+
+  /faye-websocket@0.11.4:
+    resolution:
+      {
+        integrity: sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==,
+      }
+    engines: { node: '>=0.8.0' }
+    dependencies:
+      websocket-driver: 0.7.4
+    dev: false
 
   /file-entry-cache@6.0.1:
     resolution:
@@ -3191,6 +3209,13 @@ packages:
       }
     dependencies:
       react-is: 16.13.1
+    dev: false
+
+  /http-parser-js@0.5.8:
+    resolution:
+      {
+        integrity: sha512-SGeBX54F94Wgu5RH3X5jsDtf4eHyRogWX1XGT3b4HuW3tQPM4AaBzoUji/4AAJNXCEOWZ5O0DgZmJw1947gD5Q==,
+      }
     dev: false
 
   /ieee754@1.2.1:
@@ -4076,6 +4101,13 @@ packages:
     engines: { node: '>=6' }
     dev: true
 
+  /querystringify@2.2.0:
+    resolution:
+      {
+        integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==,
+      }
+    dev: false
+
   /queue-microtask@1.2.3:
     resolution:
       {
@@ -4201,6 +4233,13 @@ packages:
       define-properties: 1.2.1
       set-function-name: 2.0.1
     dev: true
+
+  /requires-port@1.0.0:
+    resolution:
+      {
+        integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==,
+      }
+    dev: false
 
   /resolve-from@4.0.0:
     resolution:
@@ -4752,6 +4791,16 @@ packages:
       punycode: 2.3.1
     dev: true
 
+  /url-parse@1.5.10:
+    resolution:
+      {
+        integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==,
+      }
+    dependencies:
+      querystringify: 2.2.0
+      requires-port: 1.0.0
+    dev: false
+
   /use-sync-external-store@1.2.0(react@18.2.0):
     resolution:
       {
@@ -4807,6 +4856,26 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
+
+  /websocket-driver@0.7.4:
+    resolution:
+      {
+        integrity: sha512-b17KeDIQVjvb0ssuSDF2cYXSg2iztliJ4B9WdsuB6J952qCPKmnVq4DyW5motImXHDC1cBT/1UezrJVsKw5zjg==,
+      }
+    engines: { node: '>=0.8.0' }
+    dependencies:
+      http-parser-js: 0.5.8
+      safe-buffer: 5.2.1
+      websocket-extensions: 0.1.4
+    dev: false
+
+  /websocket-extensions@0.1.4:
+    resolution:
+      {
+        integrity: sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==,
+      }
+    engines: { node: '>=0.8.0' }
+    dev: false
 
   /which-boxed-primitive@1.0.2:
     resolution:
