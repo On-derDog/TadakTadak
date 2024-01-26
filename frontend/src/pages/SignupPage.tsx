@@ -38,11 +38,11 @@ const SignupPage = () => {
     // 통신코드
     const checkEmailDuplicate = async () => {
         try {
-          const response = await axios.post('/api/v1/signup', {
-            username: userInfo.username,
-            email: userInfo.email,
-            password: userInfo.password
-          });
+            const response = await axios.post('http://localhost:8001/user-service/login', {
+                username: userInfo.username,
+                email: userInfo.email,
+                password: userInfo.password
+              });
       
           const data = response.data;
       
