@@ -67,7 +67,7 @@ const VideoCall: React.FC = () => {
       const offer = await peerConnectionRef.current.createOffer();
       await peerConnectionRef.current.setLocalDescription(offer);
       if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-        websocketRef.current.send(JSON.stringify({ type: 'offer', offer: offer }));
+        websocketRef.current.send(JSON.stringify({ type: 'offer',  roomId:1, userId: 1, sdp: offer}));
       }
     }
   };
@@ -78,15 +78,36 @@ const VideoCall: React.FC = () => {
 
     websocket.onopen = () => {
       console.log('Connected to signaling server');
+	  websocket.send("hello server");
     };
 
     websocket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      if (message.type === 'answer' && peerConnectionRef.current) {
-        peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(message.answer));
-      } else if (message.type === 'candidate' && peerConnectionRef.current) {
-        peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(message.candidate));
-      }
+	  var userCount =5;
+	  if(message.type ==='offer' && peerConnectionRef.current ){
+      console.log("offer 받음");
+		peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(message.sdp));
+		peerConnectionRef.current.createAnswer()
+		.then(answer => { peerConnectionRef.current.setLocalDescription(answer);
+			if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+				websocketRef.current.send(JSON.stringify({ type: 'answer',  roomId:1, userId: 1, sdp: answer}));
+			}
+		});
+	  }
+        else if (message.type === 'answer' && peerConnectionRef.current) {
+        peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(message.sdp));
+      } else if (message.type === 'ice' && peerConnectionRef.current) {
+		console.log("Received"+message.type);
+        peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(message.sdp));
+      } else if (message.type === 'join' && peerConnectionRef.current) {
+		console.log(" Received"+message.type);
+		websocket.send(JSON.stringify({
+			fromUserId: userCount, type : "join" , roomId: "1", candidate: null, sdp: null
+		}));
+		websocket.send(JSON.stringify({
+			fromUserId: userCount, type : "offer" , roomId: "1", candidate: null, sdp: null
+		}));
+	  } 
     };
 
     return () => {
