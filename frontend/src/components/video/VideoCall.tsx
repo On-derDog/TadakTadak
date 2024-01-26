@@ -1,120 +1,132 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef} from "react";
+import { useParams } from "react-router-dom";
+import { io, Socket } from "socket.io-client";
 
 const VideoCall: React.FC = () => {
-  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const socketRef = useRef<Socket>();
+  const myVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-  const websocketRef = useRef<WebSocket | null>(null);
+  const pcRef = useRef<RTCPeerConnection>();
 
-  useEffect(() => {
-    const startMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setLocalStream(stream);
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
+  const { roomName } = useParams<{ roomName: string }>(); // 라우터 매개변수에서 roomName 값을 가져옴
+
+  const getMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      if (myVideoRef.current) {
+        myVideoRef.current.srcObject = stream;
+      }
+      if (!(pcRef.current && socketRef.current)) {
+        return;
+      }
+      stream.getTracks().forEach((track) => {
+        if (!pcRef.current) {
+          return;
         }
-        createPeerConnection();
-      } catch (error) {
-        console.error('Error accessing media devices.', error);
-      }
-    };
-
-    startMedia();
-
-    return () => {
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
-      if (peerConnectionRef.current) {
-        peerConnectionRef.current.close();
-      }
-      if (websocketRef.current) {
-        websocketRef.current.close();
-      }
-    };
-  }, []);
-
-  const createPeerConnection = () => {
-    const peerConnection = new RTCPeerConnection();
-
-    peerConnectionRef.current = peerConnection;
-
-    if (localStream) {
-      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        pcRef.current.addTrack(track, stream);
+      });
+    } catch (e) {
+      console.error(e);
     }
-
-    peerConnection.ontrack = (event) => {
-      if (remoteVideoRef.current && event.streams.length) {
-        setRemoteStream(event.streams[0]);
-        remoteVideoRef.current.srcObject = event.streams[0];
-      }
-    };
-
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-          websocketRef.current.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
-        }
-      }
-    };
   };
 
-  const startCall = async () => {
-    if (peerConnectionRef.current) {
-      const offer = await peerConnectionRef.current.createOffer();
-      await peerConnectionRef.current.setLocalDescription(offer);
-      if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-        websocketRef.current.send(JSON.stringify({ type: 'offer', offer: offer }));
-      }
+  const createOffer = async () => {
+    console.log("create Offer");
+    if (!(pcRef.current && socketRef.current)) {
+      return;
+    }
+    try {
+      const offer = await pcRef.current.createOffer();
+      await pcRef.current.setLocalDescription(offer);
+      console.log("sent the offer");
+      socketRef.current.emit("offer", offer, roomName);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const createAnswer = async (offer: RTCSessionDescription) => {
+    console.log("createAnswer");
+    if (!(pcRef.current && socketRef.current)) {
+      return;
+    }
+
+    try {
+      pcRef.current.setRemoteDescription(offer);
+      const answer = await pcRef.current.createAnswer();
+      await pcRef.current.setLocalDescription(answer);
+
+      console.log("sent the answer");
+      socketRef.current.emit("answer", answer, roomName);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:8080/signal/1');
-    websocketRef.current = websocket;
+    socketRef.current = io("localhost:8080/signal/1");
 
-    websocket.onopen = () => {
-		console.log('Connected to signaling server');
-	  
-		const message = {
-		  fromUserId: '1',
-		  type: 'ice',
-		  roomId: '1',
-		  candidate: null,
-		  sdp: null
-		};
-	  
-		websocketRef.current!.send(JSON.stringify(message));
-	  };
+    pcRef.current = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: "stun:stun.l.google.com:19302",
+        },
+      ],
+    });
 
-    websocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === 'answer' && peerConnectionRef.current) {
-        peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(message.answer));
-      } else if (message.type === 'candidate' && peerConnectionRef.current) {
-        peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(message.candidate));
+    socketRef.current.on("offer", (offer: RTCSessionDescription) => {
+      console.log("received the offer");
+      createAnswer(offer);
+    });
+
+    socketRef.current.on("answer", (answer: RTCSessionDescription) => {
+      console.log("received the answer");
+      if (!pcRef.current) {
+        return;
       }
-    };
+      pcRef.current.setRemoteDescription(answer);
+    });
+
+    socketRef.current.on("candidate", async (candidate: RTCIceCandidate) => {
+      console.log("received candidate");
+      if (!pcRef.current) {
+        return;
+      }
+      await pcRef.current.addIceCandidate(candidate);
+    });
+
+    socketRef.current.emit("join_room", roomName);
+
+    getMedia();
 
     return () => {
-      if (websocketRef.current) {
-        websocketRef.current.close();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      if (pcRef.current) {
+        pcRef.current.close();
       }
     };
   }, []);
 
   return (
     <div>
-      <div>
-        <video ref={localVideoRef} autoPlay muted playsInline></video>
-      </div>
-      <div>
-        <video ref={remoteVideoRef} autoPlay playsInline></video>
-      </div>
-      <button onClick={startCall}>Start Call</button>
+      <video
+        id="myVideo"
+        style={{ width: 400, height: 400, backgroundColor: "black" }}
+        ref={myVideoRef}
+        autoPlay
+      />
+      <video
+        id="remoteVideo"
+        style={{ width: 400, height: 400, backgroundColor: "black" }}
+        ref={remoteVideoRef}
+        autoPlay
+      />
     </div>
   );
 };
