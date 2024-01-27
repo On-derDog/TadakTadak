@@ -1,50 +1,51 @@
-import useChatStore from '../../stores/useChatStore';
+import { useEffect } from 'react';
+import SockJS from 'sockjs-client';
+import { Stomp, Client, Message } from '@stomp/stompjs';
 import Chat from './Chat';
 import ChatRecent from './ChatRecent';
-import { useEffect } from 'react';
-import { enterChatRoom } from '../../hooks/ChatWebSocket';
-import { useQuery } from '@tanstack/react-query';
-import Stomp from 'stompjs';
+import useChatStore from '../../stores/useChatStore';
 
 const ChatForm: React.FC = () => {
 	const { inputMessage, setInputMessage, handleSendMessage } = useChatStore();
-	const {
-		data: stompClient,
-		isLoading,
-		isError,
-		error,
-	} = useQuery<Stomp.Client>({
-		queryKey: ['chats'],
-		queryFn: enterChatRoom,
-	});
-
-	let content;
-
-	if (isLoading) {
-		content = <div>Loading...</div>;
-	}
-
-	if (isError) {
-		console.error('Error connecting to the chat room:', error);
-		content = <div>Error: {error.message || 'Failed to connect'}</div>;
-	}
+	let stompClient: Client | null = null;
 
 	useEffect(() => {
-		if (stompClient) {
-			console.log('Data loaded successfully:');
-		}
-		return () => {
-			stompClient?.disconnect(() => {
-				console.log('Disconnected from the chat room!');
-			});
+		stompClient = new Client({
+			webSocketFactory: () => new SockJS('http://localhost:8010/ws'),
+			debug: (str) => {
+				console.log(str);
+			},
+			reconnectDelay: 5000,
+			heartbeatIncoming: 4000,
+			heartbeatOutgoing: 4000,
+		});
+
+		stompClient.onConnect = (frame) => {
+			console.log('Connected: ' + frame);
+
+			if (stompClient && stompClient.connected) {
+				stompClient.subscribe('/topic/public', (message: Message) => {
+					console.log('Received message:', message.body);
+				});
+			}
 		};
-	}, [stompClient]);
+
+		stompClient.onStompError = (frame) => {
+			console.error('Error connecting to WebSocket:', frame);
+		};
+
+		stompClient.activate();
+
+		return () => {
+			stompClient?.deactivate();
+		};
+	}, []);
 
 	return (
 		<>
 			<ChatRecent />
 			<Chat />
-			{content}
+
 			<div>
 				<input
 					type="text"
