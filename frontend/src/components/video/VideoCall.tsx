@@ -14,7 +14,7 @@ const VideoCall: React.FC = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true,
+        audio: false,
       });
 
       if (myVideoRef.current) {
@@ -68,7 +68,8 @@ const VideoCall: React.FC = () => {
   };
 
   useEffect(() => {
-    socketRef.current = io("localhost:8080/signal/1");
+    socketRef.current = io("http://localhost:8080", { transports: ['websocket']});
+   
 
     pcRef.current = new RTCPeerConnection({
       iceServers: [
