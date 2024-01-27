@@ -1,20 +1,21 @@
-import { useEffect, useRef} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
 
-const VideoCall: React.FC = () => {
-  const socketRef = useRef<Socket>();
+const VideoCall = () => {
+  const socketRef = useRef<WebSocket>();
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection>();
 
-  const { roomName } = useParams<{ roomName: string }>(); // 라우터 매개변수에서 roomName 값을 가져옴
+  const { roomName } = useParams();
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [videoEnabled, setVideoEnabled] = useState(true);
 
   const getMedia = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
+        video: videoEnabled,
+        audio: audioEnabled,
       });
 
       if (myVideoRef.current) {
@@ -29,46 +30,109 @@ const VideoCall: React.FC = () => {
         }
         pcRef.current.addTrack(track, stream);
       });
+
+      pcRef.current.onicecandidate = (e) => {
+        if (e.candidate) {
+          if (!socketRef.current) {
+            return;
+          }
+          console.log("recv candidate");
+          socketRef.current.send(JSON.stringify({ type: "candidate", candidate: e.candidate, roomName }));
+        }
+      };
+
+      pcRef.current.ontrack = (e) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = e.streams[0];
+        }
+      };
     } catch (e) {
       console.error(e);
     }
   };
-
   const createOffer = async () => {
     console.log("create Offer");
     if (!(pcRef.current && socketRef.current)) {
       return;
     }
     try {
-      const offer = await pcRef.current.createOffer();
-      await pcRef.current.setLocalDescription(offer);
+      const sdp = await pcRef.current.createOffer();
+      pcRef.current.setLocalDescription(sdp);
       console.log("sent the offer");
-      socketRef.current.emit("offer", offer, roomName);
+      socketRef.current.send(JSON.stringify({ type: "offer", sdp, roomName }));
     } catch (e) {
       console.error(e);
     }
   };
 
-  const createAnswer = async (offer: RTCSessionDescription) => {
+  const createAnswer = async (sdp: RTCSessionDescriptionInit) => {
     console.log("createAnswer");
     if (!(pcRef.current && socketRef.current)) {
       return;
     }
 
     try {
-      pcRef.current.setRemoteDescription(offer);
-      const answer = await pcRef.current.createAnswer();
-      await pcRef.current.setLocalDescription(answer);
+      pcRef.current.setRemoteDescription(new RTCSessionDescription(sdp));
+      const answerSdp = await pcRef.current.createAnswer();
+      pcRef.current.setLocalDescription(answerSdp);
 
       console.log("sent the answer");
-      socketRef.current.emit("answer", answer, roomName);
-    } catch (e) {
-      console.error(e);
-    }
+      socketRef.current.send(JSON.stringify({ type: "answer", answerSdp, roomName }));
+      } catch (e) {
+        console.error(e);
+      }
+  };
+
+  const toggleAudio = () => {
+    setAudioEnabled(!audioEnabled);
+  };
+  
+  const toggleVideo = () => {
+    setVideoEnabled(!videoEnabled);
   };
 
   useEffect(() => {
-    socketRef.current = io("localhost:8080/signal/1");
+    socketRef.current = new WebSocket("ws://localhost:8080/signal/1");
+
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connected");
+
+      const message = {
+        fromUserId: '1',
+        type: 'ice',
+        roomId: '1',
+        candidate: null,
+        sdp: null
+      };
+
+      socketRef.current?.send(JSON.stringify(message));
+
+      getMedia();
+    };
+
+    socketRef.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      switch (message.type) {
+        case "offer":
+          console.log("recv Offer");
+          createAnswer(message.sdp);
+          break;
+        case "answer":
+          console.log("recv Answer");
+          pcRef.current?.setRemoteDescription(new RTCSessionDescription(message.answerSdp));
+          break;
+        case "candidate":
+          console.log("recv candidate");
+          pcRef.current?.addIceCandidate(new RTCIceCandidate(message.candidate));
+          break;
+        default:
+          break;
+      }
+    };
+
+    socketRef.current.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
 
     pcRef.current = new RTCPeerConnection({
       iceServers: [
@@ -78,55 +142,42 @@ const VideoCall: React.FC = () => {
       ],
     });
 
-    socketRef.current.on("offer", (offer: RTCSessionDescription) => {
-      console.log("received the offer");
-      createAnswer(offer);
-    });
-
-    socketRef.current.on("answer", (answer: RTCSessionDescription) => {
-      console.log("received the answer");
-      if (!pcRef.current) {
-        return;
-      }
-      pcRef.current.setRemoteDescription(answer);
-    });
-
-    socketRef.current.on("candidate", async (candidate: RTCIceCandidate) => {
-      console.log("received candidate");
-      if (!pcRef.current) {
-        return;
-      }
-      await pcRef.current.addIceCandidate(candidate);
-    });
-
-    socketRef.current.emit("join_room", roomName);
-
-    getMedia();
-
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
+        socketRef.current.close();
       }
       if (pcRef.current) {
         pcRef.current.close();
       }
     };
-  }, []);
+  }, [audioEnabled, videoEnabled]);
 
   return (
-    <div>
+    <div
+      id="Wrapper"
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
       <video
-        id="myVideo"
-        style={{ width: 400, height: 400, backgroundColor: "black" }}
+        id="localvideo"
+        style={{ width: 500, height: 500, backgroundColor: "black" }}
         ref={myVideoRef}
         autoPlay
+        muted
       />
       <video
-        id="remoteVideo"
-        style={{ width: 400, height: 400, backgroundColor: "black" }}
+        id="remotevideo"
+        style={{ width: 500, height: 500, backgroundColor: "black" }}
         ref={remoteVideoRef}
         autoPlay
       />
+      <div>
+        <button onClick={toggleAudio}>{audioEnabled ? "Mute" : "Unmute"}</button>
+        <button onClick={toggleVideo}>{videoEnabled ? "Camera Off" : "Camera On"}</button>
+      </div>
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import VideoCall from "../components/video/VideoCall";
+import WebSockTest from "../components/video/WebSockTest";
 
 const VideoCallPage = () => {
 
     return (
         <div>
-            <VideoCall/>
+            <WebSockTest/>
         </div>
     );
 }
