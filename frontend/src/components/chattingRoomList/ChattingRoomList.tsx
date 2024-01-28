@@ -6,7 +6,6 @@ const ChattingRoomList: React.FC = () => {
 		<main className="ChattingRoomList-wrapper">
 			<section className="ChattingRoomList-container">
 				<h3>This is ChattingRoomList Component!</h3>
-				<span>방 4*4로 배치하기</span>
 
 				{/* Grid */}
         <ChattingRoomListGridContainer>

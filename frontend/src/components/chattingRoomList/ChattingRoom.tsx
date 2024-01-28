@@ -16,6 +16,7 @@ const getImage = async () => {
 
 export const ChattingRoom = () =>{
 
+  // 에러가 발생하면 react-query update를 하기
   const { isLoading, data, isError } = useQuery({
     queryKey: ["chattingRoomImage"],
     queryFn: getImage,
