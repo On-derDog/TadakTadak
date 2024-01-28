@@ -18,7 +18,7 @@ type isValid = {
     messageValidPw2Color: 'black' | 'blue';
 };
 
-const SignupPage = () => {
+const SignupPage: React.FC = () => {
     const navigate = useNavigate();
     const userInfo = useStore(UserInfoStore);
     const [messageValidPw1, setMessageValidPw1] = useState<string>('숫자/영어/특수문자를 혼용하여 3종류를 사용하세요.');
@@ -74,7 +74,7 @@ const SignupPage = () => {
     }
 
     // 비밀번호 예외처리
-    const checkValidPassword = (password: string) => {
+    const checkValidPassword = (password: string): void => {
         // 숫자/영어/특수문자를 혼용했는가
         const pattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/;
         
@@ -89,9 +89,9 @@ const SignupPage = () => {
     };
 
     // API 반환값 설정
-    const handleCheckEmailDuplicate = async () => {
-        const { data, isLoading } = await AuthApis.useCheckEmailDuplicateQuery(userInfo); // react-query: true/false date로 반환
-        // const data = await AuthApis.checkEmailDuplicate(userInfo);
+    const handleCheckEmailDuplicate = async (): Promise<void> => {
+        // const { data, isLoading } = await AuthApis.useCheckEmailDuplicateQuery(userInfo);
+        const data = await AuthApis.checkEmailDuplicate(userInfo);
         if (data) {
             setIsValid((prev) => ({ ...prev, emailIsValid: true }));
         }
@@ -99,7 +99,7 @@ const SignupPage = () => {
 
 
     // API 반환값 설정
-    const handlecheckUsernameDuplicate = async () => {
+    const handlecheckUsernameDuplicate = async (): Promise<void> => {
         const data = await AuthApis.checkUsernameDuplicate(userInfo)
         if (data) {
             setIsValid((prev) => ({ ...prev, usernameIsValid: true }));
@@ -107,7 +107,7 @@ const SignupPage = () => {
     };
 
     // 버튼코드
-    const onButtonClick = (action:string) => {
+    const onButtonClick = (action:string): void => {
         switch(action){
             case "onSetEmailCheck":
             console.log(`API 통신 ${userInfo.email}`)
@@ -136,7 +136,7 @@ const SignupPage = () => {
                     navigate("/");
                 }
                 else
-                    console.log("조건이 안맞음");
+                    console.log("4가지 조건이 안맞음 ex)중복확인x, 비밀번호다름");
                 break;
 
             default:
