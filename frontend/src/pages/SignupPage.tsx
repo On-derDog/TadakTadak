@@ -7,6 +7,8 @@ import { UserInfoStore } from "../stores/UserInfoStore";
 import styled from '@emotion/styled';
 import axios from 'axios';
 
+import { AuthApis }  from "../hooks/useAuthQuery";
+
 type isValid = {
     passwordIsValid: boolean;
     passwordCheckIsValid: boolean;
@@ -26,7 +28,7 @@ const SignupPage = () => {
     const [messageEmail, setMessageEmail] = useState<string>("");
     const [messageUsername, setMessageUsername] = useState<string>("");
     const [passwordConfirm, setPasswordConfirm] = useState<string>("");
-      
+    
     const [isValid, setIsValid] = useState<isValid>({
         passwordIsValid: false,
         passwordCheckIsValid: false,
@@ -34,7 +36,9 @@ const SignupPage = () => {
         usernameIsValid: false,
         messageValidPw1Color: 'black',
         messageValidPw2Color: 'black',
-      });
+    });
+
+    const authApis = AuthApis();
 
     //inputForm 코드
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,58 +84,26 @@ const SignupPage = () => {
         }));
     };
 
-    // 통신코드
-    const signup = async () => {
-        try {
-            const response = await axios.post('http://localhost:8001/user-service/login', {
-                username: userInfo.username,
-                email: userInfo.email,
-                password: userInfo.password,
-                passwordConfirm: passwordConfirm,
-            });
-        const data = response.data;
-        const jwtToken = data.token;
-        localStorage.setItem('jwtToken', jwtToken);
-        } catch (error) {
-            console.error("API 통신 에러:", error);
+    // API 반환값 설정
+    const handleCheckEmailDuplicate = async () => {
+        if (await authApis.checkEmailDuplicate()) {
+            setIsValid((prev) => ({ ...prev, emailIsValid: true }));
         }
     };
 
-    // 통신코드
-    const checkEmailDuplicate = async () => {
-            try {
-                const response = await axios.post(`http://localhost:8001/user-service/signup/exists/${userInfo.email}`, {
-                    email: userInfo.email,
-                });
-            const data = response.data;
-            if(data) setIsValid((prev)=>({...prev, emailIsValid:true }));
-            } catch (error) {
-                console.error("API 통신 에러:", error);
+    // API 반환값 설정
+    const handlecheckUsernameDuplicate = async () => {
+        if (await authApis.checkUsernameDuplicate()) {
+            setIsValid((prev) => ({ ...prev, usernameIsValid: true }));
         }
     };
-
-    // 통신코드
-    const checkUsernameDuplicate = async () => {
-        try {
-            const response = await axios.post(`http://localhost:8001/user-service/signup/exists/${userInfo.username}`, {
-                    username: userInfo.username,
-            });
-            const data = response.data;
-            if(data) setIsValid((prev)=>({...prev, usernameIsValid:true }));
-            } catch (error) {
-                console.error("API 통신 에러:", error);
-        }
-    };
-
-    
-    
 
     // 버튼코드
     const onButtonClick = (action:string) => {
         switch(action){
             case "onSetEmailCheck":
             console.log(`API 통신 ${userInfo.email}`)
-            checkEmailDuplicate();
+            handleCheckEmailDuplicate();
             if(!isValid.emailIsValid)
                 setMessageEmail('중복된 이메일입니다')
             else
@@ -140,7 +112,7 @@ const SignupPage = () => {
 
             case "onSetNicknameCheck":
                 console.log(`API 통신 ${userInfo.username}`)
-                checkUsernameDuplicate();
+                handlecheckUsernameDuplicate();
                 if(!isValid.usernameIsValid)
                     setMessageUsername('중복된 닉네임입니다')
                 else
@@ -151,8 +123,8 @@ const SignupPage = () => {
                 console.log(`회원가입 ${userInfo.email}, ${userInfo.password},${passwordConfirm}, ${userInfo.username}`);
 
                 if (isValid.passwordIsValid && isValid.passwordCheckIsValid && isValid.emailIsValid && isValid.usernameIsValid) {
-                    console.log("성공");
-                    signup();
+                    console.log("로그인 성공");
+                    authApis.signup(passwordConfirm);
                     navigate("/");
                 }
                 else
