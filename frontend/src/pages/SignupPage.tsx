@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
@@ -38,7 +38,11 @@ const SignupPage = () => {
         messageValidPw2Color: 'black',
     });
 
-    const authApis = AuthApis();
+    // const authApis = AuthApis(userInfo);
+
+    useEffect(()=>{
+        console.log(isValid)
+    },[isValid])
 
     //inputForm 코드
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,14 +90,16 @@ const SignupPage = () => {
 
     // API 반환값 설정
     const handleCheckEmailDuplicate = async () => {
-        if (await authApis.checkEmailDuplicate()) {
+        const data = await AuthApis.checkEmailDuplicate(userInfo);
+        if (data) {
             setIsValid((prev) => ({ ...prev, emailIsValid: true }));
         }
     };
 
     // API 반환값 설정
     const handlecheckUsernameDuplicate = async () => {
-        if (await authApis.checkUsernameDuplicate()) {
+        const data = await AuthApis.checkUsernameDuplicate(userInfo)
+        if (data) {
             setIsValid((prev) => ({ ...prev, usernameIsValid: true }));
         }
     };
@@ -124,7 +130,7 @@ const SignupPage = () => {
 
                 if (isValid.passwordIsValid && isValid.passwordCheckIsValid && isValid.emailIsValid && isValid.usernameIsValid) {
                     console.log("로그인 성공");
-                    authApis.signup(passwordConfirm);
+                    AuthApis.signup(userInfo,passwordConfirm);
                     navigate("/");
                 }
                 else
