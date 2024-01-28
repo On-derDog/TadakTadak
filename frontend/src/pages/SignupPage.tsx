@@ -78,66 +78,87 @@ const SignupPage = () => {
             messageValidPw2Color: isValidLength ? 'blue' : 'black',
             passwordIsValid: pattern.test(password) && isValidLength,
         }));
-      };
-      
+    };
 
     // 통신코드
-    const checkEmailDuplicate = async () => {
+    const signup = async () => {
         try {
             const response = await axios.post('http://localhost:8001/user-service/login', {
                 username: userInfo.username,
                 email: userInfo.email,
                 password: userInfo.password,
                 passwordConfirm: passwordConfirm,
-              });
-          const data = response.data;
-      
+            });
+        const data = response.data;
+        const jwtToken = data.token;
+        localStorage.setItem('jwtToken', jwtToken);
         } catch (error) {
-          console.error("API 통신 에러:", error);
+            console.error("API 통신 에러:", error);
         }
-      };
+    };
+
+    // 통신코드
+    const checkEmailDuplicate = async () => {
+            try {
+                const response = await axios.post(`http://localhost:8001/user-service/signup/exists/${userInfo.email}`, {
+                    email: userInfo.email,
+                });
+            const data = response.data;
+            if(data) setIsValid((prev)=>({...prev, emailIsValid:true }));
+            } catch (error) {
+                console.error("API 통신 에러:", error);
+        }
+    };
+
+    // 통신코드
+    const checkUsernameDuplicate = async () => {
+        try {
+            const response = await axios.post(`http://localhost:8001/user-service/signup/exists/${userInfo.username}`, {
+                    username: userInfo.username,
+            });
+            const data = response.data;
+            if(data) setIsValid((prev)=>({...prev, usernameIsValid:true }));
+            } catch (error) {
+                console.error("API 통신 에러:", error);
+        }
+    };
+
+    
+    
 
     // 버튼코드
     const onButtonClick = (action:string) => {
         switch(action){
-          case "onSetEmailCheck":
+            case "onSetEmailCheck":
             console.log(`API 통신 ${userInfo.email}`)
-            // 해서 중복확인을 받는다. 코드 수정 필요
-            setIsValid(prevState => ({
-                ...prevState,
-                emailIsValid: true,
-              }));
+            checkEmailDuplicate();
             if(!isValid.emailIsValid)
                 setMessageEmail('중복된 이메일입니다')
-            else{
+            else
                 setMessageEmail('사용 가능한 이메일입니다')
-            }
-
                 break;
+
             case "onSetNicknameCheck":
                 console.log(`API 통신 ${userInfo.username}`)
-                // 해서 중복확인을 받는다. 코드 수정 필요
-                setIsValid(prevState => ({
-                    ...prevState,
-                    usernameIsValid: true,
-                  }));
+                checkUsernameDuplicate();
                 if(!isValid.usernameIsValid)
                     setMessageUsername('중복된 닉네임입니다')
-                else{
+                else
                     setMessageUsername('사용 가능한 닉네임입니다')
-                }
                 break;
+
             case "onSignup":
                 console.log(`회원가입 ${userInfo.email}, ${userInfo.password},${passwordConfirm}, ${userInfo.username}`);
 
                 if (isValid.passwordIsValid && isValid.passwordCheckIsValid && isValid.emailIsValid && isValid.usernameIsValid) {
                     console.log("성공");
-                    checkEmailDuplicate();
-                    setTimeout(()=> navigate("/"),1000);
+                    signup();
+                    navigate("/");
                 }
                 else
                     console.log("조건이 안맞음");
                 break;
+
             default:
                 console.error("error")
         }
@@ -146,39 +167,39 @@ const SignupPage = () => {
 
     return(
         <main className="SignupPage-wrapper">
-          <section className="SigupPage-container">
-            <>It's SignupPage!</>
-            <br/>    
+            <section className="SigupPage-container">
+                <>It's SignupPage!</>
+                <br/>    
   
-            {/* email input */}
-            <InputForm onChange={onChange}type = 'text' title="이메일"  name="email" value={userInfo?.email} placeholder="이메일을 입력해주세요"/>
-            <Button onClick={ () => onButtonClick("onSetEmailCheck")} label={"중복확인"}></Button>
-            <span> {messageEmail} </span>
-            <br/>            
+                {/* email input */}
+                <InputForm onChange={onChange}type = 'text' title="이메일"  name="email" value={userInfo?.email} placeholder="이메일을 입력해주세요"/>
+                <Button onClick={ () => onButtonClick("onSetEmailCheck")} label={"중복확인"}></Button>
+                <span> {messageEmail} </span>
+                <br/>            
   
-            {/* pw input */}
-            <InputForm onChange={onChange}
-            type = 'password' title="비밀번호"  name="password" value={userInfo?.password} placeholder="비밀번호을 입력해주세요"/><br/>
-            <MessageValidPw color={isValid.messageValidPw1Color}> {messageValidPw1} </MessageValidPw> <br/>
-            <br/>
-            <MessageValidPw color={isValid.messageValidPw2Color}> {messageValidPw2} </MessageValidPw> <br/>
-            <br/>     
-            {/* password duplicate check */}
-            <InputForm onChange={onChange}
-            type = 'password' title="비밀번호 확인"  name="password-check" value={passwordConfirm} placeholder="비밀번호을 다시 입력해주세요"/>
-            <span> {messagePw} </span>
-            <br/>    
+                {/* pw input */}
+                <InputForm onChange={onChange}
+                type = 'password' title="비밀번호"  name="password" value={userInfo?.password} placeholder="비밀번호을 입력해주세요"/><br/>
+                <MessageValidPw color={isValid.messageValidPw1Color}> {messageValidPw1} </MessageValidPw> <br/>
+                <br/>
+                <MessageValidPw color={isValid.messageValidPw2Color}> {messageValidPw2} </MessageValidPw> <br/>
+                <br/>     
+                {/* password duplicate check */}
+                <InputForm onChange={onChange}
+                type = 'password' title="비밀번호 확인"  name="password-check" value={passwordConfirm} placeholder="비밀번호을 다시 입력해주세요"/>
+                <span> {messagePw} </span>
+                <br/>    
 
-            {/* username input */}
-            <InputForm onChange={onChange}
-            type = 'text' title="닉네임"  name="username" value={userInfo?.username} placeholder="닉네임을 입력해주세요"/>
-            <Button onClick={ () => onButtonClick("onSetNicknameCheck")} label={"중복 확인"}></Button>
-            <span> {messageUsername} </span>
-            <br/>
-            <br/>
-            <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
-            <br/>
-          </section>  
+                {/* username input */}
+                <InputForm onChange={onChange}
+                type = 'text' title="닉네임"  name="username" value={userInfo?.username} placeholder="닉네임을 입력해주세요"/>
+                <Button onClick={ () => onButtonClick("onSetNicknameCheck")} label={"중복 확인"}></Button>
+                <span> {messageUsername} </span>
+                <br/>
+                <br/>
+                <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
+                <br/>
+            </section>  
         </main>
     )
 };
