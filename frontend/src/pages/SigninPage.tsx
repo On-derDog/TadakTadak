@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
@@ -23,13 +23,13 @@ const SigninPage:React.FC = () => {
     const onButtonClick = (action:string) => {
       switch(action){
         case "onSignin":
-          setTimeout(()=> navigate("/"),2000);
+          navigate("/")
           break;
         case "onSignup":
-          setTimeout(()=> navigate("/signup"),2000);
+          navigate("/signup")
           break;
         case "onSignupKakao":
-          setTimeout(()=> navigate("/signupkakao"),2000);
+          navigate("/signupkakao")
           break;
         default:
           console.error("error")
