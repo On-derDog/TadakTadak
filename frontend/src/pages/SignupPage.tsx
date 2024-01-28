@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
-import { useStore, create } from "zustand";
+import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
-import { devtools } from 'zustand/middleware'
 import styled from '@emotion/styled';
 import axios from 'axios';
 
@@ -37,31 +36,19 @@ const SignupPage = () => {
         messageValidPw2Color: 'black',
       });
 
-    // 확인용 코드
-    useEffect(()=>{
-        console.log(isValid);
-    },[isValid])
-
-    // 중복확인 예외 코드 // 중복확인을 받아놓고 값을 바꾸는 경우
-    useEffect(()=>{
-        // email
-
-        // username
-        console.log(isValid);
-    },[isValid])
-
     //inputForm 코드
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target;
 
         if (name === 'email') {
-          userInfo.updateEmail(value);
+            setIsValid((prev) => ({ ...prev, emailIsValid: false }));
+            userInfo.updateEmail(value);
         } else if (name === 'password') {
             userInfo.updatePassword(value);
             checkValidPassword(value);
             if(isValid.passwordIsValid)
-              console.log("사용가능한 비밀번호입니다");
-          }
+                console.log("사용가능한 비밀번호입니다");
+        }
         else if (name === 'password-check') {
             setPasswordConfirm(value);
             if(userInfo.password === value){
@@ -73,6 +60,7 @@ const SignupPage = () => {
             }
         }
         else if (name === 'username') {
+            setIsValid((prev) => ({ ...prev, usernameIsValid: false }));
             userInfo.updateUsername(value);
         }
     }
