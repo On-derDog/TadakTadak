@@ -90,11 +90,13 @@ const SignupPage = () => {
 
     // API 반환값 설정
     const handleCheckEmailDuplicate = async () => {
-        const data = await AuthApis.checkEmailDuplicate(userInfo);
+        const { data, isLoading } = await AuthApis.useCheckEmailDuplicateQuery(userInfo); // react-query: true/false date로 반환
+        // const data = await AuthApis.checkEmailDuplicate(userInfo);
         if (data) {
             setIsValid((prev) => ({ ...prev, emailIsValid: true }));
         }
     };
+
 
     // API 반환값 설정
     const handlecheckUsernameDuplicate = async () => {

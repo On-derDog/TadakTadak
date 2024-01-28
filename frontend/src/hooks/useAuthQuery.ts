@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { UserInfoStore } from '../stores/UserInfoStore';
+import { UserInfo, UserInfoStore } from '../stores/UserInfoStore';
 import { useStore } from 'zustand';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+
 
 export const AuthApis = {
   instance: axios.create({
@@ -9,23 +10,37 @@ export const AuthApis = {
     withCredentials: true,
   }),
 
-  checkEmailDuplicate: async (userInfo) => {
+  checkEmailDuplicate: async (userInfo: UserInfo): Promise<Boolean> => {
     const response = await AuthApis.instance.post(`/signup/exists/${userInfo.email}`, {
       email: userInfo.email,
     });
-    const data = response.data;
     return response.data === true;
   },
 
-  checkUsernameDuplicate: async (userInfo) => {
+  useCheckEmailDuplicateQuery: (userInfo: UserInfo) => {
+    const { data, isLoading, error } = useQuery<Boolean, Error>({
+      queryKey: ['checkEmailDuplicateQuery', userInfo.email],
+      queryFn: () => AuthApis.checkEmailDuplicate(userInfo),
+    });
+    return { data, isLoading, error };
+  },
+  
+  checkUsernameDuplicate: async (userInfo:UserInfo): Promise<Boolean> => {
     const response = await AuthApis.instance.post(`/signup/exists/${userInfo.username}`, {
       username: userInfo.username,
     });
-    const data = response.data;
     return response.data === true;
   },
 
-  signup: async (userInfo, passwordConfirm: string) => {
+  checkUsernameDuplicateQuery: (userInfo: UserInfo) => {
+    const { data, isLoading, error } = useQuery<Boolean, Error>({
+      queryKey: ['checkUsernameDuplicateQuery', userInfo.username],
+      queryFn: () => AuthApis.checkUsernameDuplicate(userInfo),
+    });
+    return { data, isLoading, error };
+  },
+
+  signup: async (userInfo:UserInfo, passwordConfirm: string) => {
     try {
       const response = await AuthApis.instance.post('/login', {
         username: userInfo.username,
@@ -40,8 +55,16 @@ export const AuthApis = {
     } catch (error) {
       console.error("API 통신 에러:", error);
     }
-  }
-,
+  },
+
+  signupQuery: (userInfo: UserInfo,passwordConfirm:string) => {
+    const { data, isLoading, error } = useQuery<Boolean, Error>({
+     queryKey: ['signupQuery', userInfo,passwordConfirm],
+      queryFn: () => AuthApis.signup(userInfo,  passwordConfirm),
+    });
+    return { data, isLoading, error };
+  },
+
   fetchData: async (endpoint: string, type: string, data?: any) => {
     let response;
   
@@ -61,30 +84,3 @@ export const AuthApis = {
 };
 
 
-  // 통신코드
-  // const checkEmailDuplicate = async (userInfo) => {
-  //   try {
-  //     const response = await axios.post(`http://localhost:8001/user-service/signup/exists/${userInfo.email}`, {
-  //       email: userInfo.email,
-  //     });
-  //     const data = response.data;
-  //     return data === true;
-  //   } catch (error) {
-  //     console.error("API 통신 에러:", error);
-  //     return false;
-  //   }
-  // };
-
-  // // 통신코드
-  // const checkUsernameDuplicate = async (userInfo) => {
-  //   try {
-  //     const response = await axios.post(`http://localhost:8001/user-service/signup/exists/${userInfo.username}`, {
-  //       username: userInfo.username,
-  //     });
-  //     const data = response.data;
-  //     return data === true;
-  //   } catch (error) {
-  //     console.error("API 통신 에러:", error);
-  //     return false;
-  //   }
-  // };
