@@ -7,6 +7,7 @@ import SignupPage from './pages/SignupPage';
 import SigninPage from './pages/SigninPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
 import SignUpKakaoPage from './pages/SignUpKaKaoPage';
+import TestPage from './test/TestPage';
 
 const router = createBrowserRouter([
 	{
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
 			{ path: 'chattinglist', element: <ChattingListPage /> },
 			{ path: 'chatroom/:chatroom_id', element: <ChattingRoomPage /> },
 			{ path: 'signupkakao', element: <SignUpKakaoPage /> },
-
+			{ path: 'test', element: <TestPage /> },
 		],
 	},
 ]);
