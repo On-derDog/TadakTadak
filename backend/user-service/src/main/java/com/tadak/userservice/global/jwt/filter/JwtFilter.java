@@ -21,8 +21,8 @@ import java.io.IOException;
 public class JwtFilter extends GenericFilterBean {
 
     //    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String ACCESS_AUTHORIZATION_HEADER = "AccessToken";
-    public static final String REFRESH_AUTHORIZATION_HEADER = "RefreshToken";
+    public static final String ACCESS_AUTHORIZATION_HEADER = "Accesstoken";
+    public static final String REFRESH_AUTHORIZATION_HEADER = "Refreshtoken";
     private final TokenProvider tokenProvider;
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

@@ -63,7 +63,7 @@ public class UserController {
     /**
      * username 검증
      */
-    @GetMapping("/signup/exists/{username}")
+    @GetMapping("/signup/exists-username/{username}")
     public ResponseEntity<DuplicateCheckResponseDto> checkUsername(@PathVariable("username") String username){
         DuplicateCheckResponseDto duplicateCheckResponseDto = memberService.existsUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(duplicateCheckResponseDto);
@@ -72,7 +72,7 @@ public class UserController {
     /**
      * email 검증
      */
-    @GetMapping("/signup/exists/{email}")
+    @GetMapping("/signup/exists-email/{email}")
     public ResponseEntity<DuplicateCheckResponseDto> checkEmail(@PathVariable("email") String email){
         DuplicateCheckResponseDto duplicateCheckResponseDto = memberService.existsEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(duplicateCheckResponseDto);
