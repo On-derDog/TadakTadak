@@ -1,16 +1,32 @@
-import { useEffect } from 'react';
-import { Client, Message } from '@stomp/stompjs';
-import Chat from './Chat';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import * as StompJs from '@stomp/stompjs';
 import ChatRecent from './ChatRecent';
-import useChatStore from '../../stores/useChatStore';
+
+interface ChatMessage {
+	applyId: string;
+	chat: string;
+}
 
 const ChatForm = () => {
-	const { inputMessage, setInputMessage, handleSendMessage } = useChatStore();
-	let stompClient: Client;
+	const [chatList, setChatList] = useState<ChatMessage[]>([]);
+	const [chat, setChat] = useState<string>('');
+
+	const { apply_id } = useParams<{ apply_id: string }>();
+	const client = useRef<StompJs.Client | null>(null);
+
+	const newChatMessage: ChatMessage = {
+		applyId: 'User',
+		chat,
+	};
 
 	const connect = () => {
-		stompClient = new Client({
-			webSocketFactory: () => new WebSocket('ws://localhost:8010/ws'),
+		client.current = new StompJs.Client({
+			brokerURL: 'ws://localhost:8010/ws',
+			onConnect: () => {
+				console.log('success');
+				subscribe();
+			},
 			debug: (str) => {
 				console.log(str);
 			},
@@ -18,68 +34,73 @@ const ChatForm = () => {
 			heartbeatIncoming: 4000,
 			heartbeatOutgoing: 4000,
 		});
+		client.current.activate();
+	};
 
-		stompClient.onConnect = (frame) => {
-			console.log('Connected: ' + frame);
+	const publish = (chat: string) => {
+		if (!client.current || !client.current.connected) return;
 
-			if (stompClient && stompClient.connected) {
-				stompClient.subscribe('/topic/public/5', (message: Message) => {
-					const receivedMessage = JSON.parse(message.body);
-					console.log('Received message:', receivedMessage);
+		client.current.publish({
+			destination: '/app/chat/5/send-message',
+			body: JSON.stringify({
+				applyId: apply_id,
+				chat: chat,
+			}),
+		});
+		setChatList((prevChatList) => [...prevChatList, newChatMessage]);
+		setChat('');
+	};
 
-					if (receivedMessage.type === 'JOIN') {
-						console.log(
-							`${receivedMessage.sender} 님이 채팅방에 참여하셨습니다.`,
-						);
-					} else {
-						console.log('Regular chat message:', receivedMessage.body);
-					}
-				});
+	const subscribe = () => {
+		if (!client.current) return;
 
-				stompClient.publish({
-					destination: '/app/chat/5/enter',
-					body: JSON.stringify({ type: 'JOIN', sender: 'username' }),
-				});
-			}
-		};
+		client.current.subscribe(`/topic/public/5`, (body) => {
+			console.log('Received message:', body);
+		});
+	};
 
-		stompClient.onStompError = (frame) => {
-			console.error('Error connecting to WebSocket:', frame);
-		};
+	const disconnect = () => {
+		if (!client.current) return;
 
-		stompClient.activate();
+		client.current.deactivate();
+	};
+
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setChat(event.target.value);
+	};
+
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			publish(chat);
+		}
 	};
 
 	useEffect(() => {
 		connect();
 
-		return () => {
-			stompClient?.deactivate();
-		};
+		return () => disconnect();
 	}, []);
 
-
 	return (
-		<>
+		<div>
 			<ChatRecent />
-			<Chat />
-
+			<div className={'chat-list'}>
+				{chatList.map((chatMessage, index) => (
+					<div key={index}>{`${chatMessage.applyId}: ${chatMessage.chat}`}</div>
+				))}
+			</div>
 			<div>
 				<input
-					type="text"
-					value={inputMessage}
-					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-						setInputMessage(e.target.value)
-					}
-					onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-						if (e.key === 'Enter') {
-							handleSendMessage();
-						}
-					}}
+					type={'text'}
+					name={'chatInput'}
+					onChange={handleChange}
+					value={chat}
 					placeholder="채팅을 입력해주세요"
+					onKeyDown={handleKeyDown}
 				/>
 			</div>
-		</>
+		</div>
 	);
 };
 
