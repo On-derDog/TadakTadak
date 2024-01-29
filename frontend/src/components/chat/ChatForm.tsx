@@ -1,17 +1,16 @@
 import { useEffect } from 'react';
-import SockJS from 'sockjs-client';
-import { Stomp, Client, Message } from '@stomp/stompjs';
+import { Client, Message } from '@stomp/stompjs';
 import Chat from './Chat';
 import ChatRecent from './ChatRecent';
 import useChatStore from '../../stores/useChatStore';
 
-const ChatForm: React.FC = () => {
+const ChatForm = () => {
 	const { inputMessage, setInputMessage, handleSendMessage } = useChatStore();
-	let stompClient: Client | null = null;
+	let stompClient: Client;
 
-	useEffect(() => {
+	const connect = () => {
 		stompClient = new Client({
-			webSocketFactory: () => new SockJS('http://localhost:8010/ws'),
+			webSocketFactory: () => new WebSocket('ws://localhost:8010/ws'),
 			debug: (str) => {
 				console.log(str);
 			},
@@ -24,8 +23,22 @@ const ChatForm: React.FC = () => {
 			console.log('Connected: ' + frame);
 
 			if (stompClient && stompClient.connected) {
-				stompClient.subscribe('/topic/public', (message: Message) => {
-					console.log('Received message:', message.body);
+				stompClient.subscribe('/topic/public/5', (message: Message) => {
+					const receivedMessage = JSON.parse(message.body);
+					console.log('Received message:', receivedMessage);
+
+					if (receivedMessage.type === 'JOIN') {
+						console.log(
+							`${receivedMessage.sender} 님이 채팅방에 참여하셨습니다.`,
+						);
+					} else {
+						console.log('Regular chat message:', receivedMessage.body);
+					}
+				});
+
+				stompClient.publish({
+					destination: '/app/chat/5/enter',
+					body: JSON.stringify({ type: 'JOIN', sender: 'username' }),
 				});
 			}
 		};
@@ -35,11 +48,16 @@ const ChatForm: React.FC = () => {
 		};
 
 		stompClient.activate();
+	};
+
+	useEffect(() => {
+		connect();
 
 		return () => {
 			stompClient?.deactivate();
 		};
 	}, []);
+
 
 	return (
 		<>
