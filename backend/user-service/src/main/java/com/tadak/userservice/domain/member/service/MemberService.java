@@ -2,6 +2,7 @@ package com.tadak.userservice.domain.member.service;
 
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.entity.Member;
@@ -103,6 +104,22 @@ public class MemberService {
         refreshTokenRepository.deleteEmail(email);
     }
 
+    public DuplicateCheckResponseDto existsUsername(String username) {
+        if (memberRepository.existsByUsername(username)){
+            throw new DuplicateMemberUsernameException(ErrorCode.DUPLICATE_MEMBER_USERNAME_ERROR);
+        }
+
+        return DuplicateCheckResponseDto.of(true);
+    }
+
+    public DuplicateCheckResponseDto existsEmail(String email) {
+        if (memberRepository.existsByEmail(email)){
+            throw new DuplicateMemberEmailException(ErrorCode.DUPLICATE_MEMBER_EMAIL_ERROR);
+        }
+
+        return DuplicateCheckResponseDto.of(true);
+    }
+
     /**
      * Header 부분에 token 넣어주기
      * @param accessToken
@@ -166,5 +183,4 @@ public class MemberService {
                 .email(member.getEmail())
                 .build();
     }
-
 }

@@ -2,6 +2,7 @@ package com.tadak.userservice.domain.member.controller;
 
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.service.MemberService;
@@ -57,5 +58,23 @@ public class UserController {
         memberService.logout(email, authentication.getName());
         log.info("loginEmail = {}", authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * username 검증
+     */
+    @GetMapping("/signup/exists/{username}")
+    public ResponseEntity<DuplicateCheckResponseDto> checkUsername(@PathVariable("username") String username){
+        DuplicateCheckResponseDto duplicateCheckResponseDto = memberService.existsUsername(username);
+        return ResponseEntity.status(HttpStatus.OK).body(duplicateCheckResponseDto);
+    }
+
+    /**
+     * email 검증
+     */
+    @GetMapping("/signup/exists/{email}")
+    public ResponseEntity<DuplicateCheckResponseDto> checkEmail(@PathVariable("email") String email){
+        DuplicateCheckResponseDto duplicateCheckResponseDto = memberService.existsEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).body(duplicateCheckResponseDto);
     }
 }
