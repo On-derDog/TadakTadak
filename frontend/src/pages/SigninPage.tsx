@@ -4,11 +4,33 @@ import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
 import { KakaoButton } from "../components/auth/KakaoButton";
 import { useStore } from "zustand";
-import { userInfoStore } from "../stores/UserInfoStore";
+import { UserInfoStore } from "../stores/UserInfoStore";
+
+import { AuthApis }  from "../hooks/useAuthQuery";
+import axios from "axios";
+
+
+const fetchDataExample = async () => {
+    instance: axios.create({
+        baseURL: "http://localhost:8001/user-service/",
+        withCredentials: true,
+      })
+
+      try {
+        AuthApis.setupInterceptors();
+        const response = await AuthApis.instance.get('/hello',  {
+            headers: { Accesstoken: `Bearer ${localStorage.getItem('Accesstoken')}` },
+          });
+        const data = response.data;
+        console.log("로그인 성공")
+        return data;
+      } catch (error) {
+      }
+  };
 
 const SigninPage:React.FC = () => {
     const navigate = useNavigate();
-    const userInfo = useStore(userInfoStore);
+    const userInfo = useStore(UserInfoStore);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target;
@@ -23,16 +45,18 @@ const SigninPage:React.FC = () => {
     const onButtonClick = (action:string) => {
       switch(action){
         case "onSignin":
-          navigate("/")
-          break;
+            AuthApis.signin(userInfo);
+            navigate("/");
+            break;
         case "onSignup":
-          navigate("/signup")
-          break;
+            navigate("/signup")
+            break;
         case "onSignupKakao":
-          navigate("/signupkakao")
-          break;
+            fetchDataExample();
+            // navigate("/signupkakao")
+            break;
         default:
-          console.error("error")
+            console.error("error")
       }
     }
 
@@ -56,6 +80,8 @@ const SigninPage:React.FC = () => {
           <Button onClick={ () => onButtonClick("onSignin")} label={"로그인"}></Button>
           <br/>
           <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
+          <br/>
+          <Button onClick={ () => onButtonClick("onSignupKakao")} label={"테스트용코드"}></Button>
           <br/>
           <KakaoButton/>
         </section>  

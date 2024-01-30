@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-interface UserInfo {
+export interface UserInfo {
   email: string;
   password: string;
   username: string;
@@ -28,4 +28,4 @@ if (import.meta.env.DEV) {
   userInfoStoreTemp = create<UserInfo>()(createUserInfoStore);
 }
 
-export const userInfoStore = userInfoStoreTemp;
+export const UserInfoStore = userInfoStoreTemp;
