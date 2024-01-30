@@ -89,30 +89,33 @@ const SignupPage: React.FC = () => {
     };
 
     // API 반환값 설정
-    const handleCheckEmailDuplicate = async (): Promise<void> => {
+    const handleCheckEmailDuplicate = async (): Promise<Boolean> => {
         // const { data, isLoading } = await AuthApis.useCheckEmailDuplicateQuery(userInfo);
         const data = await AuthApis.checkEmailDuplicate(userInfo);
         if (data) {
             setIsValid((prev) => ({ ...prev, emailIsValid: true }));
         }
+        return data;
     };
 
 
     // API 반환값 설정
-    const handlecheckUsernameDuplicate = async (): Promise<void> => {
+    const handlecheckUsernameDuplicate = async (): Promise<Boolean> => {
         const data = await AuthApis.checkUsernameDuplicate(userInfo)
         if (data) {
             setIsValid((prev) => ({ ...prev, usernameIsValid: true }));
         }
+        return data;
     };
 
     // 버튼코드
-    const onButtonClick = (action:string): void => {
+    const onButtonClick = async (action: string): Promise<void> => {
         switch(action){
             case "onSetEmailCheck":
             console.log(`API 통신 ${userInfo.email}`)
-            handleCheckEmailDuplicate();
-            if(!isValid.emailIsValid)
+            const res1 = await handleCheckEmailDuplicate();
+
+            if(!res1)
                 setMessageEmail('중복된 이메일입니다')
             else
                 setMessageEmail('사용 가능한 이메일입니다')
@@ -120,8 +123,8 @@ const SignupPage: React.FC = () => {
 
             case "onSetNicknameCheck":
                 console.log(`API 통신 ${userInfo.username}`)
-                handlecheckUsernameDuplicate();
-                if(!isValid.usernameIsValid)
+                const res2 = await handlecheckUsernameDuplicate();
+                if(!res2)
                     setMessageUsername('중복된 닉네임입니다')
                 else
                     setMessageUsername('사용 가능한 닉네임입니다')
@@ -131,12 +134,12 @@ const SignupPage: React.FC = () => {
                 console.log(`회원가입 ${userInfo.email}, ${userInfo.password},${passwordConfirm}, ${userInfo.username}`);
 
                 if (isValid.passwordIsValid && isValid.passwordCheckIsValid && isValid.emailIsValid && isValid.usernameIsValid) {
-                    console.log("로그인 성공");
+                    alert("회원가입 성공");
                     AuthApis.signup(userInfo,passwordConfirm);
-                    navigate("/");
+                    navigate("/signin");
                 }
                 else
-                    console.log("4가지 조건이 안맞음 ex)중복확인x, 비밀번호다름");
+                    alert("회원가입에 실패했습니다. 입력 정보를 다시 확인해주세요.");
                 break;
 
             default:

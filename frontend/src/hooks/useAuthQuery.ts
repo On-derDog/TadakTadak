@@ -1,7 +1,6 @@
 import axios,{ AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { UserInfo, UserInfoStore } from '../stores/UserInfoStore';
-import { useStore } from 'zustand';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { UserInfo } from '../stores/UserInfoStore';
+import { useQuery } from '@tanstack/react-query';
 
 
 export const AuthApis = {
@@ -10,11 +9,11 @@ export const AuthApis = {
     withCredentials: true,
   }),
 
-  checkEmailDuplicate: async (userInfo: UserInfo): Promise<Boolean> => {
-    const response = await AuthApis.instance.post(`/signup/exists/${userInfo.email}`, {
+  checkEmailDuplicate: async (userInfo: UserInfo): Promise<boolean> => {
+    const response = await AuthApis.instance.get(`/signup/exists-email/${userInfo.email}`, {
       email: userInfo.email,
     });
-    return response.data === true;
+    return response.data.valid === true;
   },
 
   useCheckEmailDuplicateQuery: (userInfo: UserInfo) => {
@@ -26,10 +25,10 @@ export const AuthApis = {
   },
   
   checkUsernameDuplicate: async (userInfo:UserInfo): Promise<Boolean> => {
-    const response = await AuthApis.instance.post(`/signup/exists/${userInfo.username}`, {
+    const response = await AuthApis.instance.get(`/signup/exists-username/${userInfo.username}`, {
       username: userInfo.username,
     });
-    return response.data === true;
+    return response.data.valid === true;
   },
 
   checkUsernameDuplicateQuery: (userInfo: UserInfo) => {
@@ -49,11 +48,6 @@ export const AuthApis = {
         passwordConfirm: passwordConfirm,
       });
       const data = response.data;
-      const jwtToken = data.token;
-      const refreshToken = data.refreshToken;
-  
-      localStorage.setItem('jwtToken', jwtToken);
-      localStorage.setItem('refreshToken', refreshToken);
 
       return data;
     } catch (error) {
@@ -70,17 +64,18 @@ export const AuthApis = {
   },
 
 
-  signin: async (userInfo:UserInfo, passwordConfirm: string) => {
+  signin: async (userInfo:UserInfo) => {
     try {
       const response = await AuthApis.instance.post('/login', {
         email: userInfo.email,
         password: userInfo.password,
       });
       const data = response.data;
-      const jwtToken = data.token;
+      console.log(data);
+      const accessToken = data.accessToken;
       const refreshToken = data.refreshToken;
   
-      localStorage.setItem('jwtToken', jwtToken);
+      localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
       return data;
@@ -100,9 +95,10 @@ export const AuthApis = {
           originalRequest._retry = true;
 
           try {
+            console.log("토큰 갱신 :",);
             const refreshToken = localStorage.getItem('refreshToken');
             // 재발급받는 경로
-            const response = await AuthApis.instance.post<{ accessToken: string }>('/login', { refreshToken });
+            const response = await AuthApis.instance.post<{ accessToken: string }>('/hello', { refreshToken });
 
             const newAccessToken = response.data.accessToken;
 
@@ -111,7 +107,7 @@ export const AuthApis = {
             return AuthApis.instance(originalRequest);
           } catch (refreshError) {
             console.error("토큰 갱신 실패:", refreshError);
-            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             window.location.href = '/signin';
           }
