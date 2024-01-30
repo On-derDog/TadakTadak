@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
-import { KakaoButton } from "../components/auth/KakaoButton";
+import { NaverLoginButton } from "../components/auth/NaverLoginButton";
 import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
 
@@ -83,7 +83,7 @@ const SigninPage:React.FC = () => {
           <br/>
           <Button onClick={ () => onButtonClick("onSignupKakao")} label={"테스트용코드"}></Button>
           <br/>
-          <KakaoButton/>
+          <NaverLoginButton/>
         </section>  
       </main>
   )
