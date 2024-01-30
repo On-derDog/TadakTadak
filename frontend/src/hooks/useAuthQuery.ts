@@ -78,7 +78,7 @@ export const AuthApis = {
       const Accesstoken = rawAccessToken ? rawAccessToken.replace(/^Bearer\s+/i, '') : null;
       const Refreshtoken = rawRefreshToken ? rawRefreshToken.replace(/^Bearer\s+/i, '') : null;
       
-      console.log(`토큰 발급\n Accesstoken:${Accesstoken}\n Refreshtoken:${Refreshtoken}`)
+      // console.log(`토큰 발급\n Accesstoken:${Accesstoken}\n Refreshtoken:${Refreshtoken}`)
   
       localStorage.setItem('Accesstoken', Accesstoken);
       localStorage.setItem('Refreshtoken', Refreshtoken);
@@ -112,7 +112,7 @@ export const AuthApis = {
             const newAccesstoken = rawAccessToken ? rawAccessToken.replace(/^Bearer\s+/i, '') : null;
             const newRefreshtoken = rawRefreshToken ? rawRefreshToken.replace(/^Bearer\s+/i, '') : null;
             
-            console.log(`토큰 갱신\n newAccesstoken:${newAccesstoken}\n newRefreshtoken:${newRefreshtoken}`)
+            // console.log(`토큰 갱신\n newAccesstoken:${newAccesstoken}\n newRefreshtoken:${newRefreshtoken}`)
 
             localStorage.setItem('Accesstoken',newAccesstoken);
             localStorage.setItem('Refreshtoken',newRefreshtoken);
