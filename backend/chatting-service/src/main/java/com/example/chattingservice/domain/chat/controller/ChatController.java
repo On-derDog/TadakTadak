@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -24,9 +25,12 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @MessageMapping("/chat/send-message")
-    @SendTo("/topic/public")
-    public ChatResponse sendMessage(@Payload ChatRequest chatRequest) {
+    @MessageMapping("/chat/{roomId}/send-message")
+    @SendTo("/topic/public/{roomId}")
+    public ChatResponse sendMessage(
+            @Payload ChatRequest chatRequest,
+            @DestinationVariable("roomId") Long roomId
+    ) {
 
         ChatResponse chatResponse = ChatResponse.builder()
                 .content(chatRequest.getContent())
@@ -37,20 +41,22 @@ public class ChatController {
         return chatResponse;
     }
 
-    @MessageMapping("/chat/add-user")
-    @SendTo("/topic/public")
-    public ChatResponse addUser(
+    @MessageMapping("/chat/{roomId}/enter")
+    @SendTo("/topic/public/{roomId}")
+    public ChatResponse enter(
             @Payload ChatRequest chatRequest,
+            @DestinationVariable("roomId") Long roomId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
+
         ChatResponse chatResponse = ChatResponse.builder()
                 .content(chatRequest.getContent())
                 .sender(chatRequest.getSender())
                 .type(chatRequest.getType())
                 .build();
 
-        // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatResponse.getSender());
+        headerAccessor.getSessionAttributes().put("roomId", roomId);
         return chatResponse;
     }
 
