@@ -34,13 +34,7 @@ public class ChatController {
 
         chatService.saveChat(chatRequest, roomId);
 
-        ChatResponse chatResponse = ChatResponse.builder()
-                .content(chatRequest.getContent())
-                .sender(chatRequest.getSender())
-                .type(chatRequest.getType())
-                .build();
-
-        return chatResponse;
+        return ChatResponse.from(chatRequest);
     }
 
     @MessageMapping("/chat/{roomId}/enter")
@@ -51,15 +45,10 @@ public class ChatController {
             SimpMessageHeaderAccessor headerAccessor
     ) {
 
-        ChatResponse chatResponse = ChatResponse.builder()
-                .content(chatRequest.getContent())
-                .sender(chatRequest.getSender())
-                .type(chatRequest.getType())
-                .build();
-
-        headerAccessor.getSessionAttributes().put("username", chatResponse.getSender());
+        headerAccessor.getSessionAttributes().put("username", chatRequest.getSender());
         headerAccessor.getSessionAttributes().put("roomId", roomId);
-        return chatResponse;
+
+        return ChatResponse.from(chatRequest);
     }
 
     @GetMapping("/chat/{roomId}/messages")
