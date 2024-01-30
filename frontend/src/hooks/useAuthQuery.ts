@@ -71,12 +71,17 @@ export const AuthApis = {
         password: userInfo.password,
       });
       const data = response.data;
-      console.log(data);
-      const accessToken = data.accessToken;
-      const refreshToken = data.refreshToken;
+
+      const rawAccessToken = response.headers.get('Accesstoken');
+      const rawRefreshToken = response.headers.get('RefreshToken');
+
+      const Accesstoken = rawAccessToken ? rawAccessToken.replace(/^Bearer\s+/i, '') : null;
+      const Refreshtoken = rawRefreshToken ? rawRefreshToken.replace(/^Bearer\s+/i, '') : null;
+      
+      console.log(`토큰 발급\n Accesstoken:${Accesstoken}\n Refreshtoken:${Refreshtoken}`)
   
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('Accesstoken', Accesstoken);
+      localStorage.setItem('Refreshtoken', Refreshtoken);
 
       return data;
     } catch (error) {
@@ -95,20 +100,30 @@ export const AuthApis = {
           originalRequest._retry = true;
 
           try {
-            console.log("토큰 갱신 :",);
             const refreshToken = localStorage.getItem('refreshToken');
             // 재발급받는 경로
-            const response = await AuthApis.instance.post<{ accessToken: string }>('/hello', { refreshToken });
+            const response = await AuthApis.instance.get('/hello', {
+              headers: {Refreshtoken : `Bearer ${localStorage.getItem('Refreshtoken')}`}
+            });
 
-            const newAccessToken = response.data.accessToken;
+            const rawAccessToken = response.headers.get('Accesstoken');
+            const rawRefreshToken = response.headers.get('Refreshtoken');
+      
+            const newAccesstoken = rawAccessToken ? rawAccessToken.replace(/^Bearer\s+/i, '') : null;
+            const newRefreshtoken = rawRefreshToken ? rawRefreshToken.replace(/^Bearer\s+/i, '') : null;
+            
+            console.log(`토큰 갱신\n newAccesstoken:${newAccesstoken}\n newRefreshtoken:${newRefreshtoken}`)
 
-            originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+            localStorage.setItem('Accesstoken',newAccesstoken);
+            localStorage.setItem('Refreshtoken',newRefreshtoken);
+
+            originalRequest.headers['Authorization'] = `Bearer ${newAccesstoken}`;
 
             return AuthApis.instance(originalRequest);
           } catch (refreshError) {
-            console.error("토큰 갱신 실패:", refreshError);
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            console.error("토큰 갱신 실패", refreshError);
+            localStorage.removeItem('Accesstoken');
+            localStorage.removeItem('Refreshtoken');
             window.location.href = '/signin';
           }
         }
