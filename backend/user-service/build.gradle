@@ -45,6 +45,9 @@ dependencies {
 	// redis 설정
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// oauth 2.0
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 	// smtp naver 이메일
 //	implementation 'org.springframework.boot:spring-boot-starter-mail'
 

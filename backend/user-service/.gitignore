@@ -38,3 +38,6 @@ out/
 
 ### local.yml 설정
 application-local.yml
+
+### secret.yml 설정
+application-secret.yml

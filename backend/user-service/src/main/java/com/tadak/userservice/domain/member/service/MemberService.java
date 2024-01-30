@@ -15,6 +15,7 @@ import com.tadak.userservice.domain.refresh.repository.RefreshTokenRepository;
 import com.tadak.userservice.global.error.ErrorCode;
 import com.tadak.userservice.global.jwt.filter.JwtFilter;
 import com.tadak.userservice.global.jwt.provider.TokenProvider;
+import com.tadak.userservice.global.oauth.OAuthAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -74,7 +75,7 @@ public class MemberService {
         if (!refreshTokenRepository.existsByEmail(authentication.getName())) {
             refreshToken = tokenProvider.createRefreshToken(authentication);
 
-            RefreshToken resultRefreshToken = getRefreshToken(member, refreshToken);
+            RefreshToken resultRefreshToken = getRefreshToken(loginRequestDto.getEmail(), refreshToken);
             refreshTokenRepository.save(resultRefreshToken);
         } else {
             refreshToken = refreshTokenRepository.getValues(authentication.getName());
@@ -177,10 +178,10 @@ public class MemberService {
     /**
      * reFresh token 추출
      */
-    private static RefreshToken getRefreshToken(Member member, String refreshToken) {
+    private static RefreshToken getRefreshToken(String email, String refreshToken) {
         return RefreshToken.builder()
                 .refreshToken(refreshToken)
-                .email(member.getEmail())
+                .email(email)
                 .build();
     }
 }

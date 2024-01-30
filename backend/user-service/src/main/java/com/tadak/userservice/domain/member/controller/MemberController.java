@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/user-service")
 @Slf4j
-public class UserController {
+public class MemberController {
 
     private final MemberService memberService;
 
@@ -28,7 +28,6 @@ public class UserController {
      */
     @GetMapping("/hello")
     @PreAuthorize("isAuthenticated()")
-//    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public String hello() {
         return "hello";
     }
@@ -46,7 +45,7 @@ public class UserController {
      * 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDto> authorize(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<TokenResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return memberService.login(loginRequestDto);
     }
 
