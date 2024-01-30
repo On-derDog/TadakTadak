@@ -32,6 +32,8 @@ public class ChatController {
             @DestinationVariable("roomId") Long roomId
     ) {
 
+        chatService.saveChat(chatRequest, roomId);
+
         ChatResponse chatResponse = ChatResponse.builder()
                 .content(chatRequest.getContent())
                 .sender(chatRequest.getSender())

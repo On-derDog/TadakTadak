@@ -2,7 +2,6 @@ package com.example.chattingservice.domain.chat.service;
 
 import com.example.chattingservice.domain.chat.dto.request.ChatRequest;
 import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
-import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatsResponse;
 import com.example.chattingservice.domain.chat.entity.Chat;
 import com.example.chattingservice.domain.chat.repository.ChatRepository;
@@ -20,8 +19,10 @@ public class ChatServiceImpl implements ChatService{
     private final ChatRepository chatRepository;
 
     @Override
-    public ChatResponse save(ChatRequest chatRequest) {
-        return null;
+    public void saveChat(ChatRequest chatRequest, Long roomId) {
+        Chat chatEntity = Chat.toEntity(chatRequest, roomId);
+
+        chatRepository.save(chatEntity);
     }
 
     @Override
