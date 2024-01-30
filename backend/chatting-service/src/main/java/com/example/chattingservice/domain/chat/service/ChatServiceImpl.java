@@ -1,6 +1,7 @@
 package com.example.chattingservice.domain.chat.service;
 
 import com.example.chattingservice.domain.chat.dto.request.ChatRequest;
+import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatsResponse;
 import com.example.chattingservice.domain.chat.entity.Chat;
@@ -24,11 +25,15 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public List<ChatsResponse> getChatsByRoomId(Long roomId) {
+    public ChatListResponse getChatsByRoomId(Long roomId) {
         List<Chat> chatList = chatRepository.findByRoomId(roomId);
 
-        return chatList.stream()
+        List<ChatsResponse> chats = chatList.stream()
                 .map(ChatsResponse::from)
                 .collect(Collectors.toList());
+
+        boolean hasNext = false;
+
+        return ChatListResponse.from(chats, hasNext);
     }
 }
