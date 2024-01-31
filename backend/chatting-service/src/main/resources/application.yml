@@ -7,6 +7,20 @@ spring:
   profiles:
     active: local
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:{port}/{Database}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username:
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
 eureka:
 #  instance:
 #    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
