@@ -6,7 +6,6 @@ spring:
     name: user-service
   profiles:
     active: local
-    include: secret
   data:
     redis:
       host: localhost
