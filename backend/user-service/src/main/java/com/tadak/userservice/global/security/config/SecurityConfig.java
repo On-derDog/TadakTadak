@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/user-service/signup/**").permitAll() // 회원가입
                         .requestMatchers("/user-service/login").permitAll() // 로그인
                         .requestMatchers("/oauth2/**").permitAll() // 네이버 로그인
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // session 사용 x

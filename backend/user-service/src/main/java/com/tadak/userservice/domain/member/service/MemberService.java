@@ -1,5 +1,6 @@
 package com.tadak.userservice.domain.member.service;
 
+import com.tadak.userservice.domain.email.service.EmailService;
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
 import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
@@ -15,7 +16,7 @@ import com.tadak.userservice.domain.refresh.repository.RefreshTokenRepository;
 import com.tadak.userservice.global.error.ErrorCode;
 import com.tadak.userservice.global.jwt.filter.JwtFilter;
 import com.tadak.userservice.global.jwt.provider.TokenProvider;
-import com.tadak.userservice.global.oauth.OAuthAttributes;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -40,6 +41,7 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final EmailService emailService;
 
     @Transactional
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -113,10 +115,13 @@ public class MemberService {
         return DuplicateCheckResponseDto.of(true);
     }
 
-    public DuplicateCheckResponseDto existsEmail(String email) {
+    public DuplicateCheckResponseDto existsEmail(String email) throws MessagingException {
         if (memberRepository.existsByEmail(email)){
             throw new DuplicateMemberEmailException(ErrorCode.DUPLICATE_MEMBER_EMAIL_ERROR);
         }
+
+        // 이메일 인증 보내기!
+        emailService.sendEmail(email);
 
         return DuplicateCheckResponseDto.of(true);
     }
