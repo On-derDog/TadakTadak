@@ -62,7 +62,6 @@ public class MemberService {
         return SignupResponseDto.from(member);
     }
 
-    //TODO: login 로직 수정하기
     public ResponseEntity<TokenResponseDto> login(LoginRequestDto loginRequestDto) {
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER_ERROR));

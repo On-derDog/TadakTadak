@@ -15,9 +15,14 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/{email}/authcode")
+    @PostMapping("/authcode/{email}")
     public ResponseEntity<EmailResponseDto> verifyEmailCode(@PathVariable("email") String email, @RequestBody EmailRequestDto dto) {
         EmailResponseDto emailResponseDto = emailService.verifyEmailCode(email, dto.getCode());
+
+        if (emailResponseDto.isEmailVerified()){
+            return ResponseEntity.status(HttpStatus.OK).body(emailResponseDto);
+        }
+
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(emailResponseDto);
     }
 }

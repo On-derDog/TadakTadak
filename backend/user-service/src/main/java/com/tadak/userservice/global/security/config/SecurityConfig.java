@@ -29,8 +29,6 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-//    private final CustomOAuth2UserService customOAuth2UserService;
-//    private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,8 +47,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user-service/signup/**").permitAll() // 회원가입
                         .requestMatchers("/user-service/login").permitAll() // 로그인
+                        .requestMatchers("/user-service/authcode/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll() // 네이버 로그인
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // session 사용 x
