@@ -29,6 +29,7 @@ public enum ErrorCode {
     NOT_MATCH_PASSWORD_ERROR(1103, "G1100", "비밀번호가 일치하지 않습니다."),
     NOT_VALID_MEMBER_STATE_ERROR(1104, "G1100", "회원탈퇴한 계정입니다."),
     NOT_MATCH_LOGOUT_EXCEPTION(1105, "G1100", "로그아웃 정보가 일치하지 않습니다."),
+    EMAIL_NOT_VERIFIED_ERROR(1106, "G1100", "이메일 인증이 되지 않은 사용자입니다."),
 
     /**
      * login error 1200 ~ 1299

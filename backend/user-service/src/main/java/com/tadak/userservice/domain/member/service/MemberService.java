@@ -1,8 +1,10 @@
 package com.tadak.userservice.domain.member.service;
 
+import com.tadak.userservice.domain.email.dto.EmailResponseDto;
 import com.tadak.userservice.domain.email.service.EmailService;
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.CheckEmailResponseDto;
 import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
@@ -30,6 +32,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -54,6 +58,12 @@ public class MemberService {
             throw new DuplicateMemberUsernameException(ErrorCode.DUPLICATE_MEMBER_USERNAME_ERROR);
         }
 
+        String authCode = emailService.getValue(signupRequestDto.getEmail());
+        EmailResponseDto emailResponseDto = emailService.verifyEmailCode(signupRequestDto.getEmail(), authCode);
+        if (!emailResponseDto.isEmailVerified()) {
+            throw new EmailNotVerifiedException(ErrorCode.EMAIL_NOT_VERIFIED_ERROR);
+        }
+
         passwordConfirm(signupRequestDto.getPassword(), signupRequestDto.getPasswordConfirm());
 
         Member member = saveMember(signupRequestDto);
@@ -73,7 +83,8 @@ public class MemberService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken;
 
-        if (!refreshTokenRepository.existsByEmail(authentication.getName())) {
+        if (!refreshTokenRepository.existsByEmail(authentication.getName())
+                || refreshTokenRepository.getValues(authentication.getName()).length() < 11) {
             refreshToken = tokenProvider.createRefreshToken(authentication);
 
             RefreshToken resultRefreshToken = getRefreshToken(loginRequestDto.getEmail(), refreshToken);
@@ -114,7 +125,7 @@ public class MemberService {
         return DuplicateCheckResponseDto.of(true);
     }
 
-    public DuplicateCheckResponseDto existsEmail(String email) throws MessagingException {
+    public CheckEmailResponseDto existsEmail(String email) throws MessagingException {
         if (memberRepository.existsByEmail(email)){
             throw new DuplicateMemberEmailException(ErrorCode.DUPLICATE_MEMBER_EMAIL_ERROR);
         }
@@ -122,7 +133,7 @@ public class MemberService {
         // 이메일 인증 보내기!
         emailService.sendEmail(email);
 
-        return DuplicateCheckResponseDto.of(true);
+        return CheckEmailResponseDto.of(true, LocalDateTime.now().plusMinutes(2));
     }
 
     /**

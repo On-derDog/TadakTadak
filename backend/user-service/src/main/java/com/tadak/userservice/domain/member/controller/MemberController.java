@@ -2,6 +2,7 @@ package com.tadak.userservice.domain.member.controller;
 
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.CheckEmailResponseDto;
 import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
@@ -73,8 +74,8 @@ public class MemberController {
      * email 인증 & 검증
      */
     @GetMapping("/signup/exists-email/{email}")
-    public ResponseEntity<DuplicateCheckResponseDto> checkEmail(@PathVariable("email") String email) throws MessagingException {
-        DuplicateCheckResponseDto duplicateCheckResponseDto = memberService.existsEmail(email);
-        return ResponseEntity.status(HttpStatus.OK).body(duplicateCheckResponseDto);
+    public ResponseEntity<CheckEmailResponseDto> checkEmail(@PathVariable("email") String email) throws MessagingException {
+        CheckEmailResponseDto checkEmailResponseDto = memberService.existsEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).body(checkEmailResponseDto);
     }
 }

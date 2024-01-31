@@ -15,6 +15,9 @@ public class EmailController {
 
     private final EmailService emailService;
 
+    /**
+     * 이메일 인증
+     */
     @PostMapping("/authcode/{email}")
     public ResponseEntity<EmailResponseDto> verifyEmailCode(@PathVariable("email") String email, @RequestBody EmailRequestDto dto) {
         EmailResponseDto emailResponseDto = emailService.verifyEmailCode(email, dto.getCode());

@@ -82,7 +82,7 @@ public class EmailService {
     }
 
     public EmailResponseDto verifyEmailCode(String email, String code) {
-        String codeFoundByEmail = emailRepository.getValue(email);
+        String codeFoundByEmail = getValue(email);
 
         if (codeFoundByEmail == null) {
             return EmailResponseDto.of(false);
@@ -90,5 +90,9 @@ public class EmailService {
 
         boolean validCode = codeFoundByEmail.equals(code);
         return EmailResponseDto.of(validCode);
+    }
+
+    public String getValue(String email) {
+        return emailRepository.getValue(email);
     }
 }
