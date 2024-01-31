@@ -1,106 +1,99 @@
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useRef } from 'react';
 import * as StompJs from '@stomp/stompjs';
-import ChatRecent from './ChatRecent';
+import { useChatStore } from '../../stores/useChatStore';
 
-interface ChatMessage {
-	applyId: string;
-	chat: string;
-}
+type StompClient = StompJs.Client;
 
 const ChatForm = () => {
-	const [chatList, setChatList] = useState<ChatMessage[]>([]);
-	const [chat, setChat] = useState<string>('');
-
-	const { apply_id } = useParams<{ apply_id: string }>();
-	const client = useRef<StompJs.Client | null>(null);
-
-	const newChatMessage: ChatMessage = {
-		applyId: 'User',
-		chat,
-	};
+	const { id, messages, inputMessage, setId, setMessages, setInputMessage } =
+		useChatStore();
+	const client = useRef<StompClient | null>(null);
 
 	const connect = () => {
+		if (client.current) {
+			client.current.deactivate();
+		}
+
 		client.current = new StompJs.Client({
 			brokerURL: 'ws://localhost:8010/ws',
 			onConnect: () => {
 				console.log('success');
 				subscribe();
 			},
-			debug: (str) => {
+			debug: (str: string) => {
 				console.log(str);
 			},
 			reconnectDelay: 5000,
 			heartbeatIncoming: 4000,
 			heartbeatOutgoing: 4000,
 		});
+
 		client.current.activate();
 	};
 
-	const publish = (chat: string) => {
-		if (!client.current || !client.current.connected) return;
-
-		client.current.publish({
-			destination: '/app/chat/5/send-message',
-			body: JSON.stringify({
-				applyId: apply_id,
-				chat: chat,
-			}),
-		});
-		setChatList((prevChatList) => [...prevChatList, newChatMessage]);
-		setChat('');
-	};
-
 	const subscribe = () => {
-		if (!client.current) return;
-
-		client.current.subscribe(`/topic/public/5`, (body) => {
-			console.log('Received message:', body);
-		});
-	};
-
-	const disconnect = () => {
-		if (!client.current) return;
-
-		client.current.deactivate();
-	};
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setChat(event.target.value);
-	};
-
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-		if (event.key === 'Enter') {
-			event.preventDefault();
-			publish(chat);
+		if (client.current) {
+			client.current.subscribe('/topic/public/5', (message: any) => {
+				const receivedMessage = JSON.parse(message.body);
+				setMessages((prevMessages) => [
+					...prevMessages,
+					receivedMessage.content,
+				]);
+			});
 		}
 	};
 
-	useEffect(() => {
+	const connectId = () => {
 		connect();
 
-		return () => disconnect();
-	}, []);
+		return () => {
+			if (client.current) {
+				client.current.deactivate();
+			}
+		};
+	};
+
+	const sendMessage = () => {
+		if (client.current && inputMessage.trim() !== '') {
+			const message = {
+				content: inputMessage,
+				sender: id,
+				type: 'CHAT',
+			};
+
+			client.current.publish({
+				destination: '/app/chat/5/send-message',
+				body: JSON.stringify(message),
+			});
+
+			setInputMessage('');
+		}
+	};
 
 	return (
-		<div>
-			<ChatRecent />
-			<div className={'chat-list'}>
-				{chatList.map((chatMessage, index) => (
-					<div key={index}>{`${chatMessage.applyId}: ${chatMessage.chat}`}</div>
-				))}
+		<>
+			<div>
+				<div>
+					<ul>
+						{messages.map((msg, index) => (
+							<li key={index}>{msg}</li>
+						))}
+					</ul>
+				</div>
+				<div>
+					<input
+						type="text"
+						value={inputMessage}
+						onChange={(e) => setInputMessage(e.target.value)}
+					/>
+					<button onClick={sendMessage}>Send</button>
+				</div>
 			</div>
 			<div>
-				<input
-					type={'text'}
-					name={'chatInput'}
-					onChange={handleChange}
-					value={chat}
-					placeholder="채팅을 입력해주세요"
-					onKeyDown={handleKeyDown}
-				/>
+				<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
+				<button onClick={connectId}>Connect</button>
 			</div>
-		</div>
+		</>
 	);
 };
 
