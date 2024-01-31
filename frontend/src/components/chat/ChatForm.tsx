@@ -37,7 +37,7 @@ const ChatForm = () => {
 				const receivedMessage = JSON.parse(message.body);
 				setMessages((prevMessages) => [
 					...prevMessages,
-					receivedMessage.content,
+					{ content: receivedMessage.content, sender: receivedMessage.sender },
 				]);
 			});
 		}
@@ -76,7 +76,9 @@ const ChatForm = () => {
 				<div>
 					<ul>
 						{messages.map((msg, index) => (
-							<li key={index}>{msg}</li>
+							<li key={index}>
+								<strong>{msg.sender} : </strong>{msg.content}
+							</li>
 						))}
 					</ul>
 				</div>
@@ -85,6 +87,11 @@ const ChatForm = () => {
 						type="text"
 						value={inputMessage}
 						onChange={(e) => setInputMessage(e.target.value)}
+						onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+							if (e.key === 'Enter') {
+								sendMessage();
+							}
+						}}
 					/>
 					<button onClick={sendMessage}>Send</button>
 				</div>

@@ -1,19 +1,24 @@
 import { create } from 'zustand';
 
+interface Message {
+	content: string;
+	sender: string;
+}
+
 interface ChatStore {
-	id: string; //아이디 값 받으면 추후 수정해야함.
-	messages: string[];
+	id: string;
+	messages: Message[];
 	inputMessage: string;
-	setId: (id: string) => void;  //아이디 값 받으면 추후 수정해야함.
-	setMessages: (messages: (prev: string[]) => string[]) => void;
+	setId: (id: string) => void;
+	setMessages: (messages: (prev: Message[]) => Message[]) => void;
 	setInputMessage: (inputMessage: string) => void;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
-	id: '', //아이디 값 받으면 추후 수정해야함.
+	id: '',
 	messages: [],
 	inputMessage: '',
-	setId: (id) => set({ id }), //아이디 값 받으면 추후 수정해야함.
+	setId: (id) => set({ id }),
 	setMessages: (messages) =>
 		set((state) => ({ messages: messages(state.messages) })),
 	setInputMessage: (inputMessage) => set({ inputMessage }),
