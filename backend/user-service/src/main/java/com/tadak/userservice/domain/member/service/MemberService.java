@@ -1,7 +1,10 @@
 package com.tadak.userservice.domain.member.service;
 
+import com.tadak.userservice.domain.email.dto.EmailResponseDto;
+import com.tadak.userservice.domain.email.service.EmailService;
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.CheckEmailResponseDto;
 import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
@@ -15,6 +18,7 @@ import com.tadak.userservice.domain.refresh.repository.RefreshTokenRepository;
 import com.tadak.userservice.global.error.ErrorCode;
 import com.tadak.userservice.global.jwt.filter.JwtFilter;
 import com.tadak.userservice.global.jwt.provider.TokenProvider;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +32,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -39,6 +45,7 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final EmailService emailService;
 
     @Transactional
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -51,6 +58,12 @@ public class MemberService {
             throw new DuplicateMemberUsernameException(ErrorCode.DUPLICATE_MEMBER_USERNAME_ERROR);
         }
 
+        String authCode = signupRequestDto.getAuthCode();
+        EmailResponseDto emailResponseDto = emailService.verifyEmailCode(signupRequestDto.getEmail(), authCode);
+        if (!emailResponseDto.isEmailVerified()) {
+            throw new EmailNotVerifiedException(ErrorCode.EMAIL_NOT_VERIFIED_ERROR);
+        }
+
         passwordConfirm(signupRequestDto.getPassword(), signupRequestDto.getPasswordConfirm());
 
         Member member = saveMember(signupRequestDto);
@@ -59,7 +72,6 @@ public class MemberService {
         return SignupResponseDto.from(member);
     }
 
-    //TODO: login 로직 수정하기
     public ResponseEntity<TokenResponseDto> login(LoginRequestDto loginRequestDto) {
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER_ERROR));
@@ -71,10 +83,11 @@ public class MemberService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken;
 
-        if (!refreshTokenRepository.existsByEmail(authentication.getName())) {
+        if (!refreshTokenRepository.existsByEmail(authentication.getName())
+                || refreshTokenRepository.getValues(authentication.getName()).length() < 11) {
             refreshToken = tokenProvider.createRefreshToken(authentication);
 
-            RefreshToken resultRefreshToken = getRefreshToken(member, refreshToken);
+            RefreshToken resultRefreshToken = getRefreshToken(loginRequestDto.getEmail(), refreshToken);
             refreshTokenRepository.save(resultRefreshToken);
         } else {
             refreshToken = refreshTokenRepository.getValues(authentication.getName());
@@ -112,12 +125,15 @@ public class MemberService {
         return DuplicateCheckResponseDto.of(true);
     }
 
-    public DuplicateCheckResponseDto existsEmail(String email) {
+    public CheckEmailResponseDto existsEmail(String email) throws MessagingException {
         if (memberRepository.existsByEmail(email)){
             throw new DuplicateMemberEmailException(ErrorCode.DUPLICATE_MEMBER_EMAIL_ERROR);
         }
 
-        return DuplicateCheckResponseDto.of(true);
+        // 이메일 인증 보내기!
+        emailService.sendEmail(email);
+
+        return CheckEmailResponseDto.of(true, LocalDateTime.now().plusMinutes(2));
     }
 
     /**
@@ -177,10 +193,10 @@ public class MemberService {
     /**
      * reFresh token 추출
      */
-    private static RefreshToken getRefreshToken(Member member, String refreshToken) {
+    private static RefreshToken getRefreshToken(String email, String refreshToken) {
         return RefreshToken.builder()
                 .refreshToken(refreshToken)
-                .email(member.getEmail())
+                .email(email)
                 .build();
     }
 }

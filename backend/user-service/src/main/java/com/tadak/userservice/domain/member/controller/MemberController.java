@@ -2,10 +2,12 @@ package com.tadak.userservice.domain.member.controller;
 
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
+import com.tadak.userservice.domain.member.dto.response.CheckEmailResponseDto;
 import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
 import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.service.MemberService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/user-service")
 @Slf4j
-public class UserController {
+public class MemberController {
 
     private final MemberService memberService;
 
@@ -28,7 +30,6 @@ public class UserController {
      */
     @GetMapping("/hello")
     @PreAuthorize("isAuthenticated()")
-//    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public String hello() {
         return "hello";
     }
@@ -46,7 +47,7 @@ public class UserController {
      * 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDto> authorize(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<TokenResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return memberService.login(loginRequestDto);
     }
 
@@ -70,11 +71,11 @@ public class UserController {
     }
 
     /**
-     * email 검증
+     * email 인증 & 검증
      */
     @GetMapping("/signup/exists-email/{email}")
-    public ResponseEntity<DuplicateCheckResponseDto> checkEmail(@PathVariable("email") String email){
-        DuplicateCheckResponseDto duplicateCheckResponseDto = memberService.existsEmail(email);
-        return ResponseEntity.status(HttpStatus.OK).body(duplicateCheckResponseDto);
+    public ResponseEntity<CheckEmailResponseDto> checkEmail(@PathVariable("email") String email) throws MessagingException {
+        CheckEmailResponseDto checkEmailResponseDto = memberService.existsEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).body(checkEmailResponseDto);
     }
 }

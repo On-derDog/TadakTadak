@@ -45,8 +45,10 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user-service/signup/**").permitAll()
-                        .requestMatchers("/user-service/login").permitAll()
+                        .requestMatchers("/user-service/signup/**").permitAll() // 회원가입
+                        .requestMatchers("/user-service/login").permitAll() // 로그인
+                        .requestMatchers("/user-service/authcode/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll() // 네이버 로그인
                         .anyRequest().authenticated())
 
                 .sessionManagement(sessionManagement ->
