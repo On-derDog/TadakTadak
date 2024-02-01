@@ -85,24 +85,12 @@ const VideoCall = () => {
       await pcRef.current.setRemoteDescription(
         new RTCSessionDescription(offerSdp)
       );
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: videoEnabled,
-        audio: audioEnabled,
-      });
-
-      if (myVideoRef.current) {
-        myVideoRef.current.srcObject = stream;
-      }
-
-      stream.getTracks().forEach((track) => {
-        pcRef.current?.addTrack(track, stream);
-      });
-
+  
       const answerSdp = await pcRef.current.createAnswer();
       await pcRef.current.setLocalDescription(answerSdp);
-
+  
       console.log("sent the answer");
-
+  
       const message = {
         fromUserId: myId,
         type: "answer",
@@ -110,17 +98,17 @@ const VideoCall = () => {
         candidate: null,
         sdp: pcRef.current.localDescription,
       };
-
+  
       socketRef.current?.send(JSON.stringify(message));
     } catch (e) {
       console.error(e);
     }
   };
-
+  
   useEffect(() => {
     socketRef.current = new WebSocket("ws://localhost:8080/signal/1");
     getMedia();
-    
+
     socketRef.current.onopen = () => {
       console.log("WebSocket connected");
 
