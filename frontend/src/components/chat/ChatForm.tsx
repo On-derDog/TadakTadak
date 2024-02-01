@@ -5,15 +5,13 @@ import { useChatStore } from '../../stores/useChatStore';
 type StompClient = StompJs.Client;
 
 const ChatForm = () => {
-	const { id, messages, inputMessage, setId, setMessages, setInputMessage } =
-		useChatStore();
+	const { id, messages, inputMessage, setId, setMessages, setInputMessage } = useChatStore();
 	const client = useRef<StompClient | null>(null);
 
 	const connect = () => {
 		if (client.current) {
 			client.current.deactivate();
 		}
-
 		client.current = new StompJs.Client({
 			brokerURL: 'ws://localhost:8010/ws',
 			onConnect: () => {
@@ -37,7 +35,10 @@ const ChatForm = () => {
 				const receivedMessage = JSON.parse(message.body);
 				setMessages((prevMessages) => [
 					...prevMessages,
-					{ content: receivedMessage.content, sender: receivedMessage.sender },
+					{
+						content: receivedMessage.content,
+						sender: receivedMessage.sender,
+					},
 				]);
 			});
 		}
@@ -77,7 +78,8 @@ const ChatForm = () => {
 					<ul>
 						{messages.map((msg, index) => (
 							<li key={index}>
-								<strong>{msg.sender} : </strong>{msg.content}
+								<strong>{msg.sender} : </strong>
+								{msg.content}
 							</li>
 						))}
 					</ul>
