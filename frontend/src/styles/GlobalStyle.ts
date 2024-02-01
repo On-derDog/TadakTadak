@@ -8,6 +8,7 @@ const fontSizeXs = '0.75rem'; // 12px
 const fontSizeXxs = '0.625rem'; // 10px
 
 //color 정의
+const colorWhite = '#ffffff';
 const colorButterCap = '#F49D1A';
 const colorCrusta = '#FF8533';
 const colorPumpkin = '#FF6F0F';
@@ -25,6 +26,7 @@ export const GlobalStyle = css`
 		--font-size-xs: ${fontSizeXs};
 		--font-size-xxs: ${fontSizeXxs};
 
+		--color-white: ${colorWhite};
 		--color-buttercap: ${colorButterCap};
 		--color-crusta: ${colorCrusta};
 		--color-pumpkin: ${colorPumpkin};
