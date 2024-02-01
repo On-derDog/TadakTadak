@@ -11,3 +11,34 @@ eureka:
 spring:
   application:
     name: apigateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      routes:
+        - id: user-service # 회원가입
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/signup/**
+            - Method=POST, GET
+        - id: user-service # 로그인
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+        - id: user-service # 이메일 인증
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/authcode/**
+            - Method=POST, GET
+        - id: user-service # 권한 인증 테스트
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/hello
+            - Method=GET
+
+jwt:
+  header: Authorization
+  secret: WkhJMjVlYXo4V25xdGxaNW12WFdTRTZTamMwekt5V0FFNHVjdmFUOUM0R2tKQTVCTEw0WTlsYWo5OE5DdGpaWg==
+  access-validity-in-seconds: 3600
+  refresh-validity-in-seconds: 604800
