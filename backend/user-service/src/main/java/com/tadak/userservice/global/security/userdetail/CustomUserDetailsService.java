@@ -2,7 +2,9 @@ package com.tadak.userservice.global.security.userdetail;
 
 import com.tadak.userservice.domain.member.entity.Member;
 import com.tadak.userservice.domain.member.entity.State;
+import com.tadak.userservice.domain.member.exception.MemberStateException;
 import com.tadak.userservice.domain.member.repository.MemberRepository;
+import com.tadak.userservice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,7 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private UserDetails createMember(String username, Member member) {
         if (!member.getState().equals(State.ACTIVE)) {
-            throw new RuntimeException(username + " -> 활성화되어 있지 않습니다.");
+            throw new MemberStateException(ErrorCode.NOT_VALID_MEMBER_STATE_ERROR);
         }
 
 //        List<GrantedAuthority> grantedAuthorities = member.getMemberAuthorities().stream()
