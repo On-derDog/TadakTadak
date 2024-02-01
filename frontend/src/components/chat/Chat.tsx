@@ -1,4 +1,4 @@
-import useChatStore from '../../stores/useChatStore';
+import { useChatStore } from '../../stores/useChatStore';
 import { useEffect } from 'react';
 
 const formatTime = (createdAt: Date) => {
@@ -31,13 +31,10 @@ const Chat: React.FC = () => {
 					const isLastMessageForWriter =
 						index === array.length - 1 ||
 						array[index + 1].writer !== message.writer ||
-						formatTime(array[index + 1].createdAt) !==
-							formatTime(message.createdAt);
+						formatTime(array[index + 1].createdAt) !== formatTime(message.createdAt);
 
 					const shouldDisplayYear =
-						index === 0 ||
-						formatDate(message.createdAt) !==
-							formatDate(array[index - 1].createdAt);
+						index === 0 || formatDate(message.createdAt) !== formatDate(array[index - 1].createdAt);
 
 					return (
 						<div key={message.id}>

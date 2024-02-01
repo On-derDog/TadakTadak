@@ -1,43 +1,24 @@
 import { create } from 'zustand';
 
-interface ChatMessage {
-	id: number;
-	message: string;
-	writer: string;
-	createdAt: Date;
+interface Message {
+	content: string;
+	sender: string;
 }
 
 interface ChatStore {
-	messages: ChatMessage[];
+	id: string;
+	messages: Message[];
 	inputMessage: string;
-	setInputMessage: (value: string) => void;
-	handleSendMessage: () => void;
+	setId: (id: string) => void;
+	setMessages: (messages: (prev: Message[]) => Message[]) => void;
+	setInputMessage: (inputMessage: string) => void;
 }
 
-const useChatStore = create<ChatStore>((set) => ({
+export const useChatStore = create<ChatStore>((set) => ({
+	id: '',
 	messages: [],
 	inputMessage: '',
-	setInputMessage: (value: string): void => set({ inputMessage: value }),
-	handleSendMessage: () => {
-		set((state) => {
-			if (state.inputMessage.trim() !== '') {
-				return {
-					...state,
-					messages: [
-						...state.messages,
-						{
-							id: state.messages.length + 1,
-							message: state.inputMessage,
-							writer: 'User',
-							createdAt: new Date(),
-						},
-					],
-					inputMessage: '',
-				};
-			}
-			return state;
-		});
-	},
+	setId: (id) => set({ id }),
+	setMessages: (messages) => set((state) => ({ messages: messages(state.messages) })),
+	setInputMessage: (inputMessage) => set({ inputMessage }),
 }));
-
-export default useChatStore;
