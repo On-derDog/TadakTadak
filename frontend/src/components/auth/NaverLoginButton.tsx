@@ -1,30 +1,64 @@
 import styled from '@emotion/styled';
+import { useEffect, useRef } from 'react'
 
-const REST_API_KEY = import.meta.env.VITE_APP_REST_API_KEY;
+const CLIENT_ID = import.meta.env.VITE_APP_CLIENT_ID;
 
 export const NaverLoginButton = () => {
+  const naverRef = useRef()
+	const { naver } = window
+  const REDIRECT_URI = "http://localhost:5173/signupnaver";
 
-  const REDIRECT_URI = "http://127.0.0.1:5173/SignUpKakaoPage";
-  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+	const initializeNaverLogin = () => {
+		const naverLogin = new naver.LoginWithNaverId({
+			clientId: CLIENT_ID,
+			callbackUrl: REDIRECT_URI,        
+			isPopup: false,
+			loginButton: { color: 'green', type: 3, height: 58 },
+			callbackHandle: true,
+		})
+		naverLogin.init()
+    
+    naverLogin.getLoginStatus(async function (status) {
+			if (status) {
+        const userid = naverLogin.user.getEmail()
+				const username = naverLogin.user.getName()
+        console.log(userid,username)
+			}
+		})     
+	}
+
+	useEffect(() => {
+		initializeNaverLogin()
+	}, [])
+
+  const handleNaverLogin = () => {
+		naverRef.current.children[0].click()
+	}
 
 
-  return(
-    <NaverButtonStyles>
-      <div className="NaverLoginButton-wrapper">
-        <a href={KAKAO_AUTH_URI} className="btn-naver">
-          <div className="Logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <rect x="0.5" y="0.0727539" width="5" height="15" fill="white"/>
-            <rect x="10.5" y="0.0727539" width="5" height="15" fill="white"/>
-            <rect x="2.51801" y="1.81" width="3.62" height="15.4" transform="rotate(-30 2.51801 1.81)" fill="white"/>
-            </svg>
+  return (
+    <>
+      <NaverIdLogin ref={naverRef} id="naverIdLogin" />
+      <NaverButtonStyles>
+        <div className="NaverLoginButton-wrapper" onClick={handleNaverLogin}>
+          <div className="btn-naver">
+            <div className="Logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="0.5" y="0.0727539" width="5" height="15" fill="white"/>
+                <rect x="10.5" y="0.0727539" width="5" height="15" fill="white"/>
+                <rect x="2.51801" y="1.81" width="3.62" height="15.4" transform="rotate(-30 2.51801 1.81)" fill="white"/>
+              </svg>
+            </div>
+            <span className="text">네이버로 간편 가입</span>
           </div>
-          <span className="text">네이버로 간편 가입</span>
-        </a>
-      </div>
-    </NaverButtonStyles>
-  )
+        </div>
+      </NaverButtonStyles>
+    </>
+  );
 }
+
+const NaverIdLogin = styled.div`
+	display: none`;
 
 const NaverButtonStyles = styled.div`
   .NaverLoginButton-wrapper {
@@ -58,6 +92,6 @@ const NaverButtonStyles = styled.div`
   }
 
   .btn-naver:hover {
-    background-color: #fff7ac;
+    background-color: #029445;
   }
 `;
