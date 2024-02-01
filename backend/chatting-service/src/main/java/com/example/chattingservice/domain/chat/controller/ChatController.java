@@ -4,6 +4,7 @@ import com.example.chattingservice.domain.chat.dto.request.ChatRequest;
 import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.ChatService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class ChatController {
     @MessageMapping("/chat/{roomId}/send-message")
     @SendTo("/topic/public/{roomId}")
     public ChatResponse sendMessage(
-            @Payload ChatRequest chatRequest,
+            @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId
     ) {
 
@@ -40,7 +41,7 @@ public class ChatController {
     @MessageMapping("/chat/{roomId}/enter")
     @SendTo("/topic/public/{roomId}")
     public ChatResponse enter(
-            @Payload ChatRequest chatRequest,
+            @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
