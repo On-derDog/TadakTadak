@@ -39,16 +39,16 @@ export const AuthApis = {
     return { data, isLoading, error };
   },
 
-  signup: async (userInfo:UserInfo, passwordConfirm: string) => {
+  signup: async (userInfo:UserInfo, passwordConfirm: string, authCode: string) => {
     try {
       const response = await AuthApis.instance.post('/signup', {
         username: userInfo.username,
         email: userInfo.email,
         password: userInfo.password,
+        authCode: authCode,
         passwordConfirm: passwordConfirm,
       });
       const data = response.data;
-
       return data;
     } catch (error) {
       console.error("API 통신 에러:", error);
