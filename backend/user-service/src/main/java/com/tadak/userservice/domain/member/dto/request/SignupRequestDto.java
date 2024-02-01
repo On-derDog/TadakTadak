@@ -39,6 +39,6 @@ public class SignupRequestDto {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    // 고려중
-//    private String authCode;
+    @NotNull
+    private String authCode;
 }

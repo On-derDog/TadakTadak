@@ -58,7 +58,7 @@ public class MemberService {
             throw new DuplicateMemberUsernameException(ErrorCode.DUPLICATE_MEMBER_USERNAME_ERROR);
         }
 
-        String authCode = emailService.getValue(signupRequestDto.getEmail());
+        String authCode = signupRequestDto.getAuthCode();
         EmailResponseDto emailResponseDto = emailService.verifyEmailCode(signupRequestDto.getEmail(), authCode);
         if (!emailResponseDto.isEmailVerified()) {
             throw new EmailNotVerifiedException(ErrorCode.EMAIL_NOT_VERIFIED_ERROR);
