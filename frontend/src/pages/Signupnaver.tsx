@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { UserInfoStore } from '../stores/UserInfoStore';
+import { useStore } from 'zustand';
 
 const Signupnaver = () => {
-  const [code,setCode] = useState('');
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(null);
+  const userInfo = useStore(UserInfoStore);
 
 	const userAccessToken = () => {
 		window.location.href.includes('access_token') && getToken()
@@ -15,7 +16,7 @@ const Signupnaver = () => {
   const getToken = async () => {
 		const token = window.location.href.split('=')[1].split('&')[0]
     localStorage.setItem('Accesstoken', token)
-    console.log(token)
+
     // 네이버 API를 호출하여 사용자 정보 가져오기 proxy 적용중 수정필요
     try {
       const response = await axios.get('/api/v1/nid/me', {
@@ -23,9 +24,9 @@ const Signupnaver = () => {
             'Authorization': `Bearer ${token}`
           }}
           )
-      .then(response => {
-        console.log(response.data)
-      })
+        console.log(response.data.response.email);
+        userInfo.updateEmail(response.data.response.email)
+        userInfo.updateUsername(response.data.response.nickname)
     } catch (error) {
       console.error('Error fetching user info', error);
     }
