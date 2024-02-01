@@ -73,11 +73,6 @@ public class MemberService {
     }
 
     public ResponseEntity<TokenResponseDto> login(LoginRequestDto loginRequestDto) {
-        Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER_ERROR));
-
-        validMemberState(member); // member State 검증
-
         Authentication authentication = getAuthentication(loginRequestDto);
 
         String accessToken = tokenProvider.createAccessToken(authentication);
@@ -159,15 +154,6 @@ public class MemberService {
         }
     }
 
-    /**
-     * Member state 검증
-     * @param member
-     */
-    private static void validMemberState(Member member) {
-        if (member.getState() == State.DELETE){
-            throw new MemberStateException(ErrorCode.NOT_VALID_MEMBER_STATE_ERROR);
-        }
-    }
 
     /**
      * loginMember 검증
