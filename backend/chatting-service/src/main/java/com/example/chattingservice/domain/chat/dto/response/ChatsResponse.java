@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ChatsResponse {
-    private String _id;
+    private String id;
     private String content;
     private String sender;
     private LocalDateTime createdAt;
@@ -20,7 +20,7 @@ public class ChatsResponse {
     public static ChatsResponse from(Chat chat) {
 
         return ChatsResponse.builder()
-                ._id(chat.get_id())
+                .id(chat.getId())
                 .content(chat.getContent())
                 .sender(chat.getSender())
                 .createdAt(chat.getCreatedAt())
