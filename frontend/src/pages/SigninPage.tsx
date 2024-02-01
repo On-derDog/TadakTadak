@@ -28,7 +28,7 @@ const fetchDataExample = async () => {
       }
   };
 
-const SigninPage:React.FC = () => {
+const SigninPage = () => {
     const navigate = useNavigate();
     const userInfo = useStore(UserInfoStore);
 
@@ -53,7 +53,7 @@ const SigninPage:React.FC = () => {
             break;
         case "onSignupKakao":
             fetchDataExample();
-            // navigate("/signupkakao")
+            // navigate("/signupnaver")
             break;
         default:
             console.error("error")
