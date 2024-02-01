@@ -8,6 +8,9 @@ import SigninPage from './pages/SigninPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
 import TestPage from './test/TestPage';
 import Signupnaver from './pages/Signupnaver';
+import VideoCallPage from './pages/VideoCallPage';
+import { Global } from '@emotion/react';
+import { GlobalStyle } from './styles/GlobalStyle';
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +26,7 @@ const router = createBrowserRouter([
 			{ path: 'chatroom/:chatroom_id', element: <ChattingRoomPage /> },
 			{ path: 'test', element: <TestPage /> },
 			{ path: 'signupnaver', element: <Signupnaver /> },
+			{ path: 'videocall', element: <VideoCallPage /> },
 		],
 	},
 ]);
@@ -30,6 +34,7 @@ const router = createBrowserRouter([
 const App = () => {
 	return (
 		<>
+			<Global styles={GlobalStyle} />
 			<RouterProvider router={router} />
 		</>
 	);
