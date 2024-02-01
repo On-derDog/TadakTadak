@@ -4,7 +4,7 @@ const VideoCall = () => {
   const socketRef = useRef<WebSocket>();
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const myId = Math.floor(Math.random() * 1000).toString();
+  const myId = useRef<string>(Math.floor(Math.random() * 1000).toString());
   const pcRef = useRef<RTCPeerConnection>(
     new RTCPeerConnection({
       iceServers: [
@@ -15,9 +15,62 @@ const VideoCall = () => {
     })
   );
 
-  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(true);
 
+  //websocket 서버 연결
+  const connectWebSocket = () => {
+    socketRef.current = new WebSocket("ws://localhost:8080/signal/1");
+
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connected");
+
+      const message = {
+        fromUserId: myId.current,
+        type: "join",
+        roomId: "1",
+        candidate: null,
+        sdp: null,
+      };
+
+      socketRef.current?.send(JSON.stringify(message));
+    };
+
+    // msg 종류에 따라 다르게 처리
+    socketRef.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      switch (message.type) {
+        case "offer":
+          console.log("recv Offer");
+          createAnswer(message.sdp);
+          break;
+        case "answer":
+          console.log("recv Answer");
+          pcRef.current?.setRemoteDescription(
+            new RTCSessionDescription(message.sdp)
+          );
+          break;
+        case "ice":
+          console.log("recv ICE Candidate");
+          pcRef.current?.addIceCandidate(new RTCIceCandidate(message.candidate))
+            .then(() => {
+              console.log("Ice Candidate added successfully.");
+            })
+            .catch((error) => {
+              console.error("Error adding Ice Candidate:", error);
+            });
+          break;
+        default:
+          break;
+      }
+    };
+
+    socketRef.current.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+  };
+
+  // video and audio 설정
   const getMedia = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -36,8 +89,9 @@ const VideoCall = () => {
       pcRef.current.onicecandidate = (e) => {
         if (e.candidate && socketRef.current) {
           console.log("send candidate");
+
           const message = {
-            fromUserId: myId,
+            fromUserId: myId.current,
             type: "ice",
             roomId: "1",
             candidate: e.candidate,
@@ -52,7 +106,7 @@ const VideoCall = () => {
         }
       };
 
-      createOffer(); // Peer A가 먼저 Offer를 생성하도록 변경
+      createOffer();
     } catch (e) {
       console.error(e);
     }
@@ -65,7 +119,7 @@ const VideoCall = () => {
       await pcRef.current.setLocalDescription(sdp);
 
       const message = {
-        fromUserId: myId,
+        fromUserId: myId.current,
         type: "offer",
         roomId: "1",
         candidate: null,
@@ -80,42 +134,32 @@ const VideoCall = () => {
   };
 
   const createAnswer = async (offerSdp: RTCSessionDescriptionInit) => {
-    console.log("createAnswer");
-    try {
-      await pcRef.current.setRemoteDescription(
-        new RTCSessionDescription(offerSdp)
-      );
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: videoEnabled,
-        audio: audioEnabled,
-      });
-
-      if (myVideoRef.current) {
-        myVideoRef.current.srcObject = stream;
+      console.log("createAnswer");
+      if (!(pcRef.current && socketRef.current)) {
+        return;
       }
+      try {
+          pcRef.current.setRemoteDescription(offerSdp);
 
-      stream.getTracks().forEach((track) => {
-        pcRef.current?.addTrack(track, stream);
-      });
+          const answerSdp = await pcRef.current.createAnswer();
+          await pcRef.current.setLocalDescription(answerSdp);
 
-      const answerSdp = await pcRef.current.createAnswer();
-      await pcRef.current.setLocalDescription(answerSdp);
+          console.log("sent the answer");
 
-      console.log("sent the answer");
+          const message = {
+              fromUserId: myId.current,
+              type: "answer",
+              roomId: "1",
+              candidate: null,
+              sdp: pcRef.current.localDescription,
+          };
 
-      const message = {
-        fromUserId: myId,
-        type: "answer",
-        roomId: "1",
-        candidate: null,
-        sdp: pcRef.current.localDescription,
-      };
-
-      socketRef.current?.send(JSON.stringify(message));
-    } catch (e) {
-      console.error(e);
-    }
+          socketRef.current.send(JSON.stringify(message));
+      } catch (e) {
+          console.error(e);
+      }
   };
+  
 
   const toggleAudio = () => {
     setAudioEnabled((prevAudioEnabled) => !prevAudioEnabled);
@@ -126,62 +170,9 @@ const VideoCall = () => {
   };
 
   useEffect(() => {
-    socketRef.current = new WebSocket("ws://localhost:8080/signal/1");
-
-    socketRef.current.onopen = () => {
-      console.log("WebSocket connected");
-
-      const message = {
-        fromUserId: myId,
-        type: "join",
-        roomId: "1",
-        candidate: null,
-        sdp: null,
-      };
-
-      socketRef.current?.send(JSON.stringify(message));
-      getMedia();
-    };
-
-    socketRef.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      switch (message.type) {
-        case "offer":
-          console.log("recv Offer");
-          createAnswer(message.sdp); // Peer B가 Offer를 받으면 Answer를 생성하여 Peer A로 전송하도록 변경
-          break;
-        case "answer":
-          console.log("recv Answer");
-          pcRef.current?.setRemoteDescription(
-            new RTCSessionDescription(message.sdp)
-          );
-          break;
-        case "ice":
-          console.log("recv ICE Candidate");
-          pcRef.current?.addIceCandidate(new RTCIceCandidate(message.candidate))
-            .then(() => {
-              console.log("Ice Candidate added successfully.");
-              console.log(message.candidate);
-            })
-            .catch((error) => {
-              console.error("Error adding Ice Candidate:", error);
-            });
-          break;
-        default:
-          break;
-      }
-    };
-
-    socketRef.current.onclose = () => {
-      console.log("WebSocket disconnected");
-    };
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-      }
-    };
-  }, [audioEnabled, videoEnabled]);
+    connectWebSocket();
+    getMedia();
+   }, []);
 
   return (
     <div
