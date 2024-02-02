@@ -36,6 +36,13 @@ spring:
           predicates:
             - Path=/user-service/hello
             - Method=GET
+        - id: chatting-service # chatting-service
+          uri: lb://CHATTING-SERVICE
+          predicates:
+            - Path=/chatting-service/**
+            - Method=POST, GET
+          filters:
+            - AuthFilter
 
 jwt:
   header: Authorization
