@@ -4,6 +4,8 @@ import com.tadak.userservice.global.jwt.config.JwtSecurityConfig;
 import com.tadak.userservice.global.jwt.handler.JwtAccessDeniedHandler;
 import com.tadak.userservice.global.jwt.handler.JwtAuthenticationEntryPoint;
 import com.tadak.userservice.global.jwt.provider.TokenProvider;
+import com.tadak.userservice.global.oauth.CustomOAuth2UserService;
+import com.tadak.userservice.global.oauth.OAuth2MemberSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,8 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -50,6 +54,11 @@ public class SecurityConfig {
                         .requestMatchers("/user-service/authcode/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll() // 네이버 로그인
                         .anyRequest().authenticated())
+                .oauth2Login(
+                        oauth -> oauth
+                                .userInfoEndpoint(config ->
+                                        config.userService(customOAuth2UserService))
+                                .successHandler(oAuth2MemberSuccessHandler))
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // session 사용 x
