@@ -40,6 +40,7 @@ const ChatForm = () => {
 					{
 						content: receivedMessage.content,
 						sender: receivedMessage.sender,
+						createdAt: receivedMessage.createdAt,
 					},
 				]);
 			});
@@ -76,7 +77,7 @@ const ChatForm = () => {
 	return (
 		<ChatWrapper>
 			<ChattingContainer>
-				<ChatMessage messages={messages} />
+				<ChatMessage /*messages={messages}*/ />
 				{/* <ul>
 					{messages.map((msg, index) => (
 						<li key={index}>
