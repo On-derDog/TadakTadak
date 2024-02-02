@@ -7,15 +7,9 @@ spring:
   profiles:
     active: local
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:{port}/{Database}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username:
-    password:
-
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
