@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import * as StompJs from '@stomp/stompjs';
 import { useChatStore } from '../../stores/useChatStore';
+import styled from '@emotion/styled';
 
 type StompClient = StompJs.Client;
 
@@ -72,38 +73,53 @@ const ChatForm = () => {
 	};
 
 	return (
-		<>
-			<div>
+		<ChatWrapper>
+			<ChattingContainer>
+				<ul>
+					{messages.map((msg, index) => (
+						<li key={index}>
+							<strong>{msg.sender} : </strong>
+							{msg.content}
+						</li>
+					))}
+				</ul>
+			</ChattingContainer>
+			<InputContainer>
+				<input
+					type="text"
+					value={inputMessage}
+					onChange={(e) => setInputMessage(e.target.value)}
+					onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+						if (e.key === 'Enter') {
+							sendMessage();
+						}
+					}}
+				/>
+				<button onClick={sendMessage}>Send</button>
 				<div>
-					<ul>
-						{messages.map((msg, index) => (
-							<li key={index}>
-								<strong>{msg.sender} : </strong>
-								{msg.content}
-							</li>
-						))}
-					</ul>
+					<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
+					<button onClick={connectId}>Connect</button>
 				</div>
-				<div>
-					<input
-						type="text"
-						value={inputMessage}
-						onChange={(e) => setInputMessage(e.target.value)}
-						onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-							if (e.key === 'Enter') {
-								sendMessage();
-							}
-						}}
-					/>
-					<button onClick={sendMessage}>Send</button>
-				</div>
-			</div>
-			<div>
-				<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
-				<button onClick={connectId}>Connect</button>
-			</div>
-		</>
+			</InputContainer>
+		</ChatWrapper>
 	);
 };
 
 export default ChatForm;
+
+const InputContainer = styled.footer`
+	width: 100%;
+	height: 4rem;
+`;
+
+const ChattingContainer = styled.section`
+	width: 100%;
+	height: calc(100% - 4rem);
+	background-color: var(--color-white);
+`;
+
+const ChatWrapper = styled.div`
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+`;
