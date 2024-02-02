@@ -5,6 +5,7 @@ import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.ChatService;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,9 @@ public class ChatController {
             @DestinationVariable("roomId") Long roomId
     ) {
 
-        chatService.saveChat(chatRequest, roomId);
+        LocalDateTime createdAt = chatService.saveChat(chatRequest, roomId);
 
-        return ChatResponse.from(chatRequest);
+        return ChatResponse.from(chatRequest, createdAt);
     }
 
     @MessageMapping("/chat/{roomId}/enter")

@@ -6,6 +6,7 @@ import com.example.chattingservice.domain.chat.dto.response.ChatsResponse;
 import com.example.chattingservice.domain.chat.entity.Chat;
 import com.example.chattingservice.domain.chat.exception.validation.Validation;
 import com.example.chattingservice.domain.chat.repository.ChatRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,13 @@ public class ChatServiceImpl implements ChatService{
     private final ChatRepository chatRepository;
 
     @Override
-    public void saveChat(ChatRequest chatRequest, Long roomId) {
+    public LocalDateTime saveChat(ChatRequest chatRequest, Long roomId) {
         Chat chatEntity = Chat.toEntity(chatRequest, roomId);
 
         Chat savedEntity = chatRepository.save(chatEntity);
         Validation.isSuccessSaveChat(savedEntity);
+
+        return savedEntity.getCreatedAt();
     }
 
     @Override
