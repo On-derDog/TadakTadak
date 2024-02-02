@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import * as StompJs from '@stomp/stompjs';
 import { useChatStore } from '../../stores/useChatStore';
 import styled from '@emotion/styled';
+import ChatMessage from './ChatMessage';
 
 type StompClient = StompJs.Client;
 
@@ -75,14 +76,15 @@ const ChatForm = () => {
 	return (
 		<ChatWrapper>
 			<ChattingContainer>
-				<ul>
+				<ChatMessage messages={messages} />
+				{/* <ul>
 					{messages.map((msg, index) => (
 						<li key={index}>
 							<strong>{msg.sender} : </strong>
 							{msg.content}
 						</li>
 					))}
-				</ul>
+				</ul> */}
 			</ChattingContainer>
 			<InputContainer>
 				<input
@@ -95,7 +97,6 @@ const ChatForm = () => {
 						}
 					}}
 				/>
-				<button onClick={sendMessage}>Send</button>
 				<div>
 					<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
 					<button onClick={connectId}>Connect</button>
