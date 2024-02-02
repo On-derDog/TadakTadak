@@ -11,9 +11,8 @@ const ChatRoom: React.FC = () => {
 };
 
 const ChattingRoom = styled.div`
-	width: calc(100% - 1rem);
+	width: 100%;
 	height: 100%;
-	margin: 0.5rem 0rem 0.5rem 0rem;
 	background-color: var(--color-rangoongreen);
 	display: flex;
 	flex-direction: column;

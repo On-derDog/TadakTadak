@@ -116,12 +116,30 @@ const InputContainer = styled.footer`
 
 const ChattingContainer = styled.section`
 	width: 100%;
-	height: calc(100% - 4rem);
+	height: 100%;
 	background-color: var(--color-white);
+	overflow: auto;
+
+	&::-webkit-scrollbar {
+		width: 0.5rem;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--color-crusta);
+		border-radius: 0.25rem;
+	}
+
+	&::-webkit-scrollbar-track {
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb:hover {
+		background-color: var(--color-pumpkin);
+	}
 `;
 
 const ChatWrapper = styled.div`
-	height: 100%;
+	height: calc(100% - 3.125rem);
 	display: flex;
 	flex-direction: column;
 `;
