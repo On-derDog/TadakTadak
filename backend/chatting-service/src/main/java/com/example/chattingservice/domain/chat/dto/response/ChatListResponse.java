@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ChatListResponse {
-    private List<ChatsResponse> chatList;
+    private List<ChatHistoryResponse> chatList;
     private boolean hasNext;
 
-    public static ChatListResponse from(List<ChatsResponse> chats, boolean hasNext) {
+    public static ChatListResponse of(List<ChatHistoryResponse> chats, boolean hasNext) {
         return ChatListResponse.builder()
                 .chatList(chats)
                 .hasNext(hasNext)

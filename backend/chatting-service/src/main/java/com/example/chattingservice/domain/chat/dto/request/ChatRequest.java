@@ -1,5 +1,6 @@
 package com.example.chattingservice.domain.chat.dto.request;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,4 +14,5 @@ public class ChatRequest {
     private String content;
     private String sender;
     private MessageType type;
+    private LocalDateTime createdAt;
 }
