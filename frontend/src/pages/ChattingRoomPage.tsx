@@ -31,7 +31,7 @@ export const VideoWrapper = styled.div`
 export const ChatWrapper = styled.div`
 	width: calc(50% - 1rem);
 	height: calc(100% - 1rem);
-	background-color: var(--color-rangoongreen);
+	background-color: var(--color-shark);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

@@ -77,22 +77,14 @@ const ChatForm = () => {
 	return (
 		<ChatWrapper>
 			<ChattingContainer>
-				<ChatMessage /*messages={messages}*/ />
-				{/* <ul>
-					{messages.map((msg, index) => (
-						<li key={index}>
-							<strong>{msg.sender} : </strong>
-							{msg.content}
-						</li>
-					))}
-				</ul> */}
+				<ChatMessage messages={messages} />
 			</ChattingContainer>
 			<InputContainer>
 				<input
 					type="text"
 					value={inputMessage}
 					onChange={(e) => setInputMessage(e.target.value)}
-					onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+					onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
 						if (e.key === 'Enter') {
 							sendMessage();
 						}
@@ -112,6 +104,7 @@ export default ChatForm;
 const InputContainer = styled.footer`
 	width: 100%;
 	height: 4rem;
+	background-color: var(--color-shark);
 `;
 
 const ChattingContainer = styled.section`
@@ -122,6 +115,7 @@ const ChattingContainer = styled.section`
 
 	&::-webkit-scrollbar {
 		width: 0.5rem;
+		height: 0rem;
 	}
 
 	&::-webkit-scrollbar-thumb {
