@@ -8,6 +8,8 @@ import SigninPage from './pages/SigninPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
 import TestPage from './test/TestPage';
 import VideoCallPage from './pages/VideoCallPage';
+import { Global } from '@emotion/react';
+import { GlobalStyle } from './styles/GlobalStyle';
 
 const router = createBrowserRouter([
 	{
@@ -30,6 +32,7 @@ const router = createBrowserRouter([
 const App = () => {
 	return (
 		<>
+			<Global styles={GlobalStyle} />
 			<RouterProvider router={router} />
 		</>
 	);

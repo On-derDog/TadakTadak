@@ -10,6 +10,7 @@
 		"prettier",
 		"plugin:prettier/recommended",
 		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/parser",
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
 		"plugin:jsx-a11y/recommended",
@@ -19,7 +20,8 @@
 	"parserOptions": {
 		"ecmaVersion": "latest",
 		"sourceType": "module",
-		"project": "./tsconfig.json"
+		"project": "./tsconfig.json",
+		"createDefaultProgram": true
 	},
 	"plugins": [
 		"prettier",

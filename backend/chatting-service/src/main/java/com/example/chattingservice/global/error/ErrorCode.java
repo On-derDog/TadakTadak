@@ -1,4 +1,4 @@
-package com.tadak.userservice.global.error;
+package com.example.chattingservice.global.error;
 
 import lombok.Getter;
 
@@ -24,12 +24,6 @@ public enum ErrorCode {
      * Member Error 1100 ~ 1199
      */
     NOT_FOUND_MEMBER_ERROR(1100, "G1100", "현재 해당 member가 존재하지 않습니다."),
-    DUPLICATE_MEMBER_USERNAME_ERROR(1101, "G1100", "현재 해당 username이 존재합니다."),
-    DUPLICATE_MEMBER_EMAIL_ERROR(1102, "G1100", "현재 해당 email은 존재합니다."),
-    NOT_MATCH_PASSWORD_ERROR(1103, "G1100", "비밀번호가 일치하지 않습니다."),
-    NOT_VALID_MEMBER_STATE_ERROR(1104, "G1100", "회원탈퇴한 계정입니다."),
-    NOT_MATCH_LOGOUT_EXCEPTION(1105, "G1100", "로그아웃 정보가 일치하지 않습니다."),
-    EMAIL_NOT_VERIFIED_ERROR(1106, "G1100", "이메일 인증이 되지 않은 사용자입니다."),
 
     /**
      * login error 1200 ~ 1299
@@ -39,7 +33,14 @@ public enum ErrorCode {
     /**
      * Binding Error 1400 ~ 1499
      */
-    INVALID_INPUT_VALUE(1400, "G1400", "잘못된 입력 값 입니다.");
+    INVALID_INPUT_VALUE(1400, "G1400", "잘못된 입력 값 입니다."),
+
+    /**
+     * Chatting Error 2000 ~ 2099
+     */
+
+    FAIL_TO_SAVE_CHAT(2000, "G2000", "채팅 정보를 저장하는데 실패하였습니다."),
+    NOT_FOUND_CHAT_LIST(2001, "G2001", "채팅 메시지를 불러오는데 실패했습니다.");
 
     private final int status;
     private final String code;

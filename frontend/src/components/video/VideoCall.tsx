@@ -15,7 +15,7 @@ const VideoCall = () => {
     })
   );
 
-  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(true);
 
   const getMedia = async () => {
@@ -52,7 +52,7 @@ const VideoCall = () => {
         }
       };
 
-      createOffer(); // Peer A가 먼저 Offer를 생성하도록 변경
+      createOffer();
     } catch (e) {
       console.error(e);
     }
@@ -85,24 +85,12 @@ const VideoCall = () => {
       await pcRef.current.setRemoteDescription(
         new RTCSessionDescription(offerSdp)
       );
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: videoEnabled,
-        audio: audioEnabled,
-      });
-
-      if (myVideoRef.current) {
-        myVideoRef.current.srcObject = stream;
-      }
-
-      stream.getTracks().forEach((track) => {
-        pcRef.current?.addTrack(track, stream);
-      });
-
+  
       const answerSdp = await pcRef.current.createAnswer();
       await pcRef.current.setLocalDescription(answerSdp);
-
+  
       console.log("sent the answer");
-
+  
       const message = {
         fromUserId: myId,
         type: "answer",
@@ -110,23 +98,16 @@ const VideoCall = () => {
         candidate: null,
         sdp: pcRef.current.localDescription,
       };
-
+  
       socketRef.current?.send(JSON.stringify(message));
     } catch (e) {
       console.error(e);
     }
   };
-
-  const toggleAudio = () => {
-    setAudioEnabled((prevAudioEnabled) => !prevAudioEnabled);
-  };
-
-  const toggleVideo = () => {
-    setVideoEnabled((prevVideoEnabled) => !prevVideoEnabled);
-  };
-
+  
   useEffect(() => {
     socketRef.current = new WebSocket("ws://localhost:8080/signal/1");
+    getMedia();
 
     socketRef.current.onopen = () => {
       console.log("WebSocket connected");
@@ -140,7 +121,7 @@ const VideoCall = () => {
       };
 
       socketRef.current?.send(JSON.stringify(message));
-      getMedia();
+      
     };
 
     socketRef.current.onmessage = (event) => {
@@ -148,7 +129,7 @@ const VideoCall = () => {
       switch (message.type) {
         case "offer":
           console.log("recv Offer");
-          createAnswer(message.sdp); // Peer B가 Offer를 받으면 Answer를 생성하여 Peer A로 전송하도록 변경
+          createAnswer(message.sdp);
           break;
         case "answer":
           console.log("recv Answer");
@@ -181,7 +162,7 @@ const VideoCall = () => {
         socketRef.current.close();
       }
     };
-  }, [audioEnabled, videoEnabled]);
+  }, []);
 
   return (
     <div
@@ -205,14 +186,6 @@ const VideoCall = () => {
         ref={remoteVideoRef}
         autoPlay
       />
-      <div>
-        <button onClick={toggleAudio}>
-          {audioEnabled ? "Mute" : "Unmute"}
-        </button>
-        <button onClick={toggleVideo}>
-          {videoEnabled ? "Camera Off" : "Camera On"}
-        </button>
-      </div>
     </div>
   );
 };
