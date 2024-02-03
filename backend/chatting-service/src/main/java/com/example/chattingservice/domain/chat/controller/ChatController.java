@@ -1,6 +1,7 @@
 package com.example.chattingservice.domain.chat.controller;
 
 import com.example.chattingservice.domain.chat.dto.request.ChatRequest;
+import com.example.chattingservice.domain.chat.dto.response.ChatEnterLeaveResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.ChatService;
@@ -34,14 +35,12 @@ public class ChatController {
             @DestinationVariable("roomId") Long roomId
     ) {
 
-        LocalDateTime createdAt = chatService.saveChat(chatRequest, roomId);
-
-        return ChatResponse.from(chatRequest, createdAt);
+        return chatService.saveChat(chatRequest, roomId);
     }
 
     @MessageMapping("/chat/{roomId}/enter")
     @SendTo("/topic/public/{roomId}")
-    public ChatResponse enter(
+    public ChatEnterLeaveResponse enter(
             @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId,
             SimpMessageHeaderAccessor headerAccessor
@@ -50,7 +49,7 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("username", chatRequest.getSender());
         headerAccessor.getSessionAttributes().put("roomId", roomId);
 
-        return ChatResponse.from(chatRequest);
+        return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
     }
 
     @GetMapping("/chat/{roomId}/messages")
