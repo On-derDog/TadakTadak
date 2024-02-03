@@ -2,6 +2,7 @@ package com.tadak.signaling.server.config;
 
 import com.tadak.signaling.server.handler.SignalHandler;
 import lombok.RequiredArgsConstructor;
+import org.kurento.client.KurentoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
@@ -34,5 +35,11 @@ public class WebRtcConfig implements WebSocketConfigurer {
         container.setMaxTextMessageBufferSize(8192);
         container.setMaxBinaryMessageBufferSize(8192);
         return container;
+    }
+
+
+    @Bean
+    public KurentoClient kurentoClient(){
+        return KurentoClient.create();
     }
 }

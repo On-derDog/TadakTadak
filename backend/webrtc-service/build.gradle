@@ -21,6 +21,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
 
+	implementation group: 'org.kurento', name: 'kurento-client', version: '6.18.0'
+	implementation group: 'org.kurento', name: 'kurento-utils-js', version: '6.18.0'
+	implementation group: 'org.json', name: 'json', version: '20090211'
+
 	implementation      'org.projectlombok:lombok'
 	testImplementation  'org.projectlombok:lombok'
 	annotationProcessor     'org.projectlombok:lombok'
