@@ -7,34 +7,52 @@ import { useStore } from 'zustand';
 const Signupnaver = () => {
   const navigate = useNavigate();
   const userInfo = useStore(UserInfoStore);
+  const [code, setCode] = useState<string | null>(null);
 
-	const userAccessToken = () => {
-		window.location.href.includes('access_token') && getToken()
-    navigate('/')
-	}
-        
+  const userAccessToken = () => {
+    window.location.href.includes('access_token') && getToken();
+    // getToken();
+    navigate('/');
+  };
+
   const getToken = async () => {
-		const token = window.location.href.split('=')[1].split('&')[0]
-    localStorage.setItem('Accesstoken', token)
+    const token = window.location.href.split('=')[1].split('&')[0];
+    localStorage.setItem('Accesstoken', token);
 
-    // 네이버 API를 호출하여 사용자 정보 가져오기 proxy 적용중 수정필요
-    try {
-      const response = await axios.get('/api/v1/nid/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }}
-          )
-        console.log(response.data.response.email);
-        userInfo.updateEmail(response.data.response.email)
-        userInfo.updateUsername(response.data.response.nickname)
-    } catch (error) {
-      console.error('Error fetching user info', error);
+      // FE 코드 CORS로 proxy적용
+      try{
+      const userInfoResponse = await axios.get('/api/v1/nid/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log(userInfoResponse.data.response.email);
+      userInfo.updateEmail(userInfoResponse.data.response.email);
+      userInfo.updateUsername(userInfoResponse.data.response.nickname);
+    } catch(error) {
+      console.error("FE proxy 오류",error);
     }
-	}
+
+
+    // BE에게 전달
+    try {
+      const response = await axios.post('/oauth/token', {
+        code: code
+      });
+      console.log(response.data);
+
+      navigate('/');
+    } catch (error) {
+      console.error('BE 전달오류',error);
+    }
+  };
 
   useEffect(() => {
-		userAccessToken()
-	}, [])
+    let code = new URL(window.location.href).searchParams.get("code");
+    setCode(code);
+    console.log("BE 전달:",code);
+    userAccessToken();
+  }, []);
 
   return <div></div>;
 };
