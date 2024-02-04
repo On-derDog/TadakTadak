@@ -4,7 +4,6 @@ import Create from "../assets/Create.svg"
 import Star from "../assets/Star.svg"
 import Logout from "../assets/Logout.svg"
 
-
 interface SidebarProps{
   top: React.ReactNode;
   bottom: React.ReactNode;
@@ -17,17 +16,19 @@ interface SidebarItemProps {
   onClick?: () => void;
 }
 
+
+
 export const Sidebar ={
   wrapper: ({ top, bottom }: SidebarProps) => (
-    <div className="Sidebar-wrapper">
-      <div className="Sidebar-top">
+    <SidebarWrapper>
+      <SidebarTop>
         {top}
-      </div>
+      </SidebarTop>
 
-      <div className="Sidebar-bottom">
+      <SidebarBottom>
         {bottom}
-      </div>
-    </div>
+      </SidebarBottom>
+    </SidebarWrapper>
   ),
 
   item: ({ text, type, svg, onClick }: SidebarItemProps) => {
@@ -35,21 +36,21 @@ export const Sidebar ={
     switch (type) {
       case "list":
         return (
-          <div className="Menu-list-item" onClick={onClick}>
-            <span className="Menu-list-item-text">
+          <MenuListItem onClick={onClick}>
+            <Icons>
               {SvgComponent && <img src={SvgComponent} alt={text} />}
-              {text}
-            </span>
-          </div>
+            </Icons>
+            <MenuListItemText>{text}</MenuListItemText>
+          </MenuListItem>
         );
   
       case "category":
         return (
-          <div className="Menu-category-item">
-            <span className="Menu-category-item-text">
+          <MenuCategoryItem>
+            <MenuCategoryItemText>
               {text}
-            </span>
-          </div>
+            </MenuCategoryItemText>
+          </MenuCategoryItem>
         );
   
       default:
@@ -57,6 +58,10 @@ export const Sidebar ={
     }
   }
   ,
+
+  line: ()=>{
+    return(<Line/>)
+  }
 }
 
 const getSVG = (svg: string) => {
@@ -73,3 +78,106 @@ const getSVG = (svg: string) => {
       return null; 
   }
 };
+
+
+const MenuListItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 10px;
+  width: 139px;
+  height: 48px;
+  position: relative;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: var(--color-mercury); 
+    cursor: pointer;
+  }
+`;
+
+const Icons = styled.div`
+  width: 24px;
+  height: 24px;
+  flex-grow: 0;
+`;
+
+const MenuListItemText = styled.span`
+  width: 46px;
+  height: 22px;
+  font-size: var(--font-size-md);
+  line-height: 140%;
+  color: var(--color-rangoongreen);
+  flex: none;
+  flex-grow: 0;
+`;
+
+const MenuCategoryItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0px 16px 0px 40px;
+  gap: 16px;
+  height: 30px;
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-mercury);
+    cursor: pointer; 
+  }
+`;
+
+
+const MenuCategoryItemText = styled.span`
+  width: 70px;
+  height: 20px;
+  font-size: var(--font-size-sm);
+  line-height: 140%;
+  color: var(--color-rangoongreen);
+  flex: none;
+  flex-grow: 0;
+`;
+
+
+const SidebarWrapper = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background: var(--color-white);
+  border-right: 1px solid var(--color-mercury);
+  height: 100%; 
+  padding-bottom: 32px; 
+`;
+
+const SidebarTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+  gap: 11px;
+  margin: 0 auto;
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+`;
+
+const SidebarBottom = styled.div`
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 auto;
+  flex: none;
+  flex-grow: 0;
+  margin-top: auto;
+`;
+
+const Line= styled.div`
+  display: flex;
+  width: 70%;
+  margin: 0 auto;
+  border: 1px solid var(--color-mercury);
+  flex: none;
+  flex-grow: 0;
+`
