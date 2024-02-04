@@ -1,8 +1,18 @@
 import { Search } from "./Search"
 
-export const Sidebar ={
+interface SidebarProps{
+  top: React.ReactNode;
+  bottom: React.ReactNode;
+}
 
-  wrapper: ({ top, bottom }) => (
+interface SidebarItemProps {
+  text: string;
+  type: string;
+  onClick?: () => void;
+}
+
+export const Sidebar ={
+  wrapper: ({ top, bottom }: SidebarProps) => (
     <div className="Sidebar-wrapper">
       <div className="Sidebar-top">
         {top}
@@ -14,11 +24,11 @@ export const Sidebar ={
     </div>
   ),
 
-  item: ({ text, type }: { text: string; type: string }) => {
+  item: ({ text, type, onClick }: SidebarItemProps) => {
     switch (type) {
       case "list":
         return (
-          <div className="Menu-list-item">
+          <div className="Menu-list-item" onClick={onClick}>
             <span className="Menu-list-item-text">
               {text}
             </span>
