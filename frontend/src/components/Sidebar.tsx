@@ -1,4 +1,9 @@
-import { Search } from "./Search"
+import styled from '@emotion/styled';
+import Home from "../assets/Home.svg"
+import Create from "../assets/Create.svg"
+import Star from "../assets/Star.svg"
+import Logout from "../assets/Logout.svg"
+
 
 interface SidebarProps{
   top: React.ReactNode;
@@ -8,6 +13,7 @@ interface SidebarProps{
 interface SidebarItemProps {
   text: string;
   type: string;
+  svg?: string;
   onClick?: () => void;
 }
 
@@ -24,12 +30,14 @@ export const Sidebar ={
     </div>
   ),
 
-  item: ({ text, type, onClick }: SidebarItemProps) => {
+  item: ({ text, type, svg, onClick }: SidebarItemProps) => {
+    const SvgComponent = getSVG(svg);
     switch (type) {
       case "list":
         return (
           <div className="Menu-list-item" onClick={onClick}>
             <span className="Menu-list-item-text">
+              {SvgComponent && <img src={SvgComponent} alt={text} />}
               {text}
             </span>
           </div>
@@ -50,3 +58,18 @@ export const Sidebar ={
   }
   ,
 }
+
+const getSVG = (svg: string) => {
+  switch (svg) {
+    case "Home":
+      return Home;
+    case "Create":
+      return Create;
+    case "Star":
+      return Star;
+    case "Logout":
+      return Logout;
+    default:
+      return null; 
+  }
+};

@@ -32,19 +32,19 @@ const WelcomePage = () => {
 
             {/* Menu */}
             <div className="Menu-list">
-              <Sidebar.item text="Home" type="list" />
-              <Sidebar.item text="Create" type="list" />
+              <Sidebar.item text="Home" type="list" svg="Home" />
+              <Sidebar.item text="Create" type="list" svg="Create" />
             </div>
             <Sidebar.item text="Category 1" type="category" />
 
             <span>-----</span>
 
             {/* Favorite */}
-            <Sidebar.item text="Favorite" type="list" />
+            <Sidebar.item text="Favorite" type="list" svg="Star" />
             <Favorite />
           </>
         }
-        bottom={<Sidebar.item text={Logintext} type="list" onClick={handleLoginClick} />}
+        bottom={<Sidebar.item text={Logintext} type="list" svg="Logout" onClick={handleLoginClick} />}
       />
     </div>
   );
