@@ -4,7 +4,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -20,14 +20,18 @@ import java.security.Key;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
 
-    @Value("${jwt.secret}")
     private final String secret;
     public static final String ACCESS_AUTHORIZATION_HEADER = "Accesstoken";
     public static final String REFRESH_AUTHORIZATION_HEADER = "Refreshtoken";
     private Key key;
+
+
+    public AuthFilter(@Value("${jwt.secret}") String secret){
+        super(Config.class);
+        this.secret = secret;
+    }
 
     @PostConstruct
     public void afterPropertiesSet() {
@@ -48,6 +52,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             String accessToken = request.getHeaders().get(ACCESS_AUTHORIZATION_HEADER).get(0);
             String refreshToken = request.getHeaders().get(REFRESH_AUTHORIZATION_HEADER).get(0);
 
+            // TODO: 리팩터링 예정
             if (request.getHeaders().containsKey(ACCESS_AUTHORIZATION_HEADER) && isJwtValid(accessToken)){
                 log.info("AccessToken 인가받은 사용자입니다.");
             } else if (!isJwtValid(accessToken) && refreshToken != null) {
@@ -72,6 +77,12 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
     private boolean isJwtValid(String token) {
         boolean returnValue = true;
+
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")){
+            token = token.substring(7);
+        }
+
+        log.info("token = {}", token);
 
         String subject = null;
 
