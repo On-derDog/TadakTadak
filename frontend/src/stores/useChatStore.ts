@@ -1,18 +1,14 @@
 import { create } from 'zustand';
+import { Message } from '../interface/ChatInterface';
 
-interface Message {
-	content: string;
-	sender: string;
-}
-
-interface ChatStore {
+type ChatStore = {
 	id: string;
 	messages: Message[];
 	inputMessage: string;
 	setId: (id: string) => void;
 	setMessages: (messages: (prev: Message[]) => Message[]) => void;
 	setInputMessage: (inputMessage: string) => void;
-}
+};
 
 export const useChatStore = create<ChatStore>((set) => ({
 	id: '',

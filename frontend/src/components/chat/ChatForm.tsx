@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import * as StompJs from '@stomp/stompjs';
 import { useChatStore } from '../../stores/useChatStore';
+import styled from '@emotion/styled';
+import ChatMessage from './ChatMessage';
 
 type StompClient = StompJs.Client;
 
@@ -38,6 +40,7 @@ const ChatForm = () => {
 					{
 						content: receivedMessage.content,
 						sender: receivedMessage.sender,
+						createdAt: receivedMessage.createdAt,
 					},
 				]);
 			});
@@ -72,38 +75,65 @@ const ChatForm = () => {
 	};
 
 	return (
-		<>
-			<div>
+		<ChatWrapper>
+			<ChattingContainer>
+				<ChatMessage messages={messages} />
+			</ChattingContainer>
+			<InputContainer>
+				<input
+					type="text"
+					value={inputMessage}
+					onChange={(e) => setInputMessage(e.target.value)}
+					onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
+						if (e.key === 'Enter') {
+							sendMessage();
+						}
+					}}
+				/>
 				<div>
-					<ul>
-						{messages.map((msg, index) => (
-							<li key={index}>
-								<strong>{msg.sender} : </strong>
-								{msg.content}
-							</li>
-						))}
-					</ul>
+					<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
+					<button onClick={connectId}>Connect</button>
 				</div>
-				<div>
-					<input
-						type="text"
-						value={inputMessage}
-						onChange={(e) => setInputMessage(e.target.value)}
-						onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-							if (e.key === 'Enter') {
-								sendMessage();
-							}
-						}}
-					/>
-					<button onClick={sendMessage}>Send</button>
-				</div>
-			</div>
-			<div>
-				<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
-				<button onClick={connectId}>Connect</button>
-			</div>
-		</>
+			</InputContainer>
+		</ChatWrapper>
 	);
 };
 
 export default ChatForm;
+
+const InputContainer = styled.footer`
+	width: 100%;
+	height: 4rem;
+	background-color: var(--color-shark);
+`;
+
+const ChattingContainer = styled.section`
+	width: 100%;
+	height: 100%;
+	background-color: var(--color-white);
+	overflow: auto;
+
+	&::-webkit-scrollbar {
+		width: 0.5rem;
+		height: 0rem;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--color-crusta);
+		border-radius: 0.25rem;
+	}
+
+	&::-webkit-scrollbar-track {
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb:hover {
+		background-color: var(--color-pumpkin);
+	}
+`;
+
+const ChatWrapper = styled.div`
+	height: calc(100% - 3.125rem);
+	display: flex;
+	flex-direction: column;
+`;

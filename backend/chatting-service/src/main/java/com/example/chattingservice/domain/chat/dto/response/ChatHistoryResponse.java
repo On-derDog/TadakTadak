@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatsResponse {
+public class ChatHistoryResponse {
     private String id;
     private String content;
     private String sender;
     private LocalDateTime createdAt;
 
-    public static ChatsResponse from(Chat chat) {
+    public static ChatHistoryResponse from(Chat chat) {
 
-        return ChatsResponse.builder()
+        return ChatHistoryResponse.builder()
                 .id(chat.getId())
                 .content(chat.getContent())
                 .sender(chat.getSender())
