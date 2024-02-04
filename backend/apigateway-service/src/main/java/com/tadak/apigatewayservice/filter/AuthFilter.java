@@ -41,29 +41,25 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
     @Override
     public GatewayFilter apply(Config config) {
-        return (exchange, chain) ->{
+        return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            if(!request.getHeaders().containsKey(ACCESS_AUTHORIZATION_HEADER) &&
-                    !request.getHeaders().containsKey(REFRESH_AUTHORIZATION_HEADER)){
-                return onError(exchange, "no authorization header", HttpStatus.UNAUTHORIZED);
+            if (request.getHeaders().containsKey(ACCESS_AUTHORIZATION_HEADER)) {
+                String accessToken = request.getHeaders().get(ACCESS_AUTHORIZATION_HEADER).get(0);
+
+                if (isJwtValid(accessToken)) {
+                    log.info("AccessToken 인가받은 사용자입니다.");
+                    return chain.filter(exchange);
+                }
             }
 
-            String accessToken = request.getHeaders().get(ACCESS_AUTHORIZATION_HEADER).get(0);
             String refreshToken = request.getHeaders().get(REFRESH_AUTHORIZATION_HEADER).get(0);
 
-            // TODO: 리팩터링 예정
-            if (request.getHeaders().containsKey(ACCESS_AUTHORIZATION_HEADER) && isJwtValid(accessToken)){
-                log.info("AccessToken 인가받은 사용자입니다.");
-            } else if (!isJwtValid(accessToken) && refreshToken != null) {
-                if (!isJwtValid(refreshToken)){
-                    return onError(exchange, "토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
-                }
-            } else {
-                return onError(exchange, "토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+            if (refreshToken != null && isJwtValid(refreshToken)) {
+                return chain.filter(exchange);
             }
 
-            return chain.filter(exchange);
+            return onError(exchange, "토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
         };
     }
 
