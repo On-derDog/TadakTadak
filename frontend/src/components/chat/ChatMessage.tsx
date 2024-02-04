@@ -28,7 +28,8 @@ const ChatMessage = ({ messages }: ChatMessageListProps) => {
 				const isLastMessageForWriter =
 					index === array.length - 1 ||
 					array[index + 1].sender !== item.sender ||
-					array[index + 1].createdAt !== item.createdAt;
+					new Date(array[index + 1].createdAt).toISOString().slice(0, 16) !==
+						new Date(item.createdAt).toISOString().slice(0, 16);
 
 				const shouldDisplayYear = formattedDate !== currentFormattedDate;
 
