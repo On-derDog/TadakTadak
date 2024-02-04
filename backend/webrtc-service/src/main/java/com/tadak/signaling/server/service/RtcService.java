@@ -1,12 +1,16 @@
 package com.tadak.signaling.server.service;
 
-import com.tadak.signaling.server.domain.WebSocketMessage;
-import com.tadak.signaling.server.dto.ChatroomDto;
+import com.google.gson.JsonObject;
+import com.tadak.signaling.server.domain.KurentoUser;
+import com.tadak.signaling.server.dto.KurentoRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.kurento.client.KurentoClient;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -16,18 +20,71 @@ public class RtcService {
     private final int MINIMUM_USER_COUNT_TO_START = 1;
     // 여기에 Repository 설정 가능
 
-    public Map<String, WebSocketSession> getClients(ChatroomDto room){
-        return room.getClients();
+    private static final String MSG_TYPE_OFFER = "offer";
+    private static final String MSG_TYPE_ANSWER = "answer";
+    // ICE 메시지
+    private static final String MSG_TYPE_ICE = "ice";
+    // 데이터 타입 메시지
+    private static final String MSG_TYPE_JOIN ="join";
+    private static final String MSG_TYPE_LEAVE = "leave";
+    private Map<String, KurentoRoom> rooms = new HashMap<>();
+    private final KurentoClient kurentoClient;
+
+    public KurentoRoom createKurentoRoom(String roomId){
+        KurentoRoom newKurentoRoom = new KurentoRoom(roomId,kurentoClient);
+        rooms.put(roomId,newKurentoRoom);
+        return newKurentoRoom;
     }
-    public Map<String,WebSocketSession> addClients(ChatroomDto room,String userId,WebSocketSession session){
-        Map<String,WebSocketSession> users = room.getClients();
-        users.put(userId,session);
-        return users;
+    public void joinKurentoRoom(JsonObject msg,WebSocketSession session){
+        String roomId = msg.get("roomId").getAsString();
+        String userId = msg.get("fromUserId").getAsString();
+        KurentoRoom kurentoRoom= rooms.get(roomId);
+        kurentoRoom.join(userId,session);
     }
-    public void removeClient(ChatroomDto room,String userId){
-        room.getClients().remove(userId);
+    public void receiveVideoForm(JsonObject msg,WebSocketSession session) {
+        KurentoUser sessionUser = ;
+
+
+        String roomId = msg.get("roomId").getAsString();
+        String userId = msg.get("fromUserId").getAsString();
+        String sdpOffer = msg.get("sdp").getAsString();
+
+        KurentoRoom kurentoRoom = rooms.get(roomId);
+        KurentoUser sender = kurentoRoom.getClients().get(userId);
+
+        //answer 생성
+        String sdpAnswer = sessionUser.getAnswer(sender,sdpOffer);
+
+        JsonObject answerMessage = new JsonObject();
+        answerMessage.addProperty("type", MSG_TYPE_ANSWER);
+        answerMessage.addProperty("fromUserId", sender.getUserId());
+        answerMessage.addProperty("sdp", sdpAnswer);
+
+        synchronized (sessionUser.getSession()){
+            try {
+                session.sendMessage(new TextMessage(answerMessage.toString()));
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+        }
+        sessionUser.getAnswerEndPoint(sender).gatherCandidates();
     }
-    public boolean isUserCountMoreThan(ChatroomDto room){
-        return room.getClients().size()>1;
-    }
+
+
+
+
+//    public Map<String, WebSocketSession> getClients(KurentoRoom room){
+//        return room.getClients();
+//    }
+//    public Map<String,WebSocketSession> addClients(KurentoRoom room, String userId, WebSocketSession session){
+//        Map<String,WebSocketSession> users = room.getClients();
+//        users.put(userId,session);
+//        return users;
+//    }
+//    public void removeClient(KurentoRoom room, String userId){
+//        room.getClients().remove(userId);
+//    }
+//    public boolean isUserCountMoreThan(KurentoRoom room){
+//        return room.getClients().size()>1;
+//    }
 }

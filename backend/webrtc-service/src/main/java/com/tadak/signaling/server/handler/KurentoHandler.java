@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.tadak.signaling.server.domain.WebSocketMessage;
-import com.tadak.signaling.server.dto.ChatroomDto;
+import com.tadak.signaling.server.dto.KurentoRoom;
 import com.tadak.signaling.server.service.RtcService;
 import lombok.RequiredArgsConstructor;
 import org.kurento.client.IceCandidate;
@@ -26,7 +26,7 @@ public class KurentoHandler extends TextWebSocketHandler {
     private final Logger logger =  LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Gson gson = new GsonBuilder().create();
-    private Map<String, ChatroomDto> rooms = new HashMap<>();
+    private Map<String, KurentoRoom> rooms = new HashMap<>();
 
     private final RtcService rtcService;
     //messageType 정의
@@ -84,11 +84,11 @@ public class KurentoHandler extends TextWebSocketHandler {
             logger.info(message.get("type").getAsString());
             String userId = message.get("fromUserId").getAsString();
             String roomId = message.get("roomId").getAsString();
-            ChatroomDto findRoom = rooms.get(roomId);
+            KurentoRoom findRoom = rooms.get(roomId);
 
             if(findRoom==null) {
                 Map<String,WebSocketSession> clients = new HashMap<>();
-                findRoom = ChatroomDto.builder()
+                findRoom = KurentoRoom.builder()
                         .roomId(roomId)
                         .clients(clients)
                         .build();
@@ -119,6 +119,7 @@ public class KurentoHandler extends TextWebSocketHandler {
                                                 .sdp(sdp)
                                                 .build()
                                 );
+
                             }
                         }
                     }

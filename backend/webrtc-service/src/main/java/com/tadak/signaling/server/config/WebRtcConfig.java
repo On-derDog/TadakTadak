@@ -37,7 +37,6 @@ public class WebRtcConfig implements WebSocketConfigurer {
         return container;
     }
 
-
     @Bean
     public KurentoClient kurentoClient(){
         return KurentoClient.create();
