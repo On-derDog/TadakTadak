@@ -1,14 +1,17 @@
 import { Sidebar } from "../components/Sidebar";
 import { Search } from "../components/Search";
 import { Favorite } from "../components/Favorite";
+import Logo from "../assets/Logo.svg"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Wrapper, SideWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
+import { UserInfoStore } from "../stores/UserInfoStore";
+import { useStore } from "zustand"
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
-    const [username,setUsername] = useState<string>('타닥이');
+    const userinfo = useStore(UserInfoStore);
 
     const navigate = useNavigate();
 
@@ -28,12 +31,15 @@ const WelcomePage = () => {
                     top={
                 <>
             {/* Logo */}
-            <div className="Logo" />
+            <LogoDiv>
+                <img src={Logo} alt="logo" width="56px" height="56px" />
+            </LogoDiv>
+            
             <ServiceText>
-            TadakTadak
+                TadakTadak
             </ServiceText>
             <UsernameText>
-            {username}
+            {userinfo.username || '유저명'}
             </UsernameText>
 
             {/* Search */}
@@ -68,9 +74,14 @@ export default WelcomePage;
 const ServiceText = styled.div`
     font-size: var(--font-size-lg);
     padding: 12px 16px;
+    font-weight: 700;
 `;
 
 const UsernameText = styled.div`
     font-size: var(--font-size-sm);
     padding: 0px 16px;
 `;
+
+const LogoDiv = styled.div`
+    padding: 12px 16px 0;
+`

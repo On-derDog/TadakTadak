@@ -99,7 +99,6 @@ const MenuListItem = styled.div`
 const Icons = styled.div`
   width: 24px;
   height: 24px;
-  flex-grow: 0;
 `;
 
 const MenuListItemText = styled.span`
@@ -108,8 +107,6 @@ const MenuListItemText = styled.span`
   font-size: var(--font-size-md);
   line-height: 140%;
   color: var(--color-rangoongreen);
-  flex: none;
-  flex-grow: 0;
 `;
 
 const MenuCategoryItem = styled.div`
@@ -120,8 +117,6 @@ const MenuCategoryItem = styled.div`
   height: 30px;
   position: relative;
   flex: none;
-  align-self: stretch;
-  flex-grow: 0;
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -137,8 +132,6 @@ const MenuCategoryItemText = styled.span`
   font-size: var(--font-size-sm);
   line-height: 140%;
   color: var(--color-rangoongreen);
-  flex: none;
-  flex-grow: 0;
 `;
 
 
@@ -158,18 +151,13 @@ const SidebarTop = styled.div`
   flex-direction: column;
   padding: 0px;
   gap: 11px;
-  margin: 0 auto;
-  flex: none;
   align-self: stretch;
-  flex-grow: 0;
 `;
 
 const SidebarBottom = styled.div`
   flex-direction: column;
   gap: 10px;
   margin: 0 auto;
-  flex: none;
-  flex-grow: 0;
   margin-top: auto;
 `;
 
@@ -178,6 +166,4 @@ const Line= styled.div`
   width: 70%;
   margin: 0 auto;
   border: 1px solid var(--color-mercury);
-  flex: none;
-  flex-grow: 0;
 `
