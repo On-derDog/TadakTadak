@@ -1,6 +1,11 @@
+import { Sidebar } from "../components/Sidebar";
+
 const WelcomePage = () => {
     return(
-        <>It's Home!</>
+        <div className="WelcomePage-wrapper">
+            <>It's Home!</>
+            <Sidebar/>
+        </div>
     )
 };
 
