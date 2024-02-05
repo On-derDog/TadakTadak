@@ -17,6 +17,7 @@ const colorShark = '#2B2D31';
 const colorRangoonGreen = '#1B1A17';
 const colorHarlequin = '#2ACC02';
 const colorOrient = '#02607E';
+const colorWildsand = '#F5F5F5';
 
 export const GlobalStyle = css`
 	:root {
@@ -35,5 +36,6 @@ export const GlobalStyle = css`
 		--color-rangoongreen: ${colorRangoonGreen};
 		--color-harlequin: ${colorHarlequin};
 		--color-orient: ${colorOrient};
+		--color-wildsand: ${colorWildsand}
 	}
 `;
