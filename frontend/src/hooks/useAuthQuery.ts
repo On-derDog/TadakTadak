@@ -39,16 +39,16 @@ export const AuthApis = {
     return { data, isLoading, error };
   },
 
-  signup: async (userInfo:UserInfo, passwordConfirm: string, authCode: string) => {
+  signup: async (userInfo:UserInfo, passwordConfirm: string) => {
     try {
       const response = await AuthApis.instance.post('/signup', {
         username: userInfo.username,
         email: userInfo.email,
         password: userInfo.password,
-        authCode: authCode,
         passwordConfirm: passwordConfirm,
       });
       const data = response.data;
+
       return data;
     } catch (error) {
       console.error("API 통신 에러:", error);
@@ -78,7 +78,7 @@ export const AuthApis = {
       const Accesstoken = rawAccessToken ? rawAccessToken.replace(/^Bearer\s+/i, '') : null;
       const Refreshtoken = rawRefreshToken ? rawRefreshToken.replace(/^Bearer\s+/i, '') : null;
       
-      console.log(`토큰 발급\n Accesstoken:${Accesstoken}\n Refreshtoken:${Refreshtoken}`)
+      // console.log(`토큰 발급\n Accesstoken:${Accesstoken}\n Refreshtoken:${Refreshtoken}`)
   
       localStorage.setItem('Accesstoken', Accesstoken);
       localStorage.setItem('Refreshtoken', Refreshtoken);
@@ -112,7 +112,7 @@ export const AuthApis = {
             const newAccesstoken = rawAccessToken ? rawAccessToken.replace(/^Bearer\s+/i, '') : null;
             const newRefreshtoken = rawRefreshToken ? rawRefreshToken.replace(/^Bearer\s+/i, '') : null;
             
-            console.log(`토큰 갱신\n newAccesstoken:${newAccesstoken}\n newRefreshtoken:${newRefreshtoken}`)
+            // console.log(`토큰 갱신\n newAccesstoken:${newAccesstoken}\n newRefreshtoken:${newRefreshtoken}`)
 
             localStorage.setItem('Accesstoken',newAccesstoken);
             localStorage.setItem('Refreshtoken',newRefreshtoken);

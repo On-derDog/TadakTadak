@@ -5,7 +5,10 @@ import ErrorPage from './pages/ErrorPage';
 import ChattingListPage from './pages/ChattingListPage';
 import SignupPage from './pages/SignupPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
-import TestPage from './test/TestPage';
+import Signupnaver from './pages/Signupnaver';
+import VideoCallPage from './pages/VideoCallPage';
+import { Global } from '@emotion/react';
+import { GlobalStyle } from './styles/GlobalStyle';
 
 const router = createBrowserRouter([
 	{
@@ -18,7 +21,8 @@ const router = createBrowserRouter([
 			{ path: 'signup', element: <SignupPage /> },
 			{ path: 'chattinglist', element: <ChattingListPage /> },
 			{ path: 'chatroom/:chatroom_id', element: <ChattingRoomPage /> },
-			{ path: 'test', element: <TestPage /> },
+			{ path: 'signupnaver', element: <Signupnaver /> },
+			{ path: 'videocall', element: <VideoCallPage /> },
 		],
 	},
 ]);
@@ -26,6 +30,7 @@ const router = createBrowserRouter([
 const App = () => {
 	return (
 		<>
+			<Global styles={GlobalStyle} />
 			<RouterProvider router={router} />
 		</>
 	);
