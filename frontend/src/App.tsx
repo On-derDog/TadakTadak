@@ -6,6 +6,7 @@ import ChattingListPage from './pages/ChattingListPage';
 import SignupPage from './pages/SignupPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
 import Signupnaver from './pages/Signupnaver';
+import SigninPage from './pages/SigninPage';
 import VideoCallPage from './pages/VideoCallPage';
 import { Global } from '@emotion/react';
 import { GlobalStyle } from './styles/GlobalStyle';
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
 		errorElement: <ErrorPage />,
 		children: [
 			{ index: true, element: <WelcomePage /> },
+			{ path: 'signin', element: <SigninPage /> },
 			{ path: 'signup', element: <SignupPage /> },
 			{ path: 'chattinglist', element: <ChattingListPage /> },
 			{ path: 'chatroom/:chatroom_id', element: <ChattingRoomPage /> },
