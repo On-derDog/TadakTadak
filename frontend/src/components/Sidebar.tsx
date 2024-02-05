@@ -85,7 +85,6 @@ const MenuListItem = styled.div`
   align-items: center;
   padding: 12px 16px;
   gap: 10px;
-  width: 139px;
   height: 48px;
   position: relative;
   transition: background-color 0.3s ease;
@@ -155,10 +154,11 @@ const SidebarTop = styled.div`
 `;
 
 const SidebarBottom = styled.div`
+  display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 0 auto;
   margin-top: auto;
+  align-self: stretch;
 `;
 
 const Line= styled.div`

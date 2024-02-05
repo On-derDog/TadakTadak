@@ -32,7 +32,7 @@ const SearchDiv = styled.div`
   margin: 0 auto;
   padding: 8px 16px;
   gap: 10px;
-  background: #F5F5F5;
+  background: var(--color-wildsand);
   border-radius: 10px;
 `;
 
