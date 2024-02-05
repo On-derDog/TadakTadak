@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class RtcService {
     private static final String MSG_TYPE_JOIN ="join";
     private static final String MSG_TYPE_LEAVE = "leave";
     private Map<String, KurentoRoom> rooms = new HashMap<>();
+    private Map<String, KurentoUser> users = new HashMap<>();
     private final KurentoClient kurentoClient;
 
     public KurentoRoom createKurentoRoom(String roomId){
@@ -35,14 +37,20 @@ public class RtcService {
         rooms.put(roomId,newKurentoRoom);
         return newKurentoRoom;
     }
+    @PostConstruct
+    public void makeKurentoRoomForTest(){
+        KurentoRoom newKurentoRoom = new KurentoRoom("1",kurentoClient);
+        rooms.put("1",newKurentoRoom);
+    }
     public void joinKurentoRoom(JsonObject msg,WebSocketSession session){
         String roomId = msg.get("roomId").getAsString();
         String userId = msg.get("fromUserId").getAsString();
         KurentoRoom kurentoRoom= rooms.get(roomId);
-        kurentoRoom.join(userId,session);
+        KurentoUser user = kurentoRoom.join(userId,session);
+        users.put(user.getSession().getId(),user);
     }
     public void receiveVideoForm(JsonObject msg,WebSocketSession session) {
-        KurentoUser sessionUser = ;
+        KurentoUser sessionUser = users.get(session.getId()); // 수신자
 
 
         String roomId = msg.get("roomId").getAsString();

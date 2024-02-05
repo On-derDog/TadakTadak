@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@Builder
 public class KurentoRoom {
     private String roomId; //채팅방 아이디
     private int userCount;

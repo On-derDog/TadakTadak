@@ -8,10 +8,12 @@ import com.google.gson.JsonObject;
 import com.tadak.signaling.server.domain.WebSocketMessage;
 import com.tadak.signaling.server.dto.KurentoRoom;
 import com.tadak.signaling.server.service.RtcService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -19,16 +21,16 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
+@Component
 @RequiredArgsConstructor
 public class KurentoHandler extends TextWebSocketHandler {
+    private final RtcService rtcService;
     private final Logger logger =  LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Gson gson = new GsonBuilder().create();
     private Map<String, KurentoRoom> rooms = new HashMap<>();
 
-    private final RtcService rtcService;
+
     //messageType 정의
     //SDP 메시지
     private static final String MSG_TYPE_OFFER = "offer";
@@ -38,6 +40,7 @@ public class KurentoHandler extends TextWebSocketHandler {
     // 데이터 타입 메시지
     private static final String MSG_TYPE_JOIN ="join";
     private static final String MSG_TYPE_LEAVE = "leave";
+
 
     //소켓 연결 되었을 때
     @Override
@@ -82,64 +85,15 @@ public class KurentoHandler extends TextWebSocketHandler {
         try{
             //json을 WebSocketMessage로 변환
             logger.info(message.get("type").getAsString());
-            String userId = message.get("fromUserId").getAsString();
-            String roomId = message.get("roomId").getAsString();
-            KurentoRoom findRoom = rooms.get(roomId);
-
-            if(findRoom==null) {
-                Map<String,WebSocketSession> clients = new HashMap<>();
-                findRoom = KurentoRoom.builder()
-                        .roomId(roomId)
-                        .clients(clients)
-                        .build();
-                //임시적으로 방 만들기
-                rooms.put(roomId,findRoom);
-            }
             switch (message.get("type").getAsString()){
                 case MSG_TYPE_OFFER:
+                    rtcService.receiveVideoForm(message,session);
+                    break;
                 case MSG_TYPE_ANSWER:
-                case MSG_TYPE_ICE: // 상대방을 찾는 상황
-                    JsonObject candidate = message.get("candidate").getAsJsonObject();
-                    Object sdp = message.get("sdp").getAsJsonObject();
-                    IceCandidate cand = new IceCandidate(candidate.get("candidate").getAsString(), //프론트에 어떤 정보들이 오는지 봐야함
-                            candidate.get("sdpMid").getAsString(),
-                            candidate.get("sdpMLineIndex").getAsInt());
-
-                    if(findRoom!=null){
-                        Map<String,WebSocketSession> clients = rtcService.getClients(findRoom);
-                        for( String client : clients.keySet()){
-                            if(!client.equals(userId)){ //본인이 아니라면
-                                logger.info("userId" +userId+" to clients:"+client);
-                                sendMessage(clients.get(client) //메시지 재전송
-                                        ,WebSocketMessage.builder()
-                                                .fromUserId(userId)
-                                                .type(message.getType())
-                                                .roomId(roomId)
-                                                .candidate(candidate)
-                                                .sdp(sdp)
-                                                .build()
-                                );
-
-                            }
-                        }
-                    }
-                    break;
                 case MSG_TYPE_JOIN:
-                    logger.info(userId+"가 방에 참여하였습니다. 방 번호: "+message.getRoomId());
-                    // room에 user 추가
-                    rtcService.addClients(findRoom,userId,session);
+                    rtcService.joinKurentoRoom(message,session);
                     break;
 
-                case MSG_TYPE_LEAVE:
-                    Optional<String> client = rtcService.getClients(findRoom).keySet().stream()
-                            .filter(clientsKeys -> clientsKeys.equals(userId))
-                            .findAny();
-
-                    //존재한다면 삭제
-                    if(client.isPresent()) rtcService.removeClient(findRoom,client.get());
-
-                    logger.debug(userId+"가 방을 나갔습니다");
-                    break;
             }
 
 

@@ -1,10 +1,13 @@
 package com.tadak.signaling.server.config;
 
-import com.tadak.signaling.server.handler.SignalHandler;
+//import com.tadak.signaling.server.handler.SignalHandler;
+import com.tadak.signaling.server.handler.KurentoHandler;
+import com.tadak.signaling.server.service.RtcService;
 import lombok.RequiredArgsConstructor;
 import org.kurento.client.KurentoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -17,14 +20,15 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @RequiredArgsConstructor
 public class WebRtcConfig implements WebSocketConfigurer {
 
-    private final SignalHandler signalHandler;
+
+    private final RtcService rtcService;
+    @Bean
+    public KurentoHandler kurentoHandler(){return new KurentoHandler( rtcService);}
     //signal로 요청이 왔을 때 아래의 websocketHandler가 동작하도록 설정
     // 요청은 클라가 접속,닫기 등에 대한 특정 메서드를 호출
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(signalHandler,"/signal/{roomId}")
-                .setAllowedOrigins("*");
-        registry.addHandler(signalHandler,"/socket.io")
+        registry.addHandler(kurentoHandler(),"/signal/{roomId}")
                 .setAllowedOrigins("*");
     }
 
@@ -37,8 +41,4 @@ public class WebRtcConfig implements WebSocketConfigurer {
         return container;
     }
 
-    @Bean
-    public KurentoClient kurentoClient(){
-        return KurentoClient.create();
-    }
 }
