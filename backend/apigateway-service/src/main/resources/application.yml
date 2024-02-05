@@ -9,5 +9,41 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 spring:
+  profiles:
+    include: secret
   application:
     name: apigateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      routes:
+        - id: user-service # 회원가입
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/signup/**
+            - Method=POST, GET
+        - id: user-service # 로그인
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+        - id: user-service # 이메일 인증
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/authcode/**
+            - Method=POST, GET
+        - id: user-service # 권한 인증 테스트
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/hello
+            - Method=GET
+          filters:
+            - AuthFilter
+        - id: chatting-service # chatting-service
+          uri: lb://CHATTING-SERVICE
+          predicates:
+            - Path=/chatting-service/**
+            - Method=POST, GET
+          filters:
+            - AuthFilter
