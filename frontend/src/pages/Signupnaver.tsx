@@ -10,8 +10,8 @@ const Signupnaver = () => {
   const [code, setCode] = useState<string | null>(null);
 
   const userAccessToken = () => {
-    window.location.href.includes('access_token') && getToken();
-    // getToken();
+    // window.location.href.includes('access_token') && getToken();
+    getToken();
     navigate('/');
   };
 
@@ -19,24 +19,24 @@ const Signupnaver = () => {
     const token = window.location.href.split('=')[1].split('&')[0];
     localStorage.setItem('Accesstoken', token);
 
-      // FE 코드 CORS로 proxy적용
-      try{
-      const userInfoResponse = await axios.get('/api/v1/nid/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      console.log(userInfoResponse.data.response.email);
-      userInfo.updateEmail(userInfoResponse.data.response.email);
-      userInfo.updateUsername(userInfoResponse.data.response.nickname);
-    } catch(error) {
-      console.error("FE proxy 오류",error);
-    }
+    //   // FE 코드 CORS로 proxy적용
+    //   try{
+    //   const userInfoResponse = await axios.get('/api/v1/nid/me', {
+    //     headers: {
+    //       'Authorization': `Bearer ${token}`
+    //     }
+    //   });
+    //   console.log(userInfoResponse.data.response.email);
+    //   userInfo.updateEmail(userInfoResponse.data.response.email);
+    //   userInfo.updateUsername(userInfoResponse.data.response.nickname);
+    // } catch(error) {
+    //   console.error("FE proxy 오류",error);
+    // }
 
 
     // BE에게 전달
     try {
-      const response = await axios.post('/oauth/token', {
+      const response = await axios.post('/oauth2/token', {
         code: code
       });
       console.log(response.data);

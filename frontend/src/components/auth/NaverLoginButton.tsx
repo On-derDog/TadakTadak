@@ -48,7 +48,7 @@ export const NaverLoginButton = () => {
   return (
     <>
       <NaverIdLogin ref={naverRef} id="naverIdLogin" />
-      <NaverButtonStyles>
+      {/* <NaverButtonStyles>
         <div className="NaverLoginButton-wrapper" onClick={handleNaverLogin}>
           <div className="btn-naver">
             <div className="Logo">
@@ -61,7 +61,7 @@ export const NaverLoginButton = () => {
             <span className="text">FE 프록시 적용 간편 가입</span>
           </div>
         </div>
-      </NaverButtonStyles>
+      </NaverButtonStyles> */}
 
       {/* BE TEST */}
       <NaverButtonStyles>
