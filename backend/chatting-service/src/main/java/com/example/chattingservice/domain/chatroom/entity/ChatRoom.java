@@ -11,8 +11,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,14 +22,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "chatting_room")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatroom_id")
+    @Column
     private Long id;
 
     @Column(nullable = false)
@@ -59,7 +62,7 @@ public class ChatRoom {
 
     public static ChatRoom toEntity(CreateChatRoomRequest request, Long memberId) {
         Long DEFAULT_PARTICIPANTS_COUNT = 1L;
-        Status DEFAULT_STATUS = Status.DEACTIVE;
+        Status DEFAULT_STATUS = Status.ACTIVE;
 
         return ChatRoom.builder()
                 .title(request.getTitle())
@@ -70,5 +73,9 @@ public class ChatRoom {
                 .participantsCount(DEFAULT_PARTICIPANTS_COUNT)
                 .status(DEFAULT_STATUS)
                 .build();
+    }
+
+    public void updateParticipantsCount() {
+        participantsCount++;
     }
 }

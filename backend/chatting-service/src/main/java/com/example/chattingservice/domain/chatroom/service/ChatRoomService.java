@@ -5,4 +5,8 @@ import com.example.chattingservice.domain.chatroom.dto.request.CreateChatRoomReq
 public interface ChatRoomService {
 
     Long createChatRoom(CreateChatRoomRequest request, Long memberId);
+
+    Long enter(Long roomId);
+
+    Long exit(Long roomId);
 }
