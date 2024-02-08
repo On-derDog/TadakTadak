@@ -8,6 +8,7 @@ import SigninPage from './pages/SigninPage';
 import ChattingRoomPage from './pages/ChattingRoomPage';
 import TestPage from './test/TestPage';
 import VideoCallPage from './pages/VideoCallPage';
+import VideoCallMultPage from './pages/VideoCallMultPage';
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
 			{ path: 'chatroom/:chatroom_id', element: <ChattingRoomPage /> },
 			{ path: 'test', element: <TestPage /> },
 			{ path: 'videocall', element: <VideoCallPage /> },
+			{ path: 'videocallmult', element: <VideoCallMultPage /> },
 		],
 	},
 ]);
