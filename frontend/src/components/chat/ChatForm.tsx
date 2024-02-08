@@ -5,6 +5,7 @@ import ChatMessage from './ChatMessage';
 import { useRef } from 'react';
 import { useChatStore } from '../../stores/useChatStore';
 import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
+import { bodyMessage } from '../../interface/CommonInterface';
 
 type StompClient = StompJs.Client;
 
@@ -35,7 +36,7 @@ const ChatForm = () => {
 
 	const subscribe = () => {
 		if (client.current) {
-			client.current.subscribe('/topic/public/5', (message: any) => {
+			client.current.subscribe('/topic/public/5', (message: bodyMessage) => {
 				const receivedMessage = JSON.parse(message.body);
 				setMessages((prevMessages) => [
 					...prevMessages,

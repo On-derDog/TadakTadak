@@ -6,6 +6,7 @@ import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
 import { useUserListStore } from '../../stores/useUserListStore';
 import { useChatStore } from '../../stores/useChatStore';
 import { useRef } from 'react';
+import { bodyMessage } from '../../interface/CommonInterface';
 
 type StompClient = StompJs.Client;
 
@@ -57,7 +58,7 @@ const Users = () => {
 				body: JSON.stringify(users),
 			});
 
-			client.current.subscribe('/topic/users', (userlist: any) => {
+			client.current.subscribe('/topic/users', (userlist: bodyMessage) => {
 				const receivedUserList = JSON.parse(userlist.body);
 				setUserList((prevUserList) => [
 					...prevUserList,
