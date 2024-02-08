@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const VideoCallMult = () => {
+const VideoCall = () => {
 	const socketRef = useRef<WebSocket>();
 	const myVideoRef = useRef<HTMLVideoElement>(null);
 	const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -186,4 +186,4 @@ const VideoCallMult = () => {
 	);
 };
 
-export default VideoCallMult;
+export default VideoCall;
