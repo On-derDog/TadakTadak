@@ -1,6 +1,5 @@
-package com.example.chattingservice.domain.chat.dto.request;
+package com.example.chattingservice.domain.chat.dto.response;
 
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRequest {
-    private String content;
+public class UserParticipation {
     private String username;
+    private String roomName;
     private Long userId;
-    private MessageType type;
-    private LocalDateTime createdAt;
+
+    public void changeRoomName(String newRoomName){
+        this.roomName = newRoomName;
+    }
 }

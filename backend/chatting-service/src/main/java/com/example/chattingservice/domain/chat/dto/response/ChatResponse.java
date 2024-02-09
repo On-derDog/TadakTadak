@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChatResponse {
     private String content;
-    private String sender;
+    private String username;
     private MessageType type;
     private LocalDateTime createdAt;
 
@@ -22,7 +22,7 @@ public class ChatResponse {
 
         return ChatResponse.builder()
                 .content(chatEntity.getContent())
-                .sender(chatEntity.getSender())
+                .username(chatEntity.getSender())
                 .type(type)
                 .createdAt(chatEntity.getCreatedAt())
                 .build();
