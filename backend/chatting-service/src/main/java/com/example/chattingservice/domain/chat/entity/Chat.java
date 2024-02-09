@@ -27,7 +27,7 @@ public class Chat {
     public static Chat toEntity(ChatRequest chatRequest, Long roomId) {
         return Chat.builder()
                 .content(chatRequest.getContent())
-                .sender(chatRequest.getSender())
+                .sender(chatRequest.getUsername())
                 .roomId(roomId)
                 .createdAt(LocalDateTime.now())
                 .build();
