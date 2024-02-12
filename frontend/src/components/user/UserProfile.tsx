@@ -10,12 +10,12 @@ type UserListProps = {
 const UserProfile = ({ userlist }: UserListProps) => {
 	return (
 		<>
-			{userlist.map((item, index) => {
+			{DUMMY_DATA.map((item, index) => (
 				<ProfileContainer key={index}>
 					<Text>{item.userName}</Text>
 					<SmallText>이것이 취업을 위한 코딩테스트다.-파이썬편-</SmallText>
-				</ProfileContainer>;
-			})}
+				</ProfileContainer>
+			))}
 		</>
 	);
 };
@@ -43,3 +43,21 @@ const SmallText = styled.span`
 	font-size: var(--font-size-xxs);
 	color: var(--color-orient);
 `;
+
+const DUMMY_DATA: UserList[] = [
+	{
+		userName: 'k546kh@naver.com',
+	},
+	{
+		userName: 'k546kh@gmail.com',
+	},
+	{
+		userName: 'k546h@knu.ac.kr',
+	},
+	{
+		userName: 'k546kh@nate.com',
+	},
+	{
+		userName: 'k546kh@daum.net',
+	},
+];
