@@ -15,7 +15,7 @@ const ChattingRoomPage = () => {
 	} = useQuery({
 		queryKey: ['userData'],
 		queryFn: getUserData,
-		staleTime: 2000000,
+		staleTime: 5000,
 	});
 	let username = userData?.username;
 
