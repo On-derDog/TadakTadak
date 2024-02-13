@@ -87,8 +87,9 @@ public class MemberService {
         }
 
         HttpHeaders httpHeaders = createResponseHeaders(accessToken, refreshToken); // header 정보 넣어주기!
+        // 현재 사용하지 않음 (body로 토큰을 전달해주지 않기때문)
         TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
-        return new ResponseEntity<>(tokenResponseDto, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
     }
 
     // login Member 정보 받아오기
