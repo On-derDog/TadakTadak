@@ -23,14 +23,20 @@ const SigninPage = () => {
         } else if (name === 'password') {
           userInfo.updatePassword(value);
         }
-  };
+    };
 
-    const onButtonClick = (action:string) => {
+    async function onButtonClick (action:string) {
       switch(action){
         case "onSignin":
-            AuthApis.signin(userInfo);
-            navigate("/");
-            break;
+          try {
+            const data = await AuthApis.signin(userInfo);
+            if (data) {
+              navigate("/");
+            }
+          } catch (error) {
+            console.error("Error during signin:", error);
+          }
+          break;
         case "onSignup":
             navigate("/signup")
             break;
