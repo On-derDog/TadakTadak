@@ -10,7 +10,7 @@ type UserListProps = {
 const UserProfile = ({ userlist }: UserListProps) => {
 	return (
 		<>
-			{DUMMY_DATA.map((item, index) => (
+			{userlist.map((item, index) => (
 				<ProfileContainer key={index}>
 					<Text>{item.userName}</Text>
 					<SmallText>이것이 취업을 위한 코딩테스트다.-파이썬편-</SmallText>

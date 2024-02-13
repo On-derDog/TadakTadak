@@ -27,6 +27,12 @@ export const SideWrapper = styled.div`
 	padding: 0.5rem 0rem 0.5rem 0rem;
 `;
 
+export const FlexCenterWrapper = `
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`;
+
 export const ChattingRoomHeader = `
 	background-color: var(--color-pumpkin);
 	color: var(--color-white);

@@ -1,12 +1,13 @@
 import ChatForm from './ChatForm';
 import styled from '@emotion/styled';
 import { ChattingRoomHeader } from '../../styles/ComponentLayout';
+import { UserDataProps } from '../../interface/UserListInterface';
 
-const ChatRoom = () => {
+const ChatRoom = ({ username, isLoading, isError }: UserDataProps) => {
 	return (
 		<ChattingRoom>
 			<ChatHeader>채팅방</ChatHeader>
-			<ChatForm />
+			<ChatForm username={username} isLoading={isLoading} isError={isError} />
 		</ChattingRoom>
 	);
 };

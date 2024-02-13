@@ -4,7 +4,24 @@ import styled from '@emotion/styled';
 import ChatRoom from '../components/chat/ChatRoom';
 import UserList from '../components/user/UserList';
 
+import { useQuery } from '@tanstack/react-query';
+import { getUserData } from '../hooks/react-query/useUserData';
+
 const ChattingRoomPage = () => {
+	const {
+		data: userData,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: ['userData'],
+		queryFn: getUserData,
+		staleTime: 2000000,
+	});
+	let username = userData?.username;
+
+	if (isLoading) return <div>Loading...</div>;
+	if (isError) return <div>Error fetching user data</div>;
+
 	return (
 		<Container>
 			<Wrapper>
@@ -12,11 +29,11 @@ const ChattingRoomPage = () => {
 				<MainWrapper>
 					<VideoWrapper>비디오</VideoWrapper>
 					<ChatWrapper>
-						<ChatRoom />
+						<ChatRoom username={username} isLoading={isLoading} isError={isError} />
 					</ChatWrapper>
 				</MainWrapper>
 				<SideWrapper>
-					<UserList />
+					<UserList username={username} isLoading={isLoading} isError={isError} />
 				</SideWrapper>
 			</Wrapper>
 		</Container>
