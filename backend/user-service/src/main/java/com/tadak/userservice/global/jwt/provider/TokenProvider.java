@@ -101,7 +101,6 @@ public class TokenProvider implements InitializingBean {
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .tokenCreateAt(LocalDateTime.now())
                 .build();
     }
 

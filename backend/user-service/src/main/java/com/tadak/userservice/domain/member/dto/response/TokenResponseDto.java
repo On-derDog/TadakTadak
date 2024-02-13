@@ -22,5 +22,4 @@ public class TokenResponseDto {
     private String accessToken;
     @JsonIgnore
     private String refreshToken;
-    private LocalDateTime tokenCreateAt;
 }
