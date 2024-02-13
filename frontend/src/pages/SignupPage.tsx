@@ -18,7 +18,7 @@ type isValid = {
     messageValidPw2Color: 'black' | 'blue';
 };
 
-const SignupPage: React.FC = () => {
+const SignupPage = () => {
     const navigate = useNavigate();
     const [messageValidPw1, setMessageValidPw1] = useState<string>('숫자/영어/특수문자를 혼용하여 3종류를 사용하세요.');
     const [messageValidPw2, setMessageValidPw2] = useState<string>('비밀번호는 1자 이상 20자 이하로 입력하세요.');
@@ -167,19 +167,17 @@ const SignupPage: React.FC = () => {
 
 
     return(
-        <main className="SignupPage-wrapper">
-            <section className="SigupPage-container">
-                <>It's SignupPage!</>
-                <br/>    
-  
+        <SignInWrapper>
+            <SignInContainer>
+
                 {/* email input */}
-                <InputForm onChange={onChange}type = 'text' title="이메일"  name="email" value={userInfo?.email} placeholder="이메일 (xxx@naver.com)"/>
-                <Button onClick={ () => onButtonClick("onSetEmailCheck")} label={"이메일 인증하기"}></Button>
-                <span> {messageEmail} </span>
-                <br/>            
+                <InputForm onChange={onChange}type = 'text' title="이메일" imgSVG="Email"  name="email" value={userInfo?.email} placeholder="이메일 (xxx@naver.com)"/>
+                <Button onClick={ () => onButtonClick("onSetEmailCheck")} backgroundColor="primary" label={"이메일 인증하기"}></Button>
+                <span> {messageEmail} </span>          
                 {/* emailToggle */}
                 {   isValid.emailIsValid ? <div className="ToggleEmailCode-wrapper">
                     <InputForm
+                    imgSVG="Email"
                     onChange={onChange}
                     type="text"
                     title="인증코드"
@@ -188,33 +186,28 @@ const SignupPage: React.FC = () => {
                     placeholder="인증코드 입력"
                 />
                 <span>이메일을 받지 못하셨나요?</span>
-                <Button onClick={ () => onButtonClick("onSetEmailCheck")} label={"재전송"}></Button>
+                <Button onClick={ () => onButtonClick("onSetEmailCheck")} label={"재전송"} backgroundColor={"secondary"}></Button>
                  </div> : null}
 
                 {/* pw input */}
                 <InputForm onChange={onChange}
-                type = 'password' title="비밀번호"  name="password" value={userInfo?.password} placeholder="비밀번호"/><br/>
-                <MessageValidPw color={isValid.messageValidPw1Color}> {messageValidPw1} </MessageValidPw> <br/>
-                <br/>
-                <MessageValidPw color={isValid.messageValidPw2Color}> {messageValidPw2} </MessageValidPw> <br/>
-                <br/>     
+                type = 'password' title="비밀번호"  name="password" imgSVG="Password" value={userInfo?.password} placeholder="비밀번호"/><br/>
+                <MessageValidPw color={isValid.messageValidPw1Color}> {messageValidPw1} </MessageValidPw>
+                <MessageValidPw color={isValid.messageValidPw2Color}> {messageValidPw2} </MessageValidPw>  
                 {/* password duplicate check */}
                 <InputForm onChange={onChange}
-                type = 'password' title="비밀번호 확인"  name="password-check" value={passwordConfirm} placeholder="비밀번호 확인"/>
-                <span> {messagePw} </span>
-                <br/>    
+                type = 'password' imgSVG="Password" title="비밀번호 확인"  name="password-check" value={passwordConfirm} placeholder="비밀번호 확인"/>
+                <span> {messagePw} </span>  
 
                 {/* username input */}
                 <InputForm onChange={onChange}
-                type = 'text' title="닉네임"  name="username" value={userInfo?.username} placeholder="닉네임 (2~15자)"/>
-                <Button onClick={ () => onButtonClick("onSetNicknameCheck")} label={"중복 확인"}></Button>
+                type = 'text' imgSVG="User" title="닉네임"  name="username" value={userInfo?.username} placeholder="닉네임 (2~15자)"/>
+                <Button onClick={ () => onButtonClick("onSetNicknameCheck")} label={"중복 확인"} backgroundColor="primary"></Button>
                 <span> {messageUsername} </span>
+                <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입하기"} backgroundColor="secondary"></Button>
                 <br/>
-                <br/>
-                <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입하기"}></Button>
-                <br/>
-            </section>  
-        </main>
+        </SignInContainer>  
+      </SignInWrapper>
     )
 };
 
@@ -222,6 +215,33 @@ export default SignupPage;
 
 
 // 스타일 적용
-const MessageValidPw = styled.p<{ color: string }>`
+const MessageValidPw = styled.p<{ color: string }>` 
   color: ${(props) => props.color};
+  margin: 0 0 0.5rem;
+  font-size: var(--font-size-xs);
 `;
+
+const SignInWrapper = styled.main`
+  display: flex;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+`
+
+const SignInContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  width: 351px;
+
+  p {
+    position: relative;
+    font-size: var(--font-size-xs);
+  }
+
+  span{
+    position: relative;
+    padding: 0.5rem;
+    right: -50%;
+    font-size: var(--font-size-xs);
+  }
+`

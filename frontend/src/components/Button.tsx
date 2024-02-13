@@ -20,7 +20,8 @@ export const Button = ({ onClick, label,backgroundColor, ...rest })=>{
 const StyledButton = styled.button`
   height: 49px;
   padding: 10px 20px;
-  background-color: ${(props)=> props.backgroundColor || "var(--color-buttercap)"} ;
+  margin: 0.5rem 0;
+  background-color: ${(props)=> props.backgroundColor || "var(--color-buttercap)"};
   color: #fff;
   border: none;
   border-radius: 10px;
