@@ -61,9 +61,9 @@ const SigninPage = () => {
           type = 'password' imgSVG="Password" title="비밀번호"  name="password" value={userInfo?.password} placeholder="비밀번호을 입력해주세요"/>
 
           <br/>
-          <Button onClick={ () => onButtonClick("onSignin")} label={"로그인"}></Button>
+          <Button onClick={ () => onButtonClick("onSignin")} backgroundColor={"primary"} label={"로그인"}></Button>
           <br/>
-          <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
+          <Button onClick={ () => onButtonClick("onSignup")} backgroundColor={"secondary"}  label={"회원가입"}></Button>
           <br/>
           <NaverLoginButton/>
         </SignInContainer>  
