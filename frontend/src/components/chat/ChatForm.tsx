@@ -1,8 +1,11 @@
-import { useRef } from 'react';
 import * as StompJs from '@stomp/stompjs';
-import { useChatStore } from '../../stores/useChatStore';
 import styled from '@emotion/styled';
 import ChatMessage from './ChatMessage';
+
+import { useRef } from 'react';
+import { useChatStore } from '../../stores/useChatStore';
+import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
+import { bodyMessage } from '../../interface/CommonInterface';
 
 type StompClient = StompJs.Client;
 
@@ -33,7 +36,7 @@ const ChatForm = () => {
 
 	const subscribe = () => {
 		if (client.current) {
-			client.current.subscribe('/topic/public/5', (message: any) => {
+			client.current.subscribe('/topic/public/5', (message: bodyMessage) => {
 				const receivedMessage = JSON.parse(message.body);
 				setMessages((prevMessages) => [
 					...prevMessages,
@@ -108,32 +111,13 @@ const InputContainer = styled.footer`
 `;
 
 const ChattingContainer = styled.section`
+	${OverFlowScrollbar}
 	width: 100%;
 	height: 100%;
 	background-color: var(--color-white);
-	overflow: auto;
-
-	&::-webkit-scrollbar {
-		width: 0.5rem;
-		height: 0rem;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--color-crusta);
-		border-radius: 0.25rem;
-	}
-
-	&::-webkit-scrollbar-track {
-		background-color: transparent;
-	}
-
-	&::-webkit-scrollbar-thumb:hover {
-		background-color: var(--color-pumpkin);
-	}
 `;
 
 const ChatWrapper = styled.div`
+	${ColumnDisplay}
 	height: calc(100% - 3.125rem);
-	display: flex;
-	flex-direction: column;
 `;

@@ -1,14 +1,17 @@
 import ChatForm from './ChatForm';
 import styled from '@emotion/styled';
+import { ChattingRoomHeader } from '../../styles/ComponentLayout';
 
-const ChatRoom: React.FC = () => {
+const ChatRoom = () => {
 	return (
 		<ChattingRoom>
-			<ChattingRoomHeader>채팅방</ChattingRoomHeader>
+			<ChatHeader>채팅방</ChatHeader>
 			<ChatForm />
 		</ChattingRoom>
 	);
 };
+
+export default ChatRoom;
 
 const ChattingRoom = styled.div`
 	width: 100%;
@@ -19,17 +22,13 @@ const ChattingRoom = styled.div`
 	/* border: 1px solid var(--color-rangoongreen); */
 `;
 
-const ChattingRoomHeader = styled.header`
+const ChatHeader = styled.header`
+	${ChattingRoomHeader}
 	width: 100%;
 	height: 3.125rem;
-	background-color: var(--color-pumpkin);
-	color: var(--color-white);
-	border-radius: 5px 5px 0px 0px;
 	font-size: var(--font-size-md);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 `;
-
-export default ChatRoom;

@@ -2,6 +2,7 @@
 import { Container, Wrapper, SideWrapper, MainWrapper } from '../styles/Layout';
 import styled from '@emotion/styled';
 import ChatRoom from '../components/chat/ChatRoom';
+import UserList from '../components/user/UserList';
 
 const ChattingRoomPage = () => {
 	return (
@@ -14,7 +15,9 @@ const ChattingRoomPage = () => {
 						<ChatRoom />
 					</ChatWrapper>
 				</MainWrapper>
-				<SideWrapper>인원 목록</SideWrapper>
+				<SideWrapper>
+					<UserList />
+				</SideWrapper>
 			</Wrapper>
 		</Container>
 	);
