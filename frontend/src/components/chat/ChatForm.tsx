@@ -90,7 +90,7 @@ const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
 	return (
 		<ChatWrapper>
 			<ChattingContainer>
-				<ChatMessage messages={messages} />
+				<ChatMessage messages={messages} username={username} />
 			</ChattingContainer>
 			<InputContainer>
 				<ChatInput
