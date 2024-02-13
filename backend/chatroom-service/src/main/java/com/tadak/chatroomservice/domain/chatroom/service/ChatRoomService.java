@@ -50,4 +50,11 @@ public class ChatRoomService {
                 .map(ChatRoomResponse::from)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteChatRoom(Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("현재 방이 존재하지 않습니다."));
+        chatRoomRepository.delete(chatRoom);
+    }
 }

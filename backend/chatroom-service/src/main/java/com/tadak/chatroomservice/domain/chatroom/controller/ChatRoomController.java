@@ -40,12 +40,21 @@ public class ChatRoomController {
     }
 
     /**
+     * 방 삭제
+     */
+    @DeleteMapping("/delete/{roomId}")
+    public ResponseEntity<Void> deleteChatRoom(@PathVariable Long roomId) {
+        chatRoomService.deleteChatRoom(roomId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
      * 방 전체 리스트 조회
      */
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomResponse>> getAllChatroom() {
+    public ResponseEntity<List<ChatRoomResponse>> getAllChatRoom() {
         List<ChatRoomResponse> chatRooms = chatRoomService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(chatRooms);
     }
-
 }

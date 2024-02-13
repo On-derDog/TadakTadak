@@ -24,7 +24,7 @@ public class ChatMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = LAZY)
     private ChatRoom chatRoom;
 
     private String username;

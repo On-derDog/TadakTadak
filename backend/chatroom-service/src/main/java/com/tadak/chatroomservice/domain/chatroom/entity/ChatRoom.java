@@ -1,5 +1,6 @@
 package com.tadak.chatroomservice.domain.chatroom.entity;
 
+import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +32,10 @@ public class ChatRoom {
     private String category;
     private Integer participation;
     private Integer capacity;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatMember> chatMembers = new ArrayList<>();
+
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
