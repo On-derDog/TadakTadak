@@ -3,7 +3,8 @@ import { UserData } from '../../interface/UserListInterface';
 
 export const getUserData = async (): Promise<UserData> => {
 	try {
-		const accessToken = localStorage.getItem('AccessToken');
+		const accessToken = localStorage.getItem('Accesstoken');
+		// console.log(accessToken);
 		if (!accessToken) {
 			throw new Error('AccessToken이 없습니다.');
 		}
@@ -11,7 +12,7 @@ export const getUserData = async (): Promise<UserData> => {
 		const response = await axios.get('http://localhost:8001/user-service/user-info', {
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
+				Accesstoken: `Bearer ${accessToken}`,
 			},
 		});
 
