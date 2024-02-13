@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
@@ -10,10 +10,12 @@ import styled from "@emotion/styled"
 import LogoSVG from "../assets/Logo.svg"
 import TadakTadakSVG from "../assets/TadakTadak.svg"
 import axios from "axios";
+import Toast from "../components/Toast";
 
 const SigninPage = () => {
     const navigate = useNavigate();
     const userInfo = useStore(UserInfoStore);
+    const [toast, setToast] = useState(false);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target;
@@ -28,14 +30,22 @@ const SigninPage = () => {
     async function onButtonClick (action:string) {
       switch(action){
         case "onSignin":
-          try {
+            console.log("button 클릭")
             const data = await AuthApis.signin(userInfo);
+            console.log(data);
             if (data) {
               navigate("/");
             }
-          } catch (error) {
-            console.error("Error during signin:", error);
-          }
+            else{
+              setToast((prev) => {
+                console.log("prev:", prev);
+                return true;
+              });
+
+              setTimeout(() => {
+                setToast(false);
+              }, 10000);
+            }
           break;
         case "onSignup":
             navigate("/signup")
@@ -72,6 +82,9 @@ const SigninPage = () => {
           <Button onClick={ () => onButtonClick("onSignup")} backgroundColor={"secondary"}  label={"회원가입"}></Button>
           <br/>
           <NaverLoginButton/>
+
+
+          {toast && <Toast messageType="loginError" type="error" />}
         </SignInContainer>  
       </SignInWrapper>
   )
