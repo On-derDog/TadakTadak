@@ -1,8 +1,8 @@
-package com.tadak.chatroomservice.domain.controller;
+package com.tadak.chatroomservice.domain.chatroom.controller;
 
-import com.tadak.chatroomservice.domain.dto.request.CreateChatroomRequest;
-import com.tadak.chatroomservice.domain.dto.response.CreateChatroomResponse;
-import com.tadak.chatroomservice.domain.service.ChatRoomService;
+import com.tadak.chatroomservice.domain.chatroom.service.ChatRoomService;
+import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,5 +28,9 @@ public class ChatRoomController {
         CreateChatroomResponse createChatroomResponse = chatRoomService.create(chatroomRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createChatroomResponse);
     }
+
+    /**
+     * 방 입장
+     */
 
 }

@@ -1,9 +1,9 @@
-package com.tadak.chatroomservice.domain.service;
+package com.tadak.chatroomservice.domain.chatroom.service;
 
-import com.tadak.chatroomservice.domain.dto.request.CreateChatroomRequest;
-import com.tadak.chatroomservice.domain.dto.response.CreateChatroomResponse;
-import com.tadak.chatroomservice.domain.entity.ChatRoom;
-import com.tadak.chatroomservice.domain.repository.ChatRoomRepository;
+import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
+import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
+import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class ChatRoomService {
     public CreateChatroomResponse create(CreateChatroomRequest chatroomRequest) {
         ChatRoom chatRoom = ChatRoom.toEntity(chatroomRequest);
         chatRoomRepository.save(chatRoom);
-        return CreateChatroomResponse.of(chatRoom);
+        return CreateChatroomResponse.from(chatRoom);
 
     }
 }

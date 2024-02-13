@@ -1,4 +1,4 @@
-package com.tadak.chatroomservice.domain.dto.request;
+package com.tadak.chatroomservice.domain.chatroom.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;

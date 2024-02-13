@@ -1,7 +1,6 @@
-package com.tadak.chatroomservice.domain.entity;
+package com.tadak.chatroomservice.domain.chatroom.entity;
 
-import com.tadak.chatroomservice.domain.dto.request.CreateChatroomRequest;
-import com.tadak.chatroomservice.domain.service.ChatRoomService;
+import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

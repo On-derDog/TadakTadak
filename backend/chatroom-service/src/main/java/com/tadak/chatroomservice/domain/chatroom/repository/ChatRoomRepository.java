@@ -1,6 +1,6 @@
-package com.tadak.chatroomservice.domain.repository;
+package com.tadak.chatroomservice.domain.chatroom.repository;
 
-import com.tadak.chatroomservice.domain.entity.ChatRoom;
+import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

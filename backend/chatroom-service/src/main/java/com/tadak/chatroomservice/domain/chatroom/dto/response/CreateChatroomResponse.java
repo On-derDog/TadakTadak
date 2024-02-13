@@ -1,6 +1,6 @@
-package com.tadak.chatroomservice.domain.dto.response;
+package com.tadak.chatroomservice.domain.chatroom.dto.response;
 
-import com.tadak.chatroomservice.domain.entity.ChatRoom;
+import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,7 +16,7 @@ public class CreateChatroomResponse {
     private Integer participation;
     private Integer capacity;
 
-    public static CreateChatroomResponse of(ChatRoom chatRoom) {
+    public static CreateChatroomResponse from(ChatRoom chatRoom) {
         return CreateChatroomResponse.builder()
                 .id(chatRoom.getId())
                 .roomName(chatRoom.getRoomName())
