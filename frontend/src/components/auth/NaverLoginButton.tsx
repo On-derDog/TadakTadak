@@ -89,6 +89,7 @@ const NaverIdLogin = styled.div`
 const NaverButtonStyles = styled.div`
   .NaverLoginButton-wrapper {
     display: flex;
+    justify-content: space-between;
   }
 
   .Logo{
@@ -96,7 +97,7 @@ const NaverButtonStyles = styled.div`
   }
 
   .btn-naver {
-    width: 300px;
+    flex: 1;
     height: 46px;
     background: #03C75A;
     border-radius: 12px;

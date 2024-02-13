@@ -85,7 +85,7 @@ export const AuthApis = {
 
       return data;
     } catch (error) {
-      console.error("API 통신 에러:", error);
+      return null;
     }
   },
 

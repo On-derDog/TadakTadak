@@ -1,36 +1,21 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputForm } from "../components/InputForm";
 import { Button } from "../components/Button";
 import { NaverLoginButton } from "../components/auth/NaverLoginButton";
 import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
-
 import { AuthApis }  from "../hooks/useAuthQuery";
+import styled from "@emotion/styled"
+import LogoSVG from "../assets/Logo.svg"
+import TadakTadakSVG from "../assets/TadakTadak.svg"
 import axios from "axios";
-
-
-const fetchDataExample = async () => {
-    instance: axios.create({
-        baseURL: "http://localhost:8001/user-service/",
-        withCredentials: true,
-      })
-
-      try {
-        AuthApis.setupInterceptors();
-        const response = await AuthApis.instance.get('/hello',  {
-            headers: { Accesstoken: `Bearer ${localStorage.getItem('Accesstoken')}` },
-          });
-        const data = response.data;
-        console.log("로그인 성공")
-        return data;
-      } catch (error) {
-      }
-  };
+import Toast from "../components/Toast";
 
 const SigninPage = () => {
     const navigate = useNavigate();
     const userInfo = useStore(UserInfoStore);
+    const [toast, setToast] = useState(false);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target;
@@ -40,20 +25,30 @@ const SigninPage = () => {
         } else if (name === 'password') {
           userInfo.updatePassword(value);
         }
-  };
+    };
 
-    const onButtonClick = (action:string) => {
+    async function onButtonClick (action:string) {
       switch(action){
         case "onSignin":
-            AuthApis.signin(userInfo);
-            navigate("/");
-            break;
+            console.log("button 클릭")
+            const data = await AuthApis.signin(userInfo);
+            console.log(data);
+            if (data) {
+              navigate("/");
+            }
+            else{
+              setToast((prev) => {
+                console.log("prev:", prev);
+                return true;
+              });
+
+              setTimeout(() => {
+                setToast(false);
+              }, 10000);
+            }
+          break;
         case "onSignup":
             navigate("/signup")
-            break;
-        case "onSignupKakao":
-            fetchDataExample();
-            // navigate("/signupnaver")
             break;
         default:
             console.error("error")
@@ -61,33 +56,62 @@ const SigninPage = () => {
     }
 
     return(
-      <main className="SigninPage-wrapper">
-        <section className="SiginPage-container">
-          <h1> TadakTadak Logo </h1>
-          <>It's SigninPage!</>
+      <SignInWrapper>
+        <SignInContainer>
+          <LogoContainer>
+            <figure className="Logo"> 
+              <img src={LogoSVG} alt="logo"/>
+              <figcaption>
+                <img src={TadakTadakSVG} alt="TadakTadak"/>
+              </figcaption>
+            </figure>
+          </LogoContainer>
           <br/>    
 
           {/* email input */}
-          <InputForm onChange={onChange}type = 'text' title="이메일"  name="email" value={userInfo?.email} placeholder="이메일을 입력해주세요"/>
+          <InputForm onChange={onChange}type = 'text' title="이메일" imgSVG="Email"  name="email" value={userInfo?.email} placeholder="이메일을 입력해주세요"/>
 
           <br/>            
-
           {/* pw input */}
           <InputForm onChange={onChange}
-          type = 'password' title="비밀번호"  name="password" value={userInfo?.password} placeholder="비밀번호을 입력해주세요"/>
+          type = 'password' imgSVG="Password" title="비밀번호"  name="password" value={userInfo?.password} placeholder="비밀번호을 입력해주세요"/>
 
           <br/>
-          <Button onClick={ () => onButtonClick("onSignin")} label={"로그인"}></Button>
+          <Button onClick={ () => onButtonClick("onSignin")} backgroundColor={"primary"} label={"로그인"}></Button>
           <br/>
-          <Button onClick={ () => onButtonClick("onSignup")} label={"회원가입"}></Button>
-          <br/>
-          <Button onClick={ () => onButtonClick("onSignupKakao")} label={"테스트용코드"}></Button>
+          <Button onClick={ () => onButtonClick("onSignup")} backgroundColor={"secondary"}  label={"회원가입"}></Button>
           <br/>
           <NaverLoginButton/>
-        </section>  
-      </main>
+
+
+          {toast && <Toast messageType="loginError" type="error" />}
+        </SignInContainer>  
+      </SignInWrapper>
   )
   
 };
 
 export default SigninPage;
+
+const SignInWrapper = styled.main`
+  display: flex;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+`
+
+const SignInContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+`
+
+const LogoContainer = styled.figure`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 191px;
+  }
+`
