@@ -2,6 +2,7 @@ package com.tadak.chatroomservice.domain.chatroom.service;
 
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.EnterChatRoomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +41,13 @@ public class ChatRoomService {
 
         // 중간 테이블에 member 저장
         chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
+    }
+
+    public List<ChatRoomResponse> findAll() {
+        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+        
+        return chatRooms.stream()
+                .map(ChatRoomResponse::from)
+                .collect(Collectors.toList());
     }
 }
