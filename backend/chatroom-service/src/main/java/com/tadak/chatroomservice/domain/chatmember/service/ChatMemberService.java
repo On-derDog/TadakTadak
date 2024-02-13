@@ -25,4 +25,9 @@ public class ChatMemberService {
 
         chatMemberRepository.save(chatMember);
     }
+
+    public ChatMember findByChatMember(Long chatMemberId) {
+        return chatMemberRepository.findById(chatMemberId)
+                .orElseThrow(() -> new IllegalArgumentException("현재 방 유저가 존재하지 않습니다."));
+    }
 }

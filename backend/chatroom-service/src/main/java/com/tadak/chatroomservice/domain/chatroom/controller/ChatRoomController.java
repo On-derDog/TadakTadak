@@ -1,7 +1,8 @@
 package com.tadak.chatroomservice.domain.chatroom.controller;
 
-import com.tadak.chatroomservice.domain.chatroom.dto.request.EnterChatRoomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.service.ChatRoomService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
@@ -34,7 +35,7 @@ public class ChatRoomController {
      * 방 입장
      */
     @PostMapping("/room-in/{roomId}")
-    public ResponseEntity<Void> enter(@PathVariable Long roomId, @RequestBody EnterChatRoomRequest chatRoomRequest){
+    public ResponseEntity<Void> enter(@PathVariable Long roomId, @RequestBody ChatRoomRequest chatRoomRequest){
         chatRoomService.enter(roomId, chatRoomRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -56,5 +57,16 @@ public class ChatRoomController {
     public ResponseEntity<List<ChatRoomResponse>> getAllChatRoom() {
         List<ChatRoomResponse> chatRooms = chatRoomService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(chatRooms);
+    }
+
+    /**
+     * 강퇴
+     */
+    @PostMapping("/rooms/{roomId}/kicked/{chatMemberId}")
+    public ResponseEntity<KickMemberResponse> kickedMember(@PathVariable Long roomId, @PathVariable Long chatMemberId,
+                                                           @RequestBody ChatRoomRequest chatRoomRequest){
+        chatRoomService.kickMember(roomId, chatMemberId, chatRoomRequest.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

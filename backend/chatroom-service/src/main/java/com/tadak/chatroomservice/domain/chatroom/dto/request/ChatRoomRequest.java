@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EnterChatRoomRequest {
+public class ChatRoomRequest {
 
     private String username;
 }

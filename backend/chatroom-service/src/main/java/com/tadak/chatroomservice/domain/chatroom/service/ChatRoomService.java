@@ -1,7 +1,8 @@
 package com.tadak.chatroomservice.domain.chatroom.service;
 
+import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
-import com.tadak.chatroomservice.domain.chatroom.dto.request.EnterChatRoomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
@@ -35,9 +36,13 @@ public class ChatRoomService {
 
     }
 
-    public void enter(Long roomId, EnterChatRoomRequest chatRoomRequest) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("현재 방이 존재하지 않습니다."));
+    public void enter(Long roomId, ChatRoomRequest chatRoomRequest) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+
+        //TODO: ChatMember 상태가 KICKED인 Member에 대해서 들어오지 못하도록 설정
+
+
+        // TODO: 방 입장시 채팅방 인원 변화
 
         // 중간 테이블에 member 저장
         chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
@@ -53,8 +58,36 @@ public class ChatRoomService {
 
     @Transactional
     public void deleteChatRoom(Long roomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("현재 방이 존재하지 않습니다."));
+        ChatRoom chatRoom = findByChatRoom(roomId);
         chatRoomRepository.delete(chatRoom);
+    }
+
+    @Transactional
+    public void kickMember(Long roomId, Long chatMemberId, String owner) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+        ChatMember chatMember = chatMemberService.findByChatMember(chatMemberId);
+        // 방장 검증
+        validOwner(owner, chatRoom.getOwner());
+
+        // 상태를 KICKED로 변경
+        chatMember.updateState();
+    }
+
+    /**
+     * 방장 검증
+     */
+    private void validOwner(String owner, String chatRoomOwner) {
+        if (!owner.equals(chatRoomOwner)){
+            throw new IllegalArgumentException("현재 방장이 아닙니다.");
+        }
+    }
+
+    /**
+     * 방 찾기
+
+     */
+    private ChatRoom findByChatRoom(Long roomId) {
+        return chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("현재 방이 존재하지 않습니다."));
     }
 }

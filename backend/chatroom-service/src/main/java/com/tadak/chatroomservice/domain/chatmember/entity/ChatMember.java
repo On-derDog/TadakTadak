@@ -32,4 +32,8 @@ public class ChatMember {
     @Builder.Default
     @Enumerated(STRING)
     private ChatMemberType type = IN_ROOM;
+
+    public void updateState() {
+        this.type = KICKED;
+    }
 }
