@@ -4,10 +4,7 @@ import com.tadak.userservice.domain.email.dto.EmailResponseDto;
 import com.tadak.userservice.domain.email.service.EmailService;
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
-import com.tadak.userservice.domain.member.dto.response.CheckEmailResponseDto;
-import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
-import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
-import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
+import com.tadak.userservice.domain.member.dto.response.*;
 import com.tadak.userservice.domain.member.entity.Member;
 import com.tadak.userservice.domain.member.entity.Role;
 import com.tadak.userservice.domain.member.entity.State;
@@ -31,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -184,5 +182,22 @@ public class MemberService {
                 .refreshToken(refreshToken)
                 .email(email)
                 .build();
+    }
+
+    public MemberResponseDto findByMember(String token) {
+
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        Authentication authentication = tokenProvider.getAuthentication(token);
+        Member member = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER_ERROR));
+
+        log.info("member id = {}", member.getId());
+        log.info("member email = {}", member.getEmail());
+        log.info("member username = {}", member.getUsername());
+
+        return MemberResponseDto.from(member);
     }
 }
