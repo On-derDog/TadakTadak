@@ -6,14 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateChatroomRequest {
+@Builder
+public class EnterChatRoomRequest {
 
-    private String roomName;
-    private String description;
-    private String owner;
-    private String category;
-    private Integer capacity;
+    private String username;
 }
