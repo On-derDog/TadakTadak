@@ -65,8 +65,8 @@ public class ChatRoomController {
     @PostMapping("/rooms/{roomId}/kicked/{chatMemberId}")
     public ResponseEntity<KickMemberResponse> kickedMember(@PathVariable Long roomId, @PathVariable Long chatMemberId,
                                                            @RequestBody ChatRoomRequest chatRoomRequest){
-        chatRoomService.kickMember(roomId, chatMemberId, chatRoomRequest.getUsername());
+        KickMemberResponse kickMemberResponse = chatRoomService.kickMember(roomId, chatMemberId, chatRoomRequest.getUsername());
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(kickMemberResponse);
     }
 }

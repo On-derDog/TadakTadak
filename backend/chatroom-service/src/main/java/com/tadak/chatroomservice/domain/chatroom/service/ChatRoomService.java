@@ -4,6 +4,7 @@ import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
@@ -63,7 +64,7 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public void kickMember(Long roomId, Long chatMemberId, String owner) {
+    public KickMemberResponse kickMember(Long roomId, Long chatMemberId, String owner) {
         ChatRoom chatRoom = findByChatRoom(roomId);
         ChatMember chatMember = chatMemberService.findByChatMember(chatMemberId);
         // 방장 검증
@@ -71,6 +72,8 @@ public class ChatRoomService {
 
         // 상태를 KICKED로 변경
         chatMember.updateState();
+
+        return KickMemberResponse.from(chatMember);
     }
 
     /**
