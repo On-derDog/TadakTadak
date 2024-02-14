@@ -4,17 +4,26 @@ import { Favorite } from "../components/welcome/Favorite";
 import Logo from "../assets/Logo.svg"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Wrapper, SideWrapper } from "../styles/Layout";
+import { Container, Wrapper, SideWrapper, FlexCenterWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
 import { useStore } from "zustand"
 import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
 
+interface ModalProps {
+    onClose: () => void;
+  }
+
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
+    const [CreateRoom, setCreateRoom] = useState(false);
     const userinfo = useStore(UserInfoStore);
 
     const navigate = useNavigate();
+
+    const handleCreateRoom= () =>{
+        setCreateRoom(true);
+    }
 
     const handleLoginClick = () => {
         if (Logintext === "Login") {
@@ -25,8 +34,8 @@ const WelcomePage = () => {
     };
 
     return (
-        <Wrapper>
-            <Container>
+        <Container>
+            <Wrapper>
                 <SideWrapper>
                     <Sidebar.wrapper
                     top={
@@ -49,7 +58,7 @@ const WelcomePage = () => {
             {/* Menu */}
             <div className="Menu-list">
                 <Sidebar.item text="Home" type="list" svg="Home" />
-                <Sidebar.item text="Create" type="list" svg="Create" />
+                <Sidebar.item text="Create" type="list" svg="Create" onClick={handleCreateRoom} />
             </div>
 
             <Sidebar.item text="Category 1" type="category" />
@@ -65,13 +74,24 @@ const WelcomePage = () => {
         bottom={<Sidebar.item text={Logintext} type="list" svg="Logout" onClick={handleLoginClick} />}
         />
         </SideWrapper>
-        
-        <RoomPreviewList/>
 
-        </Container>
-    </Wrapper>
+        <FlexCenterWrapper>
+            <RoomPreviewList/>
+            {CreateRoom && <Modal onClose={() => setCreateRoom(false)} />}
+        </FlexCenterWrapper>
+        </Wrapper>
+    </Container>
   );
 };
+
+const Modal = ({ onClose }: ModalProps) => {
+    return (
+      <div>
+        <p>This is a modal content.</p>
+        <button onClick={onClose}>Close Modal</button>
+      </div>
+    );
+  };
 
 export default WelcomePage;
 
@@ -86,6 +106,13 @@ const UsernameText = styled.div`
     padding: 0px 16px;
 `;
 
+const SideContainer = styled.section`
+`
+
 const LogoDiv = styled.div`
     padding: 12px 16px 0;
+`
+
+const MainContainer = styled.section`
+  display: flex;
 `

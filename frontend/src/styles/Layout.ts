@@ -27,13 +27,13 @@ export const SideWrapper = styled.div`
 	margin: 0.5rem 0rem 0.5rem 0rem;
 `;
 
-export const FlexCenterWrapper = `
+export const FlexCenterWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
 `;
 
-export const ChattingRoomHeader = `
+export const ChattingRoomHeader = styled.div`
 	background-color: var(--color-pumpkin);
 	color: var(--color-white);
 	border-radius: 5px 5px 0px 0px;

@@ -3,27 +3,33 @@ import styled from '@emotion/styled';
 
 const RoomPreviewList = () => {
 	return (
-		<main className="ChattingRoomList-wrapper">
-			<section className="ChattingRoomList-container">
-				<h3>This is ChattingRoomList Component!</h3>
+		<RoomPreviewListWrapper>
+			<RoomPreviewListSection>
 
 				{/* Grid */}
         <ChattingRoomListGridContainer>
-          {Array.from({ length: 16 }).map((_, index) => (
+          {Array.from({ length: 20 }).map((_, index) => (
             <RoomPreview key={index} />
           ))}
         </ChattingRoomListGridContainer>
 
-			</section>
-		</main>
+			</RoomPreviewListSection>
+		</RoomPreviewListWrapper>
 	)
 };
 
 export default RoomPreviewList;
 
 
+const RoomPreviewListWrapper = styled.main`
+
+`
+
+const RoomPreviewListSection = styled.section`
+`
+
 export const ChattingRoomListGridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 `;
