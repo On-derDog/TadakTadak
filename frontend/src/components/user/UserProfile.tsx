@@ -44,20 +44,20 @@ const SmallText = styled.span`
 	color: var(--color-orient);
 `;
 
-const DUMMY_DATA: UserList[] = [
-	{
-		userName: 'k546kh@naver.com',
-	},
-	{
-		userName: 'k546kh@gmail.com',
-	},
-	{
-		userName: 'k546h@knu.ac.kr',
-	},
-	{
-		userName: 'k546kh@nate.com',
-	},
-	{
-		userName: 'k546kh@daum.net',
-	},
-];
+// const DUMMY_DATA: UserList[] = [
+// 	{
+// 		userName: 'k546kh@naver.com',
+// 	},
+// 	{
+// 		userName: 'k546kh@gmail.com',
+// 	},
+// 	{
+// 		userName: 'k546h@knu.ac.kr',
+// 	},
+// 	{
+// 		userName: 'k546kh@nate.com',
+// 	},
+// 	{
+// 		userName: 'k546kh@daum.net',
+// 	},
+// ];
