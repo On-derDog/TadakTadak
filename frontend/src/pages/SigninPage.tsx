@@ -9,7 +9,6 @@ import { AuthApis }  from "../hooks/useAuthQuery";
 import styled from "@emotion/styled"
 import LogoSVG from "../assets/Logo.svg"
 import TadakTadakSVG from "../assets/TadakTadak.svg"
-import axios from "axios";
 import Toast from "../components/common/Toast";
 
 const SigninPage = () => {
@@ -30,10 +29,12 @@ const SigninPage = () => {
     async function onButtonClick (action:string) {
       switch(action){
         case "onSignin":
-            console.log("button 클릭")
-            const data = await AuthApis.signin(userInfo);
-            console.log(data);
-            if (data === null) {
+          const response = await AuthApis.signin(userInfo);
+          console.log("button 클릭", response)
+          if ( response.headers.accesstoken) {
+              navigate("/");
+          }
+          else{
               setToast((prev) => {
                 console.log("prev:", prev);
                 // 토스트 알림 초기화
@@ -41,12 +42,10 @@ const SigninPage = () => {
                   setToast(false);
                 }, 10000);
 
-                return true;
-            })}
-            else{
-              navigate("/");
-            }break;
-        case "onSignup":
+              return true;
+          })}
+        break;
+      case "onSignup":
             navigate("/signup")
             break;
         default:

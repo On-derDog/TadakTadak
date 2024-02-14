@@ -66,12 +66,10 @@ export const AuthApis = {
 
 
   signin: async (userInfo:UserInfo) => {
-    try {
       const response = await AuthApis.instance.post('/login', {
         email: userInfo.email,
         password: userInfo.password,
       });
-      const data = response.data;
 
       const rawAccessToken = response.headers.get('Accesstoken');
       const rawRefreshToken = response.headers.get('RefreshToken');
@@ -84,10 +82,7 @@ export const AuthApis = {
       localStorage.setItem('Accesstoken', Accesstoken);
       localStorage.setItem('Refreshtoken', Refreshtoken);
 
-      return data;
-    } catch (error) {
-      return null;
-    }
+      return response;
   },
 
   //refreshToken
