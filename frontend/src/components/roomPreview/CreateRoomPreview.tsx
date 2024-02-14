@@ -52,6 +52,11 @@ const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoo
 export default CreateRoomPreview;
 
 const CreateRoomPreviewWrapper = styled.main`
+  z-index:1000;
+  position: fixed; 
+  top: 50%; 
+  left: 30%; 
+  transform: translate(-50%, -50%); 
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
