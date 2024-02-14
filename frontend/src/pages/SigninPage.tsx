@@ -33,20 +33,19 @@ const SigninPage = () => {
             console.log("button 클릭")
             const data = await AuthApis.signin(userInfo);
             console.log(data);
-            if (data) {
-              navigate("/");
-            }
-            else{
+            if (data === null) {
               setToast((prev) => {
                 console.log("prev:", prev);
-                return true;
-              });
+                // 토스트 알림 초기화
+                setTimeout(() => {
+                  setToast(false);
+                }, 10000);
 
-              setTimeout(() => {
-                setToast(false);
-              }, 10000);
-            }
-          break;
+                return true;
+            })}
+            else{
+              navigate("/");
+            }break;
         case "onSignup":
             navigate("/signup")
             break;
