@@ -39,13 +39,14 @@ export const AuthApis = {
     return { data, isLoading, error };
   },
 
-  signup: async (userInfo:UserInfo, passwordConfirm: string) => {
+  signup: async (userInfo:UserInfo, passwordConfirm: string, authCode: string) => {
     try {
       const response = await AuthApis.instance.post('/signup', {
         username: userInfo.username,
         email: userInfo.email,
         password: userInfo.password,
         passwordConfirm: passwordConfirm,
+        authCode: authCode
       });
       const data = response.data;
 
