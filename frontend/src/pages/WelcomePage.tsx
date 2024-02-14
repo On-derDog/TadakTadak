@@ -1,6 +1,6 @@
-import { Sidebar } from "../components/Sidebar";
-import { Search } from "../components/Search";
-import { Favorite } from "../components/Favorite";
+import { Sidebar } from "../components/welcome/Sidebar";
+import { Search } from "../components/welcome/Search";
+import { Favorite } from "../components/welcome/Favorite";
 import Logo from "../assets/Logo.svg"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

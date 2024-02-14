@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { InputForm } from "../components/InputForm";
-import { Button } from "../components/Button";
+import { InputForm } from "../components/auth/InputForm";
+import { Button } from "../components/common/Button";
 import { NaverLoginButton } from "../components/auth/NaverLoginButton";
 import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
@@ -10,7 +10,7 @@ import styled from "@emotion/styled"
 import LogoSVG from "../assets/Logo.svg"
 import TadakTadakSVG from "../assets/TadakTadak.svg"
 import axios from "axios";
-import Toast from "../components/Toast";
+import Toast from "../components/common/Toast";
 
 const SigninPage = () => {
     const navigate = useNavigate();

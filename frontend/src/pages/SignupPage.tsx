@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { InputForm } from "../components/InputForm";
-import { Button } from "../components/Button";
+import { InputForm } from "../components/auth/InputForm";
+import { Button } from "../components/common/Button";
 import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
 import styled from '@emotion/styled';

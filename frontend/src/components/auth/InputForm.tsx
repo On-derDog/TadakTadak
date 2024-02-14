@@ -1,6 +1,6 @@
-import EmailSVG from "../assets/Email.svg"
-import UserSVG from "../assets/User.svg"
-import PasswordSVG from "../assets/Password.svg"
+import EmailSVG from "../../assets/Email.svg"
+import UserSVG from "../../assets/User.svg"
+import PasswordSVG from "../../assets/Password.svg"
 
 import styled from "@emotion/styled";
 
