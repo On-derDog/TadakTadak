@@ -27,6 +27,7 @@ const StyledButton = styled.button`
   border-radius: 10px;
   cursor: pointer;
   transition: 0.3s ease;
+  align-items: center;
 
   &:hover {
     background-color: #000000;

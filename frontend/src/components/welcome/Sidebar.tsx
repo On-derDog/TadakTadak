@@ -17,7 +17,6 @@ interface SidebarItemProps {
 }
 
 
-
 export const Sidebar ={
   wrapper: ({ top, bottom }: SidebarProps) => (
     <SidebarWrapper>

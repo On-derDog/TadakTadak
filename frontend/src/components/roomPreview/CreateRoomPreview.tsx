@@ -1,6 +1,9 @@
 import React from 'react';
 import { InputForm } from '../../components/auth/InputForm';
 import axios from 'axios';
+import styled from "@emotion/styled"
+import Close from "../../assets/Close.svg"
+import { Button } from '../common/Button';
 
 interface CreateRoomPreviewProps {
   onClose: () => void;
@@ -25,8 +28,10 @@ const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoo
   };
 
   return (
-    <section>
-      <button onClick={onClose}>Close Modal</button>
+    <CreateRoomPreviewWrapper>
+      <StyledCloseButton onClick={onClose} >
+        <img src={Close} alt='Close' width="16px"/>
+      </StyledCloseButton>
       <h1>Create Room</h1>
       <InputForm type="text" name="roomName" value={newRoom.roomName} title="방 이름" onChange={handleInputChange} />
       <InputForm type="text" name="description" value={newRoom.description} title="방 설명" onChange={handleInputChange} />
@@ -38,9 +43,35 @@ const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoo
         title="인원 수"
         onChange={handleInputChange}
       />
-      <button onClick={handleAddRoomClick}>Create Room</button>
-    </section>
+      <br/>
+      <Button onClick={handleAddRoomClick} label="Create Room" backgroundColor="primary"/>
+    </CreateRoomPreviewWrapper>
   );
 };
 
 export default CreateRoomPreview;
+
+const CreateRoomPreviewWrapper = styled.main`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  padding: 2rem;
+  border: solid 1px var(--color-wildsand);
+  border-radius: 0.3125rem;
+  background: var(----white-color, #FFF);
+
+  h1 {
+    color: #000;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+`
+
+const StyledCloseButton = styled.button`
+  display: flex;
+  margin-left: auto;
+  border: none;
+  background: none;
+`;

@@ -36,13 +36,13 @@ export const InputForm = ({ type, name, value, onChange, title, imgSVG, ...rest 
           </picture>
         )}
         {type === 'number' ? (
-          <select name={name} value={value} onChange={onChange}>
-            {[1, 2, 3, 4, 5].map((option) => (
+          <StyledSelect name={name} value={value} onChange={onChange}>
+            {[1, 2, 3, 4, 5, 6].map((option) => (
               <option key={option} value={option}>
-                {option}
+                {option} 명
               </option>
             ))}
-          </select>
+          </StyledSelect>
         ) : (
           <input type={type} name={name} value={value} onChange={onChange} {...rest} />
         )}
@@ -79,3 +79,10 @@ const InputFormContainer = styled.div`
 
   border: solid 1px var(--color-crusta)
 `
+
+const StyledSelect = styled.select`
+  width: 100%;
+  border: none;
+  padding: 8px;
+  outline: none;
+`;
