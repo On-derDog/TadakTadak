@@ -5,6 +5,8 @@ import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.repository.ChatMemberRepository;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
+import com.tadak.chatroomservice.domain.chatroom.exception.AlreadyKickedException;
+import com.tadak.chatroomservice.domain.chatroom.exception.CannotTransferOwnershipException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatMemberException;
 import com.tadak.chatroomservice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -60,8 +62,15 @@ public class ChatMemberService {
 
     // ChatMember 가지고 오기
     public ChatMember getChatMemberByChatRoomAndUsername(ChatRoom chatRoom, String username) {
-        return chatMemberRepository.findByChatRoomAndUsername(chatRoom, username)
+        ChatMember chatMember = chatMemberRepository.findByChatRoomAndUsername(chatRoom, username)
                 .orElseThrow(() -> new NotFoundChatMemberException(ErrorCode.NOT_FOUND_CHAT_MEMBER_ERROR));
+
+        // 방장 위임 할 경우 exception
+        if (chatMember.getType() == ChatMemberType.KICKED){
+            throw new CannotTransferOwnershipException(ErrorCode.CANNOT_TRANSFER_OWNER_ERROR);
+        }
+
+        return chatMember;
     }
 
 }

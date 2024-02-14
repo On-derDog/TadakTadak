@@ -52,10 +52,12 @@ public class ChatRoomService {
             throw new AlreadyKickedException(ErrorCode.KICKED_MEMBER_ERROR);
         }
 
+        // 채팅방에 없는 member 일 경우 save 로직
         if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
             return chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
         }
 
+        // 채팅방에 member가 있을 경우 get으로 가져와서 전달
         ChatMember existingChatMember = chatMemberService.getChatMemberByChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername());
         return EnterChatMemberResponse.of(existingChatMember, chatRoom.getParticipation());
     }
