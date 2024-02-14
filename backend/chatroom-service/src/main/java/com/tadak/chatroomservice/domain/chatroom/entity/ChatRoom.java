@@ -52,4 +52,12 @@ public class ChatRoom {
                 .capacity(chatroomRequest.getCapacity())
                 .build();
     }
+
+    public void increaseParticipation() {
+        this.participation++;
+    }
+
+    public void decreaseParticipation() {
+        this.participation--;
+    }
 }

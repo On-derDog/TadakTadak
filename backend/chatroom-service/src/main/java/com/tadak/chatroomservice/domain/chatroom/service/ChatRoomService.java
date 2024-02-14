@@ -37,13 +37,15 @@ public class ChatRoomService {
 
     }
 
+    @Transactional
     public void enter(Long roomId, ChatRoomRequest chatRoomRequest) {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
-        //TODO: ChatMember 상태가 KICKED인 Member에 대해서 들어오지 못하도록 설정
+        if (chatMemberService.validEnterChatMember(chatRoom, chatRoomRequest.getUsername())){
+            throw new IllegalArgumentException("이미 강퇴당한 채팅방 입니다.");
+        }
 
-
-        // TODO: 방 입장시 채팅방 인원 변화
+        chatRoom.increaseParticipation();
 
         // 중간 테이블에 member 저장
         chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
@@ -72,6 +74,8 @@ public class ChatRoomService {
 
         // 상태를 KICKED로 변경
         chatMember.updateState();
+        // 채팅방 인원 감소
+        chatRoom.decreaseParticipation();
 
         return KickMemberResponse.from(chatMember);
     }
@@ -87,7 +91,6 @@ public class ChatRoomService {
 
     /**
      * 방 찾기
-
      */
     private ChatRoom findByChatRoom(Long roomId) {
         return chatRoomRepository.findById(roomId)

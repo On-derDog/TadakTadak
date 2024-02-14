@@ -1,6 +1,7 @@
 package com.tadak.chatroomservice.domain.chatmember.service;
 
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
+import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.repository.ChatMemberRepository;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,18 @@ public class ChatMemberService {
     public ChatMember findByChatMember(Long chatMemberId) {
         return chatMemberRepository.findById(chatMemberId)
                 .orElseThrow(() -> new IllegalArgumentException("현재 방 유저가 존재하지 않습니다."));
+    }
+
+    public boolean validEnterChatMember(ChatRoom chatRoom, String username) {
+
+        ChatMember chatMember = chatMemberRepository.findByChatRoomAndUsername(chatRoom, username);
+
+        if (chatMember == null){
+            return false;
+        }
+
+        log.info("chatMember type = {}", chatMember.getType());
+
+        return chatMember.getType() == ChatMemberType.KICKED;
     }
 }
