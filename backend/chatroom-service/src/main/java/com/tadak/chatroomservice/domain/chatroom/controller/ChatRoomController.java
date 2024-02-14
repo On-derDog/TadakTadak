@@ -45,8 +45,8 @@ public class ChatRoomController {
      * 방 삭제
      */
     @DeleteMapping("/delete/{roomId}")
-    public ResponseEntity<Void> deleteChatRoom(@PathVariable Long roomId) {
-        chatRoomService.deleteChatRoom(roomId);
+    public ResponseEntity<Void> deleteChatRoom(@PathVariable Long roomId, @RequestBody ChatRoomRequest chatRoomRequest) {
+        chatRoomService.deleteChatRoom(roomId, chatRoomRequest.getUsername());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -67,7 +67,12 @@ public class ChatRoomController {
     public ResponseEntity<KickMemberResponse> kickedMember(@PathVariable Long roomId, @PathVariable Long chatMemberId,
                                                            @RequestBody ChatRoomRequest chatRoomRequest){
         KickMemberResponse kickMemberResponse = chatRoomService.kickMember(roomId, chatMemberId, chatRoomRequest.getUsername());
-
         return ResponseEntity.status(HttpStatus.OK).body(kickMemberResponse);
     }
+
+    /**
+     * 방장 위임
+     */
+//    @PatchMapping("/rooms/{roomId}/changeOwner/{username}")
+//    public
 }

@@ -29,7 +29,7 @@ public class ChatMemberService {
         // 채팅방 인원 증가
         chatRoom.increaseParticipation();
 
-        return EnterChatMemberResponse.from(chatMember);
+        return EnterChatMemberResponse.of(chatMember, chatRoom.getParticipation());
     }
 
     public ChatMember findByChatMember(Long chatMemberId) {

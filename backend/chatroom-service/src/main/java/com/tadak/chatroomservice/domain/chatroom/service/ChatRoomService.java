@@ -52,7 +52,7 @@ public class ChatRoomService {
         }
 
         ChatMember existingChatMember = chatMemberService.getChatMemberByChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername());
-        return EnterChatMemberResponse.from(existingChatMember);
+        return EnterChatMemberResponse.of(existingChatMember, chatRoom.getParticipation());
     }
 
     public List<ChatRoomResponse> findAll() {
@@ -64,24 +64,27 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public void deleteChatRoom(Long roomId) {
+    public void deleteChatRoom(Long roomId, String username) {
         ChatRoom chatRoom = findByChatRoom(roomId);
+
+        validOwner(username, chatRoom.getOwner());
+
         chatRoomRepository.delete(chatRoom);
     }
 
     @Transactional
-    public KickMemberResponse kickMember(Long roomId, Long chatMemberId, String owner) {
+    public KickMemberResponse kickMember(Long roomId, Long chatMemberId, String username) {
         ChatRoom chatRoom = findByChatRoom(roomId);
         ChatMember chatMember = chatMemberService.findByChatMember(chatMemberId);
         // 방장 검증
-        validOwner(owner, chatRoom.getOwner());
+        validOwner(username, chatRoom.getOwner());
 
         // 상태를 KICKED로 변경
         chatMember.updateState();
         // 채팅방 인원 감소
         chatRoom.decreaseParticipation();
 
-        return KickMemberResponse.from(chatMember);
+        return KickMemberResponse.of(chatMember, chatRoom);
     }
 
     /**

@@ -15,12 +15,14 @@ public class EnterChatMemberResponse {
     private Long chatMemberId;
     private Long chatRoomId;
     private String username;
+    private Integer participation;
 
-    public static EnterChatMemberResponse from(ChatMember chatMember){
+    public static EnterChatMemberResponse of(ChatMember chatMember, Integer participation){
         return EnterChatMemberResponse.builder()
                 .chatMemberId(chatMember.getId())
                 .chatRoomId(chatMember.getChatRoom().getId())
                 .username(chatMember.getUsername())
+                .participation(participation)
                 .build();
     }
 }
