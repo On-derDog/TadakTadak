@@ -9,6 +9,8 @@ import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
 import { useStore } from "zustand"
 import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
+import { InputForm } from "../components/auth/InputForm";
+import { Button } from "../components/common/Button";
 
 interface ModalProps {
     onClose: () => void;
@@ -86,10 +88,13 @@ const WelcomePage = () => {
 
 const Modal = ({ onClose }: ModalProps) => {
     return (
-      <div>
-        <p>This is a modal content.</p>
+      <section>
+        <h1>Create Room</h1>
+        <InputForm type="text" name=""
+        value=""
+        />
         <button onClick={onClose}>Close Modal</button>
-      </div>
+      </section>
     );
   };
 

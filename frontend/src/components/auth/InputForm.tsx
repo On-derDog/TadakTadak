@@ -4,6 +4,15 @@ import PasswordSVG from "../../assets/Password.svg"
 
 import styled from "@emotion/styled";
 
+interface InputFormProps {
+  type: string;
+  name: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
+  title: string;
+  imgSVG: string;
+}
 
 function ChangeSVG(imgSVG: string){
   switch(imgSVG){
@@ -16,7 +25,7 @@ function ChangeSVG(imgSVG: string){
   }
 }
 
-export const InputForm = ({ type, name, value, onChange, placeholder, title, imgSVG, ...rest }) => {
+export const InputForm = ({ type, name, value, onChange, title, imgSVG, ...rest }: InputFormProps) => {
   return (
     <InputFormWrapper>
       <p>{title}</p>
@@ -28,7 +37,6 @@ export const InputForm = ({ type, name, value, onChange, placeholder, title, img
         type={type}
         name={name}
         value={value}
-        placeholder={placeholder}
         onChange={onChange}
         {...rest}
       />
