@@ -1,7 +1,7 @@
-import { ChattingRoom } from "./ChattingRoom";
+import { RoomPreview } from "./RoomPreview";
 import styled from '@emotion/styled';
 
-const ChattingRoomList: React.FC = () => {
+const RoomPreviewList = () => {
 	return (
 		<main className="ChattingRoomList-wrapper">
 			<section className="ChattingRoomList-container">
@@ -10,7 +10,7 @@ const ChattingRoomList: React.FC = () => {
 				{/* Grid */}
         <ChattingRoomListGridContainer>
           {Array.from({ length: 16 }).map((_, index) => (
-            <ChattingRoom key={index} />
+            <RoomPreview key={index} />
           ))}
         </ChattingRoomListGridContainer>
 
@@ -19,7 +19,7 @@ const ChattingRoomList: React.FC = () => {
 	)
 };
 
-export default ChattingRoomList;
+export default RoomPreviewList;
 
 
 export const ChattingRoomListGridContainer = styled.div`

@@ -8,6 +8,7 @@ import { Container, Wrapper, SideWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
 import { useStore } from "zustand"
+import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
@@ -24,8 +25,8 @@ const WelcomePage = () => {
     };
 
     return (
-        <Container>
-            <Wrapper>
+        <Wrapper>
+            <Container>
                 <SideWrapper>
                     <Sidebar.wrapper
                     top={
@@ -64,8 +65,11 @@ const WelcomePage = () => {
         bottom={<Sidebar.item text={Logintext} type="list" svg="Logout" onClick={handleLoginClick} />}
         />
         </SideWrapper>
+        
+        <RoomPreviewList/>
+
+        </Container>
     </Wrapper>
-    </Container>
   );
 };
 
