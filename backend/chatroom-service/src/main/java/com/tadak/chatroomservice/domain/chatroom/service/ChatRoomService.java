@@ -1,5 +1,6 @@
 package com.tadak.chatroomservice.domain.chatroom.service;
 
+import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
@@ -32,23 +33,26 @@ public class ChatRoomService {
         // 방 생성
         chatRoomRepository.save(chatRoom);
         // 방 입장
-        chatMemberService.enterMember(chatRoom, chatRoom.getOwner());
-        return CreateChatroomResponse.from(chatRoom);
+        EnterChatMemberResponse enterChatMemberResponse = chatMemberService.enterMember(chatRoom, chatRoom.getOwner());
+
+        return CreateChatroomResponse.of(chatRoom, enterChatMemberResponse);
 
     }
 
     @Transactional
-    public void enter(Long roomId, ChatRoomRequest chatRoomRequest) {
+    public EnterChatMemberResponse enter(Long roomId, ChatRoomRequest chatRoomRequest) {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
         if (chatMemberService.validEnterChatMember(chatRoom, chatRoomRequest.getUsername())){
             throw new IllegalArgumentException("이미 강퇴당한 채팅방 입니다.");
         }
 
-        chatRoom.increaseParticipation();
+        if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
+            return chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
+        }
 
-        // 중간 테이블에 member 저장
-        chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
+        ChatMember existingChatMember = chatMemberService.getChatMemberByChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername());
+        return EnterChatMemberResponse.from(existingChatMember);
     }
 
     public List<ChatRoomResponse> findAll() {

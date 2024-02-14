@@ -21,7 +21,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class ChatRoom {
 
-    private static Integer DEFAULT_PARTICIPATION = 1;
+    private static Integer DEFAULT_PARTICIPATION = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

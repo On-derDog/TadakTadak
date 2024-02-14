@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
     ChatMember findByChatRoomAndUsername(ChatRoom chatRoom, String username);
+
+    boolean existsByChatRoomAndUsername(ChatRoom chatRoom, String username);
 }

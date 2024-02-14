@@ -1,5 +1,6 @@
 package com.tadak.chatroomservice.domain.chatroom.controller;
 
+import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
@@ -35,9 +36,9 @@ public class ChatRoomController {
      * 방 입장
      */
     @PostMapping("/room-in/{roomId}")
-    public ResponseEntity<Void> enter(@PathVariable Long roomId, @RequestBody ChatRoomRequest chatRoomRequest){
-        chatRoomService.enter(roomId, chatRoomRequest);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<EnterChatMemberResponse> enter(@PathVariable Long roomId, @RequestBody ChatRoomRequest chatRoomRequest){
+        EnterChatMemberResponse enter = chatRoomService.enter(roomId, chatRoomRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(enter);
     }
 
     /**

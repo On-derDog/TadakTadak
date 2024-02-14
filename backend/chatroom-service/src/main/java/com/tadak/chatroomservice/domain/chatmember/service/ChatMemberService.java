@@ -1,5 +1,6 @@
 package com.tadak.chatroomservice.domain.chatmember.service;
 
+import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.repository.ChatMemberRepository;
@@ -18,13 +19,17 @@ public class ChatMemberService {
     private final ChatMemberRepository chatMemberRepository;
 
     @Transactional
-    public void enterMember(ChatRoom chatRoom, String username) {
+    public EnterChatMemberResponse enterMember(ChatRoom chatRoom, String username) {
         ChatMember chatMember = ChatMember.builder()
                 .chatRoom(chatRoom)
                 .username(username)
                 .build();
 
         chatMemberRepository.save(chatMember);
+        // 채팅방 인원 증가
+        chatRoom.increaseParticipation();
+
+        return EnterChatMemberResponse.from(chatMember);
     }
 
     public ChatMember findByChatMember(Long chatMemberId) {
@@ -43,5 +48,15 @@ public class ChatMemberService {
         log.info("chatMember type = {}", chatMember.getType());
 
         return chatMember.getType() == ChatMemberType.KICKED;
+    }
+
+    // 존재하면 true, 존재하지 않으면 false
+    public boolean existsChatRoomAndUsername(ChatRoom chatRoom, String username) {
+        return chatMemberRepository.existsByChatRoomAndUsername(chatRoom, username);
+    }
+
+    // ChatMember 가지고 오기
+    public ChatMember getChatMemberByChatRoomAndUsername(ChatRoom chatRoom, String username) {
+        return chatMemberRepository.findByChatRoomAndUsername(chatRoom, username);
     }
 }
