@@ -24,7 +24,7 @@ export const SideWrapper = styled.div`
 	width: 11.5rem;
 	height: calc(100% - 1rem);
 	background-color: var(--color-shark);
-	padding: 0.5rem 0rem 0.5rem 0rem;
+	margin: 0.5rem 0rem 0.5rem 0rem;
 `;
 
 export const FlexCenterWrapper = `
