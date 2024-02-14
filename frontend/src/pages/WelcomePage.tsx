@@ -9,23 +9,31 @@ import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
 import { useStore } from "zustand"
 import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
-import { InputForm } from "../components/auth/InputForm";
-import { Button } from "../components/common/Button";
-
-interface ModalProps {
-    onClose: () => void;
-  }
+import CreateRoomPreview from "../components/roomPreview/CreateRoomPreview";
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
     const [CreateRoom, setCreateRoom] = useState(false);
     const userinfo = useStore(UserInfoStore);
+    const [newRoom, setNewRoom] = useState({ roomName: '', hashtag: '', capacity: 1 });
 
     const navigate = useNavigate();
 
     const handleCreateRoom= () =>{
         setCreateRoom(true);
     }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewRoom((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }));
+    };
+
+    const handleAddRoom = () => {
+        addRoom(newRoom);
+        setNewRoom({ roomName: '', hashtag: '', capacity: 1 });
+    };
 
     const handleLoginClick = () => {
         if (Logintext === "Login") {
@@ -51,7 +59,9 @@ const WelcomePage = () => {
                 TadakTadak
             </ServiceText>
             <UsernameText>
-            {userinfo.username || '유저명'}
+            
+            {/* API로 가져오게 변경필요 => 새로고침시 사라져서 Create에도 문제 */}
+            {userinfo.username || '유저명'} 
             </UsernameText>
 
             {/* Search */}
@@ -79,24 +89,12 @@ const WelcomePage = () => {
 
         <FlexCenterWrapper>
             <RoomPreviewList/>
-            {CreateRoom && <Modal onClose={() => setCreateRoom(false)} />}
+            {CreateRoom && <CreateRoomPreview onClose={() => setCreateRoom(false)} onAddRoom={handleAddRoom} newRoom={newRoom} handleInputChange={handleInputChange} username={userinfo.username} />}
         </FlexCenterWrapper>
         </Wrapper>
     </Container>
   );
 };
-
-const Modal = ({ onClose }: ModalProps) => {
-    return (
-      <section>
-        <h1>Create Room</h1>
-        <InputForm type="text" name=""
-        value=""
-        />
-        <button onClick={onClose}>Close Modal</button>
-      </section>
-    );
-  };
 
 export default WelcomePage;
 
@@ -119,5 +117,5 @@ const LogoDiv = styled.div`
 `
 
 const MainContainer = styled.section`
-  display: flex;
+    display: flex;
 `

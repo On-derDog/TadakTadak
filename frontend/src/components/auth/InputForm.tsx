@@ -30,16 +30,22 @@ export const InputForm = ({ type, name, value, onChange, title, imgSVG, ...rest 
     <InputFormWrapper>
       <p>{title}</p>
       <InputFormContainer>
-      <picture>
-        <img src={ChangeSVG(imgSVG)} alt="img"/>
-      </picture>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        {...rest}
-      />
+        {imgSVG && (
+          <picture>
+            <img src={ChangeSVG(imgSVG)} alt="img" />
+          </picture>
+        )}
+        {type === 'number' ? (
+          <select name={name} value={value} onChange={onChange}>
+            {[1, 2, 3, 4, 5].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input type={type} name={name} value={value} onChange={onChange} {...rest} />
+        )}
       </InputFormContainer>
     </InputFormWrapper>
   );
