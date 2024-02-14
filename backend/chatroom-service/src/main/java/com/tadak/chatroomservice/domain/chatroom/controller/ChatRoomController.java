@@ -2,6 +2,7 @@ package com.tadak.chatroomservice.domain.chatroom.controller;
 
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.ChangeOwnerResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.service.ChatRoomService;
@@ -73,6 +74,10 @@ public class ChatRoomController {
     /**
      * 방장 위임
      */
-//    @PatchMapping("/rooms/{roomId}/changeOwner/{username}")
-//    public
+    @PatchMapping("/rooms/{roomId}/change-owner/{username}")
+    public ResponseEntity<ChangeOwnerResponse> changeOwner(@PathVariable Long roomId, @PathVariable String username,
+                                                           @RequestBody ChatRoomRequest chatRoomRequest){
+        ChangeOwnerResponse changeOwnerResponse = chatRoomService.changeOwner(roomId, username, chatRoomRequest.getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body(changeOwnerResponse);
+    }
 }

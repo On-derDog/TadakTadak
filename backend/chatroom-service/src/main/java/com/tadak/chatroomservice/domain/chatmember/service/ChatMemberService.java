@@ -39,7 +39,8 @@ public class ChatMemberService {
 
     public boolean validEnterChatMember(ChatRoom chatRoom, String username) {
 
-        ChatMember chatMember = chatMemberRepository.findByChatRoomAndUsername(chatRoom, username);
+        ChatMember chatMember = chatMemberRepository.findByChatRoomAndUsername(chatRoom, username)
+                .orElse(null);
 
         if (chatMember == null){
             return false;
@@ -57,6 +58,8 @@ public class ChatMemberService {
 
     // ChatMember 가지고 오기
     public ChatMember getChatMemberByChatRoomAndUsername(ChatRoom chatRoom, String username) {
-        return chatMemberRepository.findByChatRoomAndUsername(chatRoom, username);
+        return chatMemberRepository.findByChatRoomAndUsername(chatRoom, username)
+                .orElseThrow(() -> new IllegalArgumentException("현재 채팅방에 존재하지 않는 username 입니다."));
     }
+
 }

@@ -4,6 +4,7 @@ import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberR
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.ChangeOwnerResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
@@ -102,5 +103,22 @@ public class ChatRoomService {
     private ChatRoom findByChatRoom(Long roomId) {
         return chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("현재 방이 존재하지 않습니다."));
+    }
+
+    /**
+     * @param roomId : 방 ID
+     * @param username : Owner가 될 대상
+     * @param owner : 현재 Owner
+     */
+    @Transactional
+    public ChangeOwnerResponse changeOwner(Long roomId, String username, String owner) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+        validOwner(owner, chatRoom.getOwner());
+
+        chatMemberService.getChatMemberByChatRoomAndUsername(chatRoom, username);
+
+        chatRoom.updateOwner(username);
+
+        return ChangeOwnerResponse.from(chatRoom);
     }
 }

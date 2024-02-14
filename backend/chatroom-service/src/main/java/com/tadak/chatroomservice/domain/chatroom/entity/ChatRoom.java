@@ -60,4 +60,8 @@ public class ChatRoom {
     public void decreaseParticipation() {
         this.participation--;
     }
+
+    public void updateOwner(String username) {
+        this.owner = username;
+    }
 }
