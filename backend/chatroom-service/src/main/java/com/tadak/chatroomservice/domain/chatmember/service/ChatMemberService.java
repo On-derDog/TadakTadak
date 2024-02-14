@@ -5,6 +5,8 @@ import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.repository.ChatMemberRepository;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
+import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatMemberException;
+import com.tadak.chatroomservice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class ChatMemberService {
 
     public ChatMember findByChatMember(Long chatMemberId) {
         return chatMemberRepository.findById(chatMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("현재 방 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundChatMemberException(ErrorCode.NOT_FOUND_CHAT_MEMBER_ERROR));
     }
 
     public boolean validEnterChatMember(ChatRoom chatRoom, String username) {
@@ -59,7 +61,7 @@ public class ChatMemberService {
     // ChatMember 가지고 오기
     public ChatMember getChatMemberByChatRoomAndUsername(ChatRoom chatRoom, String username) {
         return chatMemberRepository.findByChatRoomAndUsername(chatRoom, username)
-                .orElseThrow(() -> new IllegalArgumentException("현재 채팅방에 존재하지 않는 username 입니다."));
+                .orElseThrow(() -> new NotFoundChatMemberException(ErrorCode.NOT_FOUND_CHAT_MEMBER_ERROR));
     }
 
 }

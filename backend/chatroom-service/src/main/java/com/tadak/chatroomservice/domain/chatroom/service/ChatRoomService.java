@@ -7,10 +7,14 @@ import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChangeOwnerResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
+import com.tadak.chatroomservice.domain.chatroom.exception.AlreadyKickedException;
+import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatRoomException;
+import com.tadak.chatroomservice.domain.chatroom.exception.NotRoomOwnerException;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
+import com.tadak.chatroomservice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,7 +49,7 @@ public class ChatRoomService {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
         if (chatMemberService.validEnterChatMember(chatRoom, chatRoomRequest.getUsername())){
-            throw new IllegalArgumentException("이미 강퇴당한 채팅방 입니다.");
+            throw new AlreadyKickedException(ErrorCode.KICKED_MEMBER_ERROR);
         }
 
         if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
@@ -93,7 +97,7 @@ public class ChatRoomService {
      */
     private void validOwner(String owner, String chatRoomOwner) {
         if (!owner.equals(chatRoomOwner)){
-            throw new IllegalArgumentException("현재 방장이 아닙니다.");
+            throw new NotRoomOwnerException(ErrorCode.NOT_OWNER_ERROR);
         }
     }
 
@@ -102,7 +106,7 @@ public class ChatRoomService {
      */
     private ChatRoom findByChatRoom(Long roomId) {
         return chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("현재 방이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundChatRoomException(ErrorCode.NOT_FOUND_CHATROOM_ERROR));
     }
 
     /**

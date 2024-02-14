@@ -3,6 +3,8 @@ package com.tadak.chatroomservice.domain.chatroom.entity;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -26,11 +28,20 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @Size(max = 30, message = "방 제목은 30자를 초과할 수 없습니다.")
     private String roomName;
+    @NotNull
+    @Size(max = 255, message = "방 설명은 255자를 넘길 수 없습니다.")
     private String description;
+    @NotNull
     private String owner;
+    @NotNull
+    @Size(max = 10, message = "카테고리 글자는 10자를 넘길 수 없습니다.")
     private String category;
+    @NotNull
     private Integer participation;
+    @NotNull
     private Integer capacity;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE, orphanRemoval = true)
