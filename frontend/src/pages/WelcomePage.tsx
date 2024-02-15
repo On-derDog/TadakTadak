@@ -2,7 +2,7 @@ import { Sidebar } from "../components/welcome/Sidebar";
 import { Search } from "../components/welcome/Search";
 import { Favorite } from "../components/welcome/Favorite";
 import Logo from "../assets/Logo.svg"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Wrapper, SideWrapper, FlexCenterWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
@@ -10,6 +10,7 @@ import { UserInfoStore } from "../stores/UserInfoStore";
 import { useStore } from "zustand"
 import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
 import CreateRoomPreview from "../components/roomPreview/CreateRoomPreview";
+import { getUserData } from "../hooks/react-query/useUserData";
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
@@ -42,6 +43,20 @@ const WelcomePage = () => {
             setLoginText("Logout");
         }
     };
+
+    // username 불러오기
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const data = await getUserData();
+            userinfo.updateUsername(data.username);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     return (
         <Container>
