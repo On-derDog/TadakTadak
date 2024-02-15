@@ -5,6 +5,7 @@ import com.example.chattingservice.domain.chat.dto.response.ChatEnterLeaveRespon
 import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.ChatService;
+import com.example.chattingservice.domain.chat.service.UserService;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ChatController {
 
     private final ChatService chatService;
+    private final UserService userService;
 
     @MessageMapping("/chat/{roomId}/send-message")
     @SendTo("/topic/public/{roomId}")
@@ -34,21 +36,20 @@ public class ChatController {
             @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId
     ) {
-
         return chatService.saveChat(chatRequest, roomId);
     }
 
     @MessageMapping("/chat/{roomId}/enter")
-    @SendTo("/topic/public/{roomId}")
+    @SendTo({"/topic/public/{roomId}"})
     public ChatEnterLeaveResponse enter(
             @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
 
-        headerAccessor.getSessionAttributes().put("username", chatRequest.getSender());
+        headerAccessor.getSessionAttributes().put("username", chatRequest.getUsername());
         headerAccessor.getSessionAttributes().put("roomId", roomId);
-
+        userService.moveUser(chatRequest.getUsername(),roomId.toString());
         return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
     }
 

@@ -1,6 +1,6 @@
 package com.example.chattingservice.domain.chat.dto.request;
 
-import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRequest {
-    private String content;
+public class UserInformationRequest {
     private String username;
-    private Long userId;
-    private MessageType type;
-    private LocalDateTime createdAt;
+    private String roomName;
 }

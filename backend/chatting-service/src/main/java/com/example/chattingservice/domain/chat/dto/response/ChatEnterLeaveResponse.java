@@ -19,7 +19,7 @@ public class ChatEnterLeaveResponse {
 
     public static ChatEnterLeaveResponse of(ChatRequest chatRequest, LocalDateTime createdAt) {
         return ChatEnterLeaveResponse.builder()
-                .sender(chatRequest.getSender())
+                .sender(chatRequest.getUsername())
                 .type(chatRequest.getType())
                 .createdAt(createdAt)
                 .build();
