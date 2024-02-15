@@ -10,12 +10,10 @@ import Logo from '../assets/Logo.svg';
 import Toast from '../components/Toast';
 import { Container, Wrapper, SideWrapper } from '../styles/Layout';
 import styled from '@emotion/styled';
-import { useAuthStore } from '../stores/useAuthStore';
 
 const WelcomePage = () => {
-	// const [loginText, setLoginText] = useState('Login');
-	// const [showToast, setShowToast] = useState(false);
-	const { loginText, showToast, setLoginText, setShowToast } = useAuthStore();
+	const [loginText, setLoginText] = useState('Login');
+	const [showToast, setShowToast] = useState(false);
 	const { connect, unconnect } = useLoginWebSocket();
 	const navigate = useNavigate();
 	const accessToken = localStorage.getItem('Accesstoken');
@@ -45,7 +43,7 @@ const WelcomePage = () => {
 	useEffect(() => {
 		if (isLoading) return;
 		if (isError) {
-			// Handle error fetching user data
+			console.error('Error fetching user data:', isError);
 			return;
 		}
 		if (!clientConnected.current) {
