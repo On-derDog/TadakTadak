@@ -6,14 +6,10 @@ import { useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChatStore } from '../../stores/useChatStore';
 import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
-<<<<<<< HEAD
 import { FlexCenterWrapper } from '../../styles/Layout';
 import { bodyMessage } from '../../interface/CommonInterface';
 import { UserDataProps } from '../../interface/UserListInterface';
 import { StompClient } from '../../interface/ChatInterface';
-=======
-import { bodyMessage } from '../../interface/CommonInterface';
->>>>>>> cc8b37f (Feat: Message Body Type 추가)
 
 const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
 	const { messages, inputMessage, setMessages, setInputMessage } = useChatStore();
@@ -49,11 +45,7 @@ const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
 
 	const subscribe = () => {
 		if (client.current) {
-<<<<<<< HEAD
 			client.current.subscribe(`/topic/public/${chatroom_id}`, (message: bodyMessage) => {
-=======
-			client.current.subscribe('/topic/public/5', (message: bodyMessage) => {
->>>>>>> cc8b37f (Feat: Message Body Type 추가)
 				const receivedMessage = JSON.parse(message.body);
 				setMessages((prevMessages) => [
 					...prevMessages,
