@@ -4,7 +4,6 @@ import VideoBox from './VideoBox';
 const VideoCall = () => {
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
-	const remoteVideo = useRef<HTMLVideoElement>(null);
 	const myId = Math.floor(Math.random() * 1000).toString();
 	const pcRef = useRef<RTCPeerConnection>(
 		new RTCPeerConnection({
@@ -25,6 +24,7 @@ const VideoCall = () => {
 	const [videoEnabled, setVideoEnabled] = useState(true);
 	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+	const [remoteId, setRemoteId] = useState(null);
 
 	// 미디어 가져오기 함수
 	const getMedia = async () => {
@@ -116,6 +116,7 @@ const VideoCall = () => {
 			};
 
 			socketRef.current?.send(JSON.stringify(message));
+			console.log('myId : ', myId);
 		};
 
 		socketRef.current.onmessage = handleSocketMessage;
@@ -165,6 +166,8 @@ const VideoCall = () => {
 				break;
 			case 'ice':
 				console.log('Received ICE Candidate');
+				console.log(message.fromUserId);
+				setRemoteId(message.fromUserId);
 				pcRef.current
 					?.addIceCandidate(new RTCIceCandidate(message.candidate))
 					.then(() => {
@@ -188,8 +191,8 @@ const VideoCall = () => {
 				alignItems: 'center',
 			}}
 		>
-			<VideoBox id="localvideo" stream={localStream} />
-			<VideoBox id="remotevideo" stream={remoteStream} />
+			<VideoBox id="localvideo" stream={localStream} userId={myId} />
+			<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
 		</div>
 	);
 };

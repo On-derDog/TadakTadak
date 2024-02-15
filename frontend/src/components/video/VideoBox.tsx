@@ -4,9 +4,10 @@ import styled from '@emotion/styled';
 interface VideoBoxProps {
 	id: string;
 	stream: MediaStream | null;
+	userId: string | null;
 }
 
-const VideoBox: React.FC<VideoBoxProps> = ({ id, stream }) => {
+const VideoBox: React.FC<VideoBoxProps> = ({ id, stream, userId }) => {
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
@@ -23,7 +24,7 @@ const VideoBox: React.FC<VideoBoxProps> = ({ id, stream }) => {
 				ref={videoRef}
 				autoPlay
 			/>
-			<VideoTitel>{id}</VideoTitel>
+			<VideoTitel>{userId}</VideoTitel>
 		</VideoBoxWrapper>
 	);
 };
