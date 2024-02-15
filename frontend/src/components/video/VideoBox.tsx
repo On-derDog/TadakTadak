@@ -1,40 +1,27 @@
-import { useEffect, useRef } from 'react';
-import styled from '@emotion/styled';
+import React, { useRef, useEffect } from 'react';
 
 interface VideoBoxProps {
 	id: string;
 	stream: MediaStream | null;
-	isLocal: boolean;
 }
 
-const VideoBox: React.FC<VideoBoxProps> = ({ id, stream, isLocal }) => {
+const VideoBox: React.FC<VideoBoxProps> = ({ id, stream }) => {
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
-		if (videoRef.current && stream) {
+		if (stream && videoRef.current) {
 			videoRef.current.srcObject = stream;
 		}
 	}, [stream]);
 
 	return (
-		<VideoBoxWrapper>
-			<Video
-				id={id}
-				style={{ width: 200, height: 200, backgroundColor: 'black' }}
-				ref={videoRef}
-				autoPlay
-				muted={isLocal}
-			/>
-		</VideoBoxWrapper>
+		<video
+			id={id}
+			style={{ width: 200, height: 200, backgroundColor: 'black' }}
+			ref={videoRef}
+			autoPlay
+		/>
 	);
 };
 
 export default VideoBox;
-
-const VideoBoxWrapper = styled.div`
-	/* VideoBox 스타일링을 위한 CSS 추가 가능 */
-`;
-
-const Video = styled.video`
-	/* 비디오 스타일링을 위한 CSS 추가 가능 */
-`;

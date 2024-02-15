@@ -3,55 +3,48 @@ import VideoBox from './VideoBox';
 
 const VideoCall = () => {
 	const socketRef = useRef<WebSocket>();
-	const myVideoRef = useRef<HTMLVideoElement>(null);
-	const remoteVideoRef = useRef<HTMLVideoElement>(null);
+	const myVideo = useRef<HTMLVideoElement>(null);
+	const remoteVideo = useRef<HTMLVideoElement>(null);
 	const myId = Math.floor(Math.random() * 1000).toString();
 	const pcRef = useRef<RTCPeerConnection>(
 		new RTCPeerConnection({
 			iceServers: [
 				{
-					urls: 'stun:stun.l.google.com:19302',
+					urls: [
+						'stun:stun.l.google.com:19302',
+						'stun:stun1.l.google.com:19302',
+						'stun:stun2.l.google.com:19302',
+						'stun:stun3.l.google.com:19302',
+						'stun:stun4.l.google.com:19302',
+					],
 				},
 			],
 		}),
 	);
-
 	const [audioEnabled, setAudioEnabled] = useState(true);
 	const [videoEnabled, setVideoEnabled] = useState(true);
+	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
+	// 미디어 가져오기 함수 정의
 	const getMedia = async () => {
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
 				video: videoEnabled,
 				audio: audioEnabled,
 			});
+			setLocalStream(stream);
 
-			if (myVideoRef.current) {
-				myVideoRef.current.srcObject = stream;
+			if (myVideo.current) {
+				myVideo.current.srcObject = stream;
 			}
 
 			stream.getTracks().forEach((track) => {
 				pcRef.current?.addTrack(track, stream);
 			});
 
-			pcRef.current.onicecandidate = (e) => {
-				if (e.candidate && socketRef.current) {
-					console.log('send candidate');
-					const message = {
-						fromUserId: myId,
-						type: 'ice',
-						roomId: '1',
-						candidate: e.candidate,
-					};
-					socketRef.current.send(JSON.stringify(message));
-				}
-			};
-
-			pcRef.current.ontrack = (e) => {
-				if (remoteVideoRef.current) {
-					remoteVideoRef.current.srcObject = e.streams[0];
-				}
-			};
+			pcRef.current.onicecandidate = handleIceCandidate;
+			pcRef.current.ontrack = handleTrack;
 
 			createOffer();
 		} catch (e) {
@@ -59,8 +52,9 @@ const VideoCall = () => {
 		}
 	};
 
+	// Offer 생성 함수 정의
 	const createOffer = async () => {
-		console.log('create Offer');
+		console.log('Creating Offer...');
 		try {
 			const sdp = await pcRef.current.createOffer();
 			await pcRef.current.setLocalDescription(sdp);
@@ -74,21 +68,22 @@ const VideoCall = () => {
 			};
 
 			socketRef.current?.send(JSON.stringify(message));
-			console.log('sent the offer');
+			console.log('Offer sent');
 		} catch (e) {
-			console.error(e);
+			console.error('Error creating Offer:', e);
 		}
 	};
 
+	// Answer 생성 함수 정의
 	const createAnswer = async (offerSdp: RTCSessionDescriptionInit) => {
-		console.log('createAnswer');
+		console.log('Creating Answer...');
 		try {
 			await pcRef.current.setRemoteDescription(new RTCSessionDescription(offerSdp));
 
 			const answerSdp = await pcRef.current.createAnswer();
 			await pcRef.current.setLocalDescription(answerSdp);
 
-			console.log('sent the answer');
+			console.log('Sending Answer...');
 
 			const message = {
 				fromUserId: myId,
@@ -100,10 +95,11 @@ const VideoCall = () => {
 
 			socketRef.current?.send(JSON.stringify(message));
 		} catch (e) {
-			console.error(e);
+			console.error('Error creating Answer:', e);
 		}
 	};
 
+	// WebSocket 이벤트 핸들러 함수 정의
 	useEffect(() => {
 		socketRef.current = new WebSocket('ws://localhost:8080/signal/1');
 		getMedia();
@@ -122,34 +118,7 @@ const VideoCall = () => {
 			socketRef.current?.send(JSON.stringify(message));
 		};
 
-		socketRef.current.onmessage = (event) => {
-			const message = JSON.parse(event.data);
-			switch (message.type) {
-				case 'offer':
-					console.log('recv Offer');
-					createAnswer(message.sdp);
-					break;
-				case 'answer':
-					console.log('recv Answer');
-					pcRef.current?.setRemoteDescription(new RTCSessionDescription(message.sdp));
-					break;
-				case 'ice':
-					console.log('recv ICE Candidate');
-					pcRef.current
-						?.addIceCandidate(new RTCIceCandidate(message.candidate))
-						.then(() => {
-							console.log('Ice Candidate added successfully.');
-							console.log(message.candidate);
-						})
-						.catch((error) => {
-							console.error('Error adding Ice Candidate:', error);
-						});
-					break;
-				default:
-					break;
-			}
-		};
-
+		socketRef.current.onmessage = handleSocketMessage;
 		socketRef.current.onclose = () => {
 			console.log('WebSocket disconnected');
 		};
@@ -161,6 +130,56 @@ const VideoCall = () => {
 		};
 	}, []);
 
+	// ICE Candidate 이벤트 핸들러 함수 정의
+	const handleIceCandidate = (e: RTCPeerConnectionIceEvent) => {
+		if (e.candidate && socketRef.current) {
+			console.log('Sending ICE Candidate...');
+			const message = {
+				fromUserId: myId,
+				type: 'ice',
+				roomId: '1',
+				candidate: e.candidate,
+			};
+			socketRef.current.send(JSON.stringify(message));
+		}
+	};
+
+	// Track 이벤트 핸들러 함수 정의
+	const handleTrack = (e: RTCTrackEvent) => {
+		if (e.streams && e.streams[0]) {
+			setRemoteStream(e.streams[0]);
+		}
+	};
+
+	// WebSocket 메시지 이벤트 핸들러 함수 정의
+	const handleSocketMessage = (event: MessageEvent) => {
+		const message = JSON.parse(event.data);
+		switch (message.type) {
+			case 'offer':
+				console.log('Received Offer');
+				createAnswer(message.sdp);
+				break;
+			case 'answer':
+				console.log('Received Answer');
+				pcRef.current?.setRemoteDescription(new RTCSessionDescription(message.sdp));
+				break;
+			case 'ice':
+				console.log('Received ICE Candidate');
+				pcRef.current
+					?.addIceCandidate(new RTCIceCandidate(message.candidate))
+					.then(() => {
+						console.log('ICE Candidate added successfully.');
+					})
+					.catch((error) => {
+						console.error('Error adding ICE Candidate:', error);
+					});
+				break;
+			default:
+				break;
+		}
+	};
+
+	// 렌더링
 	return (
 		<div
 			id="Wrapper"
@@ -170,9 +189,8 @@ const VideoCall = () => {
 				alignItems: 'center',
 			}}
 		>
-			<VideoBox id="localvideo" isLocal />
-
-			<VideoBox id="remotevideo" isLocal={undefined} />
+			<VideoBox id="localvideo" stream={localStream} />
+			<VideoBox id="remotevideo" stream={remoteStream} />
 		</div>
 	);
 };
