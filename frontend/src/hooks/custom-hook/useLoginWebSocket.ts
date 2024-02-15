@@ -9,7 +9,7 @@ export const useLoginWebSocket = () => {
 	const { setUserList } = useUserListStore();
 	const client = useRef<StompClient | null>(null);
 
-	const connect = () => {
+	const connect = (username: string) => {
 		if (client.current) {
 			client.current.deactivate();
 		}
@@ -18,6 +18,9 @@ export const useLoginWebSocket = () => {
 			onConnect: () => {
 				console.log('success');
 				userSubscribe();
+				if (username) {
+					publishUser(username, '');
+				}
 			},
 			debug: (str: string) => {
 				console.log(str);

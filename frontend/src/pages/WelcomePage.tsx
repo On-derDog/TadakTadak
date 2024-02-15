@@ -10,11 +10,13 @@ import Logo from '../assets/Logo.svg';
 import Toast from '../components/Toast';
 import { Container, Wrapper, SideWrapper } from '../styles/Layout';
 import styled from '@emotion/styled';
+import { useAuthStore } from '../stores/useAuthStore';
 
 const WelcomePage = () => {
-	const [Logintext, setLoginText] = useState('Login');
-	const [showToast, setShowToast] = useState(false);
-	const { connect, publishUser, unconnect } = useLoginWebSocket();
+	// const [loginText, setLoginText] = useState('Login');
+	// const [showToast, setShowToast] = useState(false);
+	const { loginText, showToast, setLoginText, setShowToast } = useAuthStore();
+	const { connect, unconnect } = useLoginWebSocket();
 	const navigate = useNavigate();
 	const accessToken = localStorage.getItem('Accesstoken');
 	const isLoggedIn = accessToken !== null;
@@ -32,16 +34,13 @@ const WelcomePage = () => {
 	});
 
 	useEffect(() => {
-		if (isLoggedIn) {
+		if (isLoggedIn && userData) {
 			setLoginText('Logout');
-			connect();
-			if (clientConnected.current && userData) {
-				publishUser(userData.username, '');
-			}
+			connect(userData.username);
 		} else {
 			setLoginText('Login');
 		}
-	}, [isLoggedIn]);
+	}, [isLoggedIn, userData]);
 
 	useEffect(() => {
 		if (isLoading) return;
@@ -55,7 +54,7 @@ const WelcomePage = () => {
 	}, [isLoading, isError]);
 
 	const handleLoginClick = () => {
-		if (Logintext === 'Login') {
+		if (loginText === 'Login') {
 			navigate('/signin');
 		} else {
 			localStorage.removeItem('Accesstoken');
@@ -106,7 +105,7 @@ const WelcomePage = () => {
 							}
 							bottom={
 								<Sidebar.item
-									text={Logintext}
+									text={loginText}
 									type="list"
 									svg="Logout"
 									onClick={handleLoginClick}
