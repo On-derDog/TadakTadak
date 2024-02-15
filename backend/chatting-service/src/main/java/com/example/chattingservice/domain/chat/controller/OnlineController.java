@@ -5,6 +5,7 @@ import com.example.chattingservice.domain.chat.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
@@ -15,7 +16,9 @@ public class OnlineController {
 
 
     @MessageMapping("/users")
-    public void showUsers(UserInformationRequest userInformationRequest) {
+    public void showUsers(UserInformationRequest userInformationRequest,
+    SimpMessageHeaderAccessor headerAccessor) {
+        headerAccessor.getSessionAttributes().put("username",userInformationRequest.getUsername());
        userService.newUserLogin(userInformationRequest);
     }
 }

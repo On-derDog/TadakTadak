@@ -54,10 +54,7 @@ public class ChatController {
         return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
     }
 
-    @KafkaListener(topics="enter",groupId = "chatting-consumer")
-    public void enterListener(Object data){
-        System.out.println(data);
-    }
+
 
     @GetMapping("/chat/{roomId}/messages")
     @ResponseBody
