@@ -4,19 +4,21 @@ import axios from 'axios';
 import styled from "@emotion/styled"
 import Close from "../../assets/Close.svg"
 import { Button } from '../common/Button';
+import { RoomInfo } from '../../stores/useRoomStore';
 
 interface CreateRoomPreviewProps {
   onClose: () => void;
   onAddRoom: () => void;
+  roominfo: RoomInfo;
   username: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
   newRoom: { roomName: string; description:string; owner:string; category: string; capacity: number; };
 }
 
-const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoom, newRoom, username, handleInputChange }) => {
+const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoom, roominfo, username, handleInputChange }) => {
   const handleAddRoomClick = async () => {
     try {
-      const roomWithOwner = { ...newRoom, owner: username };
+      const roomWithOwner = { ...roominfo, owner: username };
       console.log(roomWithOwner);
       await axios.post('http://localhost:8002/chatroom-service/create', roomWithOwner);
 
@@ -27,19 +29,23 @@ const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoo
     }
   };
 
+  const handleCloseClick = () => {
+    onClose();
+  }
+
   return (
     <CreateRoomPreviewWrapper>
-      <StyledCloseButton onClick={handleAllRoomClick} >
+      <StyledCloseButton onClick={handleCloseClick} >
         <img src={Close} alt='Close' width="16px"/>
       </StyledCloseButton>
       <h1>Create Room</h1>
-      <InputForm type="text" name="roomName" value={newRoom.roomName} title="방 이름" onChange={handleInputChange} />
-      <InputForm type="text" name="description" value={newRoom.description} title="방 설명" onChange={handleInputChange} />
-      <InputForm type="text" name="category" value={newRoom.category} title="해시태그" onChange={handleInputChange} />
+      <InputForm type="text" name="roomName" value={roominfo.roomName} title="방 이름" onChange={handleInputChange} />
+      <InputForm type="text" name="description" value={roominfo.description} title="방 설명" onChange={handleInputChange} />
+      <InputForm type="text" name="hashtag" value={roominfo.hashtag} title="해시태그" onChange={handleInputChange} />
       <InputForm
         type="number"
         name="capacity"
-        value={newRoom.capacity.toString()}
+        value={roominfo.capacity.toString()}
         title="인원 수"
         onChange={handleInputChange}
       />
@@ -64,7 +70,7 @@ const CreateRoomPreviewWrapper = styled.main`
   padding: 2rem;
   border: solid 1px var(--color-wildsand);
   border-radius: 0.3125rem;
-  background: var(----white-color, #FFF);
+  background: var(--color-white);
 
   h1 {
     color: #000;

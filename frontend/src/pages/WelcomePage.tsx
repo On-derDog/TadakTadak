@@ -7,16 +7,18 @@ import { useNavigate } from "react-router-dom";
 import { Container, Wrapper, SideWrapper, FlexCenterWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
+import { RoomInfo } from "../stores/useRoomStore"
 import { useStore } from "zustand"
 import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
 import CreateRoomPreview from "../components/roomPreview/CreateRoomPreview";
 import { getUserData } from "../hooks/react-query/useUserData";
+import { GetAllRoomsApis } from "../hooks/useGetAllRoom"
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
     const [CreateRoom, setCreateRoom] = useState(false);
     const userinfo = useStore(UserInfoStore);
-    const [newRoom, setNewRoom] = useState({ roomName: '', category: '', capacity: 1 });
+    const roominfo = useStore(RoomInfo);
 
     const navigate = useNavigate();
 
@@ -25,15 +27,9 @@ const WelcomePage = () => {
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewRoom((prev) => ({
-            ...prev,
-            [e.target.name]: e.target.value,
-        }));
-    };
-
-    const handleAddRoom = () => {
-        addRoom(newRoom);
-        setNewRoom({ roomName: '', category: '', capacity: 1 });
+        const { name, value } = e.target;
+        roominfo.update(name, value);
+        console.log(roominfo);
     };
 
     const handleLoginClick = () => {
@@ -57,27 +53,15 @@ const WelcomePage = () => {
     
         fetchData();
       }, []);
-
-      const handleAllRoomClick = async () => {
-        try {
-          const res = await axios.get('http://localhost:8002/chatroom-service/rooms');
-          setRooms(res.data); // Assuming the response contains the array of rooms
-        } catch (error) {
-          console.error('Error fetching rooms:', error);
-          setError(error.message);
-        }
-      };
     
       useEffect(() => {
-        // Fetch rooms initially
-        handleAllRoomClick();
-    
-        // Fetch rooms every 5 seconds (adjust the interval as needed)
+        const res = GetAllRoomsApis.getAllRooms();
+        console.log(res);
+
         const intervalId = setInterval(() => {
-          handleAllRoomClick();
-        }, 5000);
+            GetAllRoomsApis.getAllRooms();
+        }, 10000);
     
-        // Clear the interval on component unmount
         return () => clearInterval(intervalId);
       }, []);
 
@@ -125,10 +109,10 @@ const WelcomePage = () => {
         />
         </SideWrapper>
 
-        <FlexCenterWrapper>
+        <MainContainer>
             <RoomPreviewList/>
-            {CreateRoom && <CreateRoomPreview onClose={() => setCreateRoom(false)} onAddRoom={handleAddRoom} newRoom={newRoom} handleInputChange={handleInputChange} username={userinfo.username} />}
-        </FlexCenterWrapper>
+            {CreateRoom && <CreateRoomPreview onClose={() => setCreateRoom(false)}handleInputChange={handleInputChange} username={userinfo.username} roominfo={roominfo} />}
+        </MainContainer>
         </Wrapper>
     </Container>
   );
@@ -152,8 +136,8 @@ const SideContainer = styled.section`
 
 const LogoDiv = styled.div`
     padding: 12px 16px 0;
-`
+`;
 
-const MainContainer = styled.section`
-    display: flex;
-`
+const MainContainer = styled.div`
+  ${FlexCenterWrapper}
+`;

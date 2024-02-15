@@ -1,15 +1,22 @@
-import axios,{ AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { UserInfo } from '../stores/UserInfoStore';
-
+import axios from 'axios';
+import { RoomsInfo } from '../stores/useRoomStore';
+import { useStore } from 'zustand';
 
 export const GetAllRoomsApis = {
   instance: axios.create({
-    baseURL: "http://localhost:8002/chat-service/",
+    baseURL: 'http://localhost:8002/chat-service/',
     withCredentials: true,
   }),
 
   getAllRooms: async () => {
-    const res = await axios.get('http://localhost:8002/chatroom-service/rooms');
-    return res.data;
-  }
-}
+    const roomsInfo = RoomsInfo.getState();
+
+    try {
+      const res = await axios.get('http://localhost:8002/chatroom-service/rooms');
+      return res.data;
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      throw error;
+    }
+  },
+};
