@@ -9,6 +9,8 @@ import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
 import com.tadak.chatroomservice.domain.chatroom.exception.AlreadyKickedException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatRoomException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotRoomOwnerException;
+import com.tadak.chatroomservice.domain.chatroom.mq.KafkaProducer;
+import com.tadak.chatroomservice.domain.chatroom.mq.dto.EnterKafkaRequest;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
@@ -29,6 +31,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMemberService chatMemberService;
+    private final KafkaProducer kafkaProducer;
 
     @Transactional
     public CreateChatroomResponse create(CreateChatroomRequest chatroomRequest) {
@@ -52,11 +55,18 @@ public class ChatRoomService {
 
         // 채팅방에 없는 member 일 경우 save 로직
         if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
+            EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
+            kafkaProducer.send("enter", enterKafkaRequest);
             return chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
         }
 
         // 채팅방에 member가 있을 경우 get으로 가져와서 전달
         ChatMember existingChatMember = chatMemberService.getChatMemberByChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername());
+
+        // kafka send
+        EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
+        kafkaProducer.send("enter", enterKafkaRequest);
+
         return EnterChatMemberResponse.of(existingChatMember, chatRoom.getParticipation());
     }
 

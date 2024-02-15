@@ -2,9 +2,9 @@ package com.tadak.chatroomservice.domain.chatroom.controller;
 
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
+import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
 import com.tadak.chatroomservice.domain.chatroom.service.ChatRoomService;
-import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
