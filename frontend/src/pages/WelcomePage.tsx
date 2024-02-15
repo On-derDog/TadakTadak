@@ -1,87 +1,149 @@
-import { Sidebar } from "../components/Sidebar";
-import { Search } from "../components/Search";
-import { Favorite } from "../components/Favorite";
-import Logo from "../assets/Logo.svg"
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Container, Wrapper, SideWrapper } from "../styles/Layout";
+import { useRef, useEffect, useState } from 'react';
+import * as StompJs from '@stomp/stompjs';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getUserData } from '../hooks/react-query/useUserData';
+import { useLoginWebSocket } from '../hooks/custom-hook/useLoginWebSocket';
+import { Sidebar } from '../components/Sidebar';
+import { Search } from '../components/Search';
+import { Favorite } from '../components/Favorite';
+import Logo from '../assets/Logo.svg';
+import Toast from '../components/Toast';
+import { Container, Wrapper, SideWrapper } from '../styles/Layout';
 import styled from '@emotion/styled';
-import { UserInfoStore } from "../stores/UserInfoStore";
-import { useStore } from "zustand"
 
 const WelcomePage = () => {
-    const [Logintext, setLoginText] = useState("Login");
-    const userinfo = useStore(UserInfoStore);
+	const [Logintext, setLoginText] = useState('Login');
+	const [username, setUsername] = useState('로그인이 필요합니다.');
+	const [showToast, setShowToast] = useState(false);
+	const { connect, publishUser } = useLoginWebSocket();
+	const navigate = useNavigate();
+	const accessToken = localStorage.getItem('Accesstoken');
+	const isLoggedIn = accessToken !== null;
+	const clientConnected = useRef(false);
 
-    const navigate = useNavigate();
+	useEffect(() => {
+		if (isLoggedIn) {
+			setLoginText('Logout');
+			connect();
+		} else {
+			setLoginText('Login');
+		}
+	}, [isLoggedIn]);
 
-    const handleLoginClick = () => {
-        if (Logintext === "Login") {
-            navigate("/signin");
-        } else {
-            setLoginText("Logout");
-        }
-    };
+	const {
+		data: userData,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: ['userData'],
+		queryFn: getUserData,
+		staleTime: 5000,
+		enabled: isLoggedIn,
+	});
 
-    return (
-        <Container>
-            <Wrapper>
-                <SideWrapper>
-                    <Sidebar.wrapper
-                    top={
-                <>
-            {/* Logo */}
-            <LogoDiv>
-                <img src={Logo} alt="logo" width="56px" height="56px" />
-            </LogoDiv>
-            
-            <ServiceText>
-                TadakTadak
-            </ServiceText>
-            <UsernameText>
-            {userinfo.username || '유저명'}
-            </UsernameText>
+	useEffect(() => {
+		if (userData) {
+			setUsername(userData.username);
+			if (clientConnected.current) {
+				publishUser(userData.username, '');
+			}
+		} else {
+			setUsername('로그인이 필요한 서비스입니다.');
+		}
+	}, [userData, publishUser]);
 
-            {/* Search */}
-            <Search />
+	useEffect(() => {
+		if (isLoading) return;
+		if (isError) {
+			// Handle error fetching user data
+			return;
+		}
+		if (!clientConnected.current) {
+			clientConnected.current = true;
+		}
+	}, [isLoading, isError]);
 
-            {/* Menu */}
-            <div className="Menu-list">
-                <Sidebar.item text="Home" type="list" svg="Home" />
-                <Sidebar.item text="Create" type="list" svg="Create" />
-            </div>
+	const handleLoginClick = () => {
+		if (Logintext === 'Login') {
+			navigate('/signin');
+		} else {
+			localStorage.removeItem('Accesstoken');
+			localStorage.removeItem('Refreshtoken');
+			setUsername('로그인이 필요한 서비스입니다.');
+			setLoginText('Login');
+			setShowToast(true);
+		}
+	};
 
-            <Sidebar.item text="Category 1" type="category" />
-            <Sidebar.item text="Category 2" type="category" />
+	return (
+		<>
+			{/* 전체 컴포넌트와 토스트 컴포넌트 함께 보여주기 */}
+			<Container>
+				<Wrapper>
+					<SideWrapper>
+						<Sidebar.wrapper
+							top={
+								<>
+									{/* Logo */}
+									<LogoDiv>
+										<img src={Logo} alt="logo" width="56px" height="56px" />
+									</LogoDiv>
 
-            <Sidebar.line/>
+									<ServiceText>TadakTadak</ServiceText>
+									<UsernameText>
+										{isLoggedIn ? username : '로그인이 필요한 서비스입니다.'}
+									</UsernameText>
 
-            {/* Favorite */}
-            <Sidebar.item text="Favorite" type="list" svg="Star" />
-            <Favorite />
-            </>
-            }
-        bottom={<Sidebar.item text={Logintext} type="list" svg="Logout" onClick={handleLoginClick} />}
-        />
-        </SideWrapper>
-    </Wrapper>
-    </Container>
-  );
+									{/* Search */}
+									<Search />
+
+									{/* Menu */}
+									<div className="Menu-list">
+										<Sidebar.item text="Home" type="list" svg="Home" />
+										<Sidebar.item text="Create" type="list" svg="Create" />
+									</div>
+
+									<Sidebar.item text="Category 1" type="category" />
+									<Sidebar.item text="Category 2" type="category" />
+
+									<Sidebar.line />
+
+									{/* Favorite */}
+									<Sidebar.item text="Favorite" type="list" svg="Star" />
+									<Favorite />
+								</>
+							}
+							bottom={
+								<Sidebar.item
+									text={Logintext}
+									type="list"
+									svg="Logout"
+									onClick={handleLoginClick}
+								/>
+							}
+						/>
+					</SideWrapper>
+				</Wrapper>
+			</Container>
+			{showToast && <Toast messageType="logout" type="success" />}
+		</>
+	);
 };
 
 export default WelcomePage;
 
 const ServiceText = styled.div`
-    font-size: var(--font-size-lg);
-    padding: 12px 16px;
-    font-weight: 700;
+	font-size: var(--font-size-lg);
+	padding: 12px 16px;
+	font-weight: 700;
 `;
 
 const UsernameText = styled.div`
-    font-size: var(--font-size-sm);
-    padding: 0px 16px;
+	font-size: var(--font-size-sm);
+	padding: 0px 16px;
 `;
 
 const LogoDiv = styled.div`
-    padding: 12px 16px 0;
-`
+	padding: 12px 16px 0;
+`;
