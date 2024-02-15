@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserInformationRequest {
     private String username;
+    private String roomName;
 }
