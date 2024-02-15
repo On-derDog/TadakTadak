@@ -15,7 +15,7 @@ public class CreateChatroomResponse {
     private String roomName;
     private String description;
     private String owner;
-    private String category;
+    private String hashtag;
     private Integer participation;
     private Integer capacity;
     private EnterChatMemberResponse chatMemberResponse;
@@ -27,7 +27,7 @@ public class CreateChatroomResponse {
                 .roomName(chatRoom.getRoomName())
                 .description(chatRoom.getDescription())
                 .owner(chatRoom.getOwner())
-                .category(chatRoom.getCategory())
+                .hashtag(chatRoom.getHashtag())
                 .participation(chatRoom.getParticipation())
                 .capacity(chatRoom.getCapacity())
                 .chatMemberResponse(chatMemberResponse)

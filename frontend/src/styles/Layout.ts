@@ -24,16 +24,16 @@ export const SideWrapper = styled.div`
 	width: 11.5rem;
 	height: calc(100% - 1rem);
 	background-color: var(--color-shark);
-	padding: 0.5rem 0rem 0.5rem 0rem;
+	margin: 0.5rem 0rem 0.5rem 0rem;
 `;
 
-export const FlexCenterWrapper = `
+export const FlexCenterWrapper =`
 	display: flex;
 	justify-content: center;
 	align-items: center;
 `;
 
-export const ChattingRoomHeader = `
+export const ChattingRoomHeader =`
 	background-color: var(--color-pumpkin);
 	color: var(--color-white);
 	border-radius: 5px 5px 0px 0px;

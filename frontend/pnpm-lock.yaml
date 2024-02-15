@@ -426,11 +426,13 @@ packages:
       '@babel/runtime': 7.23.9
       '@emotion/babel-plugin': 11.11.0
       '@emotion/is-prop-valid': 1.2.1
+
       '@emotion/react': 11.11.3(@types/react@18.2.55)(react@18.2.0)
       '@emotion/serialize': 1.1.3
       '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.2.0)
       '@emotion/utils': 1.2.1
       '@types/react': 18.2.55
+
       react: 18.2.0
     dev: false
 
