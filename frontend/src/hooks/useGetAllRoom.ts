@@ -13,6 +13,7 @@ export const GetAllRoomsApis = {
 
     try {
       const res = await axios.get('http://localhost:8002/chatroom-service/rooms');
+      roomsInfo.setRooms(res.data);
       return res.data;
     } catch (error) {
       console.error('Error fetching rooms:', error);

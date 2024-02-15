@@ -2,26 +2,29 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 // import { useNotification } from 'web-notification';
 import axios from "axios"
-
-const getImage = async () => {
-  try {
-    const response = await axios.get('/thumbnails'); 
-    const data = response.data;
-    return data.imageUrl;
-  } catch (error) {
-    console.error('Error fetching image:', error);
-  }
-};
+import { GetAllRoomsApis } from '../../hooks/useGetAllRoom';
 
 
-export const RoomPreview = (roomName, description ,hashtag) =>{
+// const getImage = async () => {
+//   try {
+//     const response = await axios.get('/thumbnails'); 
+//     const data = response.data;
+//     return data.imageUrl;
+//   } catch (error) {
+//     console.error('Error fetching image:', error);
+//   }
+// };
 
+
+export const RoomPreview = ({roomName, description, hashtag}:{roomName:string, description:string, hashtag: string}) =>{
+  
   // 에러가 발생하면 react-query update를 하기
   const { isLoading, data, isError } = useQuery({
-    queryKey: ["chattingRoomImage"],
-    queryFn: getImage,
+    queryKey: ["GetAllRoomsApis"],
+    queryFn: GetAllRoomsApis.getAllRooms,
     staleTime: 5 * 1000 
   });
+  const thumbnailUrl = data?.thumbnailUrl;
   
   if (isLoading) {
     return <div>Loading...</div>;
@@ -35,9 +38,8 @@ export const RoomPreview = (roomName, description ,hashtag) =>{
     <main className="ChattingRoom-wrapper">
       <section className="ChattingRoom-container">
         {/* 이미지 썸네일 */}
-        <h2>썸네일</h2>
         <div className="ChattingRoom-image">
-          {data && <img src={data} alt="썸네일" />}
+          {thumbnailUrl && <img src={thumbnailUrl} alt="썸네일" />}
         </div>
 
         {/* 채팅룸 설명 */}

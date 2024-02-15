@@ -60,12 +60,7 @@ if (import.meta.env.DEV) {
   roomInfoTemp = create<RoomInfo>()(createRoomStore);
 }
 
-//devtools
-if (import.meta.env.DEV) {
-  roomsInfoTemp = create<RoomsInfo>()(devtools(createRoomsStore, { name: 'roomsInfo' }));
-} else {
-  roomsInfoTemp = create<RoomsInfo>()(createRoomsStore);
-}
+roomsInfoTemp = create<RoomsInfo>()(createRoomsStore);
 
 export const RoomInfo = roomInfoTemp;
 export const RoomsInfo = roomsInfoTemp;

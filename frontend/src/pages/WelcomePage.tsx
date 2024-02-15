@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Wrapper, SideWrapper, FlexCenterWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
-import { RoomInfo } from "../stores/useRoomStore"
+import { RoomInfo, RoomsInfo } from "../stores/useRoomStore"
 import { useStore } from "zustand"
 import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
 import CreateRoomPreview from "../components/roomPreview/CreateRoomPreview";
@@ -59,7 +59,6 @@ const WelcomePage = () => {
         const fetchData = async () => {
             try {
             const res = await GetAllRoomsApis.getAllRooms();
-            console.log(res);
             } catch (error) {
             console.error('Error fetching rooms:', error);
             }

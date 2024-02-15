@@ -3,8 +3,10 @@ import styled from '@emotion/styled';
 import { RoomsInfo } from '../../stores/useRoomStore';
 import { useStore } from "zustand";
 
+
 const RoomPreviewList = () => {
-  const roomsInfo = useStore(RoomsInfo);
+  const roomsInfo = RoomsInfo.getState();
+  console.log(roomsInfo.rooms);
 
 	return (
 		<RoomPreviewListWrapper>
