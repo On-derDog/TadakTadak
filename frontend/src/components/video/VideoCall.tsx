@@ -26,7 +26,7 @@ const VideoCall = () => {
 	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
-	// 미디어 가져오기 함수 정의
+	// 미디어 가져오기 함수
 	const getMedia = async () => {
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
@@ -52,7 +52,7 @@ const VideoCall = () => {
 		}
 	};
 
-	// Offer 생성 함수 정의
+	// Offer 생성 함수
 	const createOffer = async () => {
 		console.log('Creating Offer...');
 		try {
@@ -74,7 +74,7 @@ const VideoCall = () => {
 		}
 	};
 
-	// Answer 생성 함수 정의
+	// Answer 생성 함수
 	const createAnswer = async (offerSdp: RTCSessionDescriptionInit) => {
 		console.log('Creating Answer...');
 		try {
@@ -99,7 +99,7 @@ const VideoCall = () => {
 		}
 	};
 
-	// WebSocket 이벤트 핸들러 함수 정의
+	// WebSocket 이벤트 핸들러 함수
 	useEffect(() => {
 		socketRef.current = new WebSocket('ws://localhost:8080/signal/1');
 		getMedia();
@@ -130,7 +130,7 @@ const VideoCall = () => {
 		};
 	}, []);
 
-	// ICE Candidate 이벤트 핸들러 함수 정의
+	// ICE Candidate 이벤트 핸들러 함수
 	const handleIceCandidate = (e: RTCPeerConnectionIceEvent) => {
 		if (e.candidate && socketRef.current) {
 			console.log('Sending ICE Candidate...');
@@ -144,14 +144,14 @@ const VideoCall = () => {
 		}
 	};
 
-	// Track 이벤트 핸들러 함수 정의
+	// Track 이벤트 핸들러 함수(상대방 stream)
 	const handleTrack = (e: RTCTrackEvent) => {
 		if (e.streams && e.streams[0]) {
 			setRemoteStream(e.streams[0]);
 		}
 	};
 
-	// WebSocket 메시지 이벤트 핸들러 함수 정의
+	// WebSocket 메시지 이벤트 핸들러 함수
 	const handleSocketMessage = (event: MessageEvent) => {
 		const message = JSON.parse(event.data);
 		switch (message.type) {
@@ -179,7 +179,6 @@ const VideoCall = () => {
 		}
 	};
 
-	// 렌더링
 	return (
 		<div
 			id="Wrapper"
