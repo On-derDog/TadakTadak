@@ -53,17 +53,26 @@ const WelcomePage = () => {
     
         fetchData();
       }, []);
-    
-      useEffect(() => {
-        const res = GetAllRoomsApis.getAllRooms();
-        console.log(res);
 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+            const res = await GetAllRoomsApis.getAllRooms();
+            console.log(res);
+            } catch (error) {
+            console.error('Error fetching rooms:', error);
+            }
+        };
+    
+        fetchData();
+    
         const intervalId = setInterval(() => {
-            GetAllRoomsApis.getAllRooms();
+            fetchData();
         }, 10000);
     
         return () => clearInterval(intervalId);
-      }, []);
+    }, []);
 
     return (
         <Container>

@@ -14,7 +14,7 @@ const getImage = async () => {
 };
 
 
-export const RoomPreview = () =>{
+export const RoomPreview = (roomName, description ,hashtag) =>{
 
   // 에러가 발생하면 react-query update를 하기
   const { isLoading, data, isError } = useQuery({
@@ -42,10 +42,10 @@ export const RoomPreview = () =>{
 
         {/* 채팅룸 설명 */}
         <div className="ChattingRoom-detail">
-          <span className="ChattingRoom-title">방제목</span><br/>
+          <span className="ChattingRoom-title">{roomName}</span><br/>
           <span className="ChattingRoom-bookmark">즐겨찾기</span><br/>
-          <span className="ChattingRoom-info">방설명</span><br/>
-          <span className=" ChattingRoom-category">#카테고리</span>
+          <span className="ChattingRoom-info">{description}</span><br/>
+          <span className=" ChattingRoom-category">{hashtag}</span>
         </div>
       </section>
     </main>
