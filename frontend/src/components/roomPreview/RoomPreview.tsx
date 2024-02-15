@@ -3,20 +3,12 @@ import { useEffect } from 'react';
 // import { useNotification } from 'web-notification';
 import axios from "axios"
 import { GetAllRoomsApis } from '../../hooks/useGetAllRoom';
+import { useNavigate } from 'react-router-dom';
 
 
-// const getImage = async () => {
-//   try {
-//     const response = await axios.get('/thumbnails'); 
-//     const data = response.data;
-//     return data.imageUrl;
-//   } catch (error) {
-//     console.error('Error fetching image:', error);
-//   }
-// };
+export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:string, roomName:string, description:string, hashtag: string}) =>{
 
-
-export const RoomPreview = ({roomName, description, hashtag}:{roomName:string, description:string, hashtag: string}) =>{
+  const navigate = useNavigate();
   
   // 에러가 발생하면 react-query update를 하기
   const { isLoading, data, isError } = useQuery({
@@ -34,8 +26,12 @@ export const RoomPreview = ({roomName, description, hashtag}:{roomName:string, d
     return <div>에러</div>;
   }
 
+  const handlieRoomClick = () => {
+    navigate(`/chatroom/${roomId.toString()}`);
+  }
+
   return(
-    <main className="ChattingRoom-wrapper">
+    <main className="ChattingRoom-wrapper" onClick={handlieRoomClick}>
       <section className="ChattingRoom-container">
         {/* 이미지 썸네일 */}
         <div className="ChattingRoom-image">
