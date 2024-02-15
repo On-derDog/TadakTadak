@@ -9,8 +9,7 @@ import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
 import { FlexCenterWrapper } from '../../styles/Layout';
 import { bodyMessage } from '../../interface/CommonInterface';
 import { UserDataProps } from '../../interface/UserListInterface';
-
-type StompClient = StompJs.Client;
+import { StompClient } from '../../interface/ChatInterface';
 
 const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
 	const { messages, inputMessage, setMessages, setInputMessage } = useChatStore();
