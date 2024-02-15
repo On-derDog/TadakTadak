@@ -40,10 +40,10 @@ spring:
             - Method=GET
           filters:
             - AuthFilter
-        - id: chatting-service # chatting-service
-          uri: lb://CHATTING-SERVICE
+        - id: chatroom-service # chatroom-service
+          uri: lb://CHATROOM-SERVICE
           predicates:
-            - Path=/chatting-service/**
+            - Path=/chatroom-service/**
             - Method=POST, GET
           filters:
             - AuthFilter

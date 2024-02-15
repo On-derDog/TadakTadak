@@ -44,13 +44,11 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            if (request.getHeaders().containsKey(ACCESS_AUTHORIZATION_HEADER)) {
-                String accessToken = request.getHeaders().get(ACCESS_AUTHORIZATION_HEADER).get(0);
+            String accessToken = request.getHeaders().get(ACCESS_AUTHORIZATION_HEADER).get(0);
+            log.info("accessToken = {}", accessToken);
 
-                if (isJwtValid(accessToken)) {
-                    log.info("AccessToken 인가받은 사용자입니다.");
-                    return chain.filter(exchange);
-                }
+            if (StringUtils.hasText(accessToken) && isJwtValid(accessToken)) {
+                return chain.filter(exchange);
             }
 
             String refreshToken = request.getHeaders().get(REFRESH_AUTHORIZATION_HEADER).get(0);
