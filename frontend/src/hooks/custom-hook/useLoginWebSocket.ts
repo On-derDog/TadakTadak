@@ -29,6 +29,12 @@ export const useLoginWebSocket = () => {
 		client.current.activate();
 	};
 
+	const unconnect = () => {
+		if (client.current && client.current.deactivate) {
+			client.current.deactivate();
+		}
+	};
+
 	const userSubscribe = () => {
 		if (client.current) {
 			client.current.subscribe('/topic/users', (userlist: bodyMessage) => {
@@ -57,5 +63,5 @@ export const useLoginWebSocket = () => {
 		throw new Error('Failed to publish user: username is empty');
 	};
 
-	return { connect, publishUser };
+	return { connect, publishUser, unconnect };
 };

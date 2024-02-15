@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react';
-import * as StompJs from '@stomp/stompjs';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getUserData } from '../hooks/react-query/useUserData';
@@ -14,22 +13,12 @@ import styled from '@emotion/styled';
 
 const WelcomePage = () => {
 	const [Logintext, setLoginText] = useState('Login');
-	const [username, setUsername] = useState('로그인이 필요합니다.');
 	const [showToast, setShowToast] = useState(false);
-	const { connect, publishUser } = useLoginWebSocket();
+	const { connect, publishUser, unconnect } = useLoginWebSocket();
 	const navigate = useNavigate();
 	const accessToken = localStorage.getItem('Accesstoken');
 	const isLoggedIn = accessToken !== null;
 	const clientConnected = useRef(false);
-
-	useEffect(() => {
-		if (isLoggedIn) {
-			setLoginText('Logout');
-			connect();
-		} else {
-			setLoginText('Login');
-		}
-	}, [isLoggedIn]);
 
 	const {
 		data: userData,
@@ -43,15 +32,16 @@ const WelcomePage = () => {
 	});
 
 	useEffect(() => {
-		if (userData) {
-			setUsername(userData.username);
-			if (clientConnected.current) {
+		if (isLoggedIn) {
+			setLoginText('Logout');
+			connect();
+			if (clientConnected.current && userData) {
 				publishUser(userData.username, '');
 			}
 		} else {
-			setUsername('로그인이 필요한 서비스입니다.');
+			setLoginText('Login');
 		}
-	}, [userData, publishUser]);
+	}, [isLoggedIn]);
 
 	useEffect(() => {
 		if (isLoading) return;
@@ -70,7 +60,7 @@ const WelcomePage = () => {
 		} else {
 			localStorage.removeItem('Accesstoken');
 			localStorage.removeItem('Refreshtoken');
-			setUsername('로그인이 필요한 서비스입니다.');
+			unconnect();
 			setLoginText('Login');
 			setShowToast(true);
 		}
@@ -92,7 +82,7 @@ const WelcomePage = () => {
 
 									<ServiceText>TadakTadak</ServiceText>
 									<UsernameText>
-										{isLoggedIn ? username : '로그인이 필요한 서비스입니다.'}
+										{isLoggedIn ? userData?.username : '로그인이 필요한 서비스입니다.'}
 									</UsernameText>
 
 									{/* Search */}
