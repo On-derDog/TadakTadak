@@ -1,19 +1,36 @@
-import { Sidebar } from "../components/Sidebar";
-import { Search } from "../components/Search";
-import { Favorite } from "../components/Favorite";
+import { Sidebar } from "../components/welcome/Sidebar";
+import { Search } from "../components/welcome/Search";
+import { Favorite } from "../components/welcome/Favorite";
 import Logo from "../assets/Logo.svg"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Wrapper, SideWrapper } from "../styles/Layout";
+import { Container, Wrapper, SideWrapper, FlexCenterWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
+import { RoomInfo, RoomsInfo } from "../stores/useRoomStore"
 import { useStore } from "zustand"
+import RoomPreviewList from "../components/roomPreview/RoomPreviewList";
+import CreateRoomPreview from "../components/roomPreview/CreateRoomPreview";
+import { getUserData } from "../hooks/react-query/useUserData";
+import { GetAllRoomsApis } from "../hooks/useGetAllRoom"
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
+    const [CreateRoom, setCreateRoom] = useState(false);
     const userinfo = useStore(UserInfoStore);
+    const roominfo = useStore(RoomInfo);
 
     const navigate = useNavigate();
+
+    const handleCreateRoom= () =>{
+        setCreateRoom(true);
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        roominfo.update(name, value);
+        console.log(roominfo);
+    };
 
     const handleLoginClick = () => {
         if (Logintext === "Login") {
@@ -22,6 +39,39 @@ const WelcomePage = () => {
             setLoginText("Logout");
         }
     };
+
+    // username 불러오기
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const data = await getUserData();
+            userinfo.updateUsername(data.username);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+    
+        fetchData();
+      }, []);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+            const res = await GetAllRoomsApis.getAllRooms();
+            } catch (error) {
+            console.error('Error fetching rooms:', error);
+            }
+        };
+    
+        fetchData();
+    
+        const intervalId = setInterval(() => {
+            fetchData();
+        }, 10000);
+    
+        return () => clearInterval(intervalId);
+    }, []);
 
     return (
         <Container>
@@ -39,7 +89,9 @@ const WelcomePage = () => {
                 TadakTadak
             </ServiceText>
             <UsernameText>
-            {userinfo.username || '유저명'}
+            
+            {/* API로 가져오게 변경필요 => 새로고침시 사라져서 Create에도 문제 */}
+            {userinfo.username || '유저명'} 
             </UsernameText>
 
             {/* Search */}
@@ -48,7 +100,7 @@ const WelcomePage = () => {
             {/* Menu */}
             <div className="Menu-list">
                 <Sidebar.item text="Home" type="list" svg="Home" />
-                <Sidebar.item text="Create" type="list" svg="Create" />
+                <Sidebar.item text="Create" type="list" svg="Create" onClick={handleCreateRoom} />
             </div>
 
             <Sidebar.item text="Category 1" type="category" />
@@ -64,7 +116,12 @@ const WelcomePage = () => {
         bottom={<Sidebar.item text={Logintext} type="list" svg="Logout" onClick={handleLoginClick} />}
         />
         </SideWrapper>
-    </Wrapper>
+
+        <MainContainer>
+            <RoomPreviewList/>
+            {CreateRoom && <CreateRoomPreview onClose={() => setCreateRoom(false)}handleInputChange={handleInputChange} username={userinfo.username} roominfo={roominfo} />}
+        </MainContainer>
+        </Wrapper>
     </Container>
   );
 };
@@ -82,6 +139,13 @@ const UsernameText = styled.div`
     padding: 0px 16px;
 `;
 
+const SideContainer = styled.section`
+`
+
 const LogoDiv = styled.div`
     padding: 12px 16px 0;
-`
+`;
+
+const MainContainer = styled.div`
+  ${FlexCenterWrapper}
+`;

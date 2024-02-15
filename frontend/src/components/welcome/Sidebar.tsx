@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import Home from "../assets/Home.svg"
-import Create from "../assets/Create.svg"
-import Star from "../assets/Star.svg"
-import Logout from "../assets/Logout.svg"
+import Home from "../../assets/Home.svg"
+import Create from "../../assets/Create.svg"
+import Star from "../../assets/Star.svg"
+import Logout from "../../assets/Logout.svg"
 
 interface SidebarProps{
   top: React.ReactNode;
@@ -15,7 +15,6 @@ interface SidebarItemProps {
   svg?: string;
   onClick?: () => void;
 }
-
 
 
 export const Sidebar ={
