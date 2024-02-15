@@ -2,12 +2,9 @@ package com.tadak.chatroomservice.domain.chatroom.controller;
 
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.ChangeOwnerResponse;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
 import com.tadak.chatroomservice.domain.chatroom.service.ChatRoomService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -79,5 +76,14 @@ public class ChatRoomController {
                                                            @RequestBody ChatRoomRequest chatRoomRequest){
         ChangeOwnerResponse changeOwnerResponse = chatRoomService.changeOwner(roomId, username, chatRoomRequest.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(changeOwnerResponse);
+    }
+
+    /**
+     * 개별 방 조회
+     */
+    @GetMapping("/rooms/{roomId}")
+    public ResponseEntity<OneChatRoomResponse> getChatRoom(@PathVariable Long roomId){
+        OneChatRoomResponse getChatRoom = chatRoomService.findChatRoom(roomId);
+        return ResponseEntity.status(HttpStatus.OK).body(getChatRoom);
     }
 }
