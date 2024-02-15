@@ -38,7 +38,7 @@ public class ChatRoom {
     private String owner;
     @NotNull
     @Size(max = 10, message = "카테고리 글자는 10자를 넘길 수 없습니다.")
-    private String category;
+    private String hashtag;
     @NotNull
     private Integer participation;
     @NotNull
@@ -58,7 +58,7 @@ public class ChatRoom {
                 .roomName(chatroomRequest.getRoomName())
                 .description(chatroomRequest.getDescription())
                 .owner(chatroomRequest.getOwner())
-                .category(chatroomRequest.getCategory())
+                .hashtag(chatroomRequest.getHashtag())
                 .participation(DEFAULT_PARTICIPATION)
                 .capacity(chatroomRequest.getCapacity())
                 .build();
