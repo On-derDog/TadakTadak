@@ -1,18 +1,16 @@
 package com.tadak.chatroomservice.domain.chatroom.service;
 
+import com.tadak.chatroomservice.domain.chatmember.dto.response.ChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.ChangeOwnerResponse;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.ChatRoomResponse;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.KickMemberResponse;
+import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
 import com.tadak.chatroomservice.domain.chatroom.exception.AlreadyKickedException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatRoomException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotRoomOwnerException;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
-import com.tadak.chatroomservice.domain.chatroom.dto.response.CreateChatroomResponse;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
 import com.tadak.chatroomservice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -126,5 +124,14 @@ public class ChatRoomService {
         chatRoom.updateOwner(username);
 
         return ChangeOwnerResponse.from(chatRoom);
+    }
+
+    public OneChatRoomResponse findChatRoom(Long roomId) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+
+        List<ChatMemberResponse> chatMemberResponses = chatRoom.getChatMembers().stream()
+                .map(ChatMemberResponse::from).toList();
+
+        return OneChatRoomResponse.of(chatRoom, chatMemberResponses);
     }
 }
