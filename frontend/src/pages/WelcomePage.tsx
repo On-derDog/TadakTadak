@@ -3,13 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getUserData } from '../hooks/react-query/useUserData';
 import { useLoginWebSocket } from '../hooks/custom-hook/useLoginWebSocket';
-import { Sidebar } from '../components/Sidebar';
-import { Search } from '../components/Search';
-import { Favorite } from '../components/Favorite';
+import { Sidebar } from '../components/welcome/Sidebar';
+import { Search } from '../components/welcome/Search';
+import { Favorite } from '../components/welcome/Favorite';
 import Logo from '../assets/Logo.svg';
-import Toast from '../components/Toast';
-import { Container, Wrapper, SideWrapper } from '../styles/Layout';
+import Toast from '../components/common/Toast';
+import { Container, Wrapper, SideWrapper, FlexCenterWrapper } from '../styles/Layout';
 import styled from '@emotion/styled';
+import { useStore } from 'zustand';
+import { RoomInfo, RoomsInfo } from '../stores/useRoomStore';
+import { UserInfoStore } from '../stores/UserInfoStore';
+import RoomPreviewList from '../components/roomPreview/RoomPreviewList';
+import CreateRoomPreview from '../components/roomPreview/CreateRoomPreview';
+import { GetAllRoomsApis } from '../hooks/useGetAllRoom';
 
 const WelcomePage = () => {
 	const [loginText, setLoginText] = useState('Login');
@@ -19,6 +25,19 @@ const WelcomePage = () => {
 	const accessToken = localStorage.getItem('Accesstoken');
 	const isLoggedIn = accessToken !== null;
 	const clientConnected = useRef(false);
+	const [CreateRoom, setCreateRoom] = useState(false);
+	const userinfo = useStore(UserInfoStore);
+	const roominfo = useStore(RoomInfo);
+
+	const handleCreateRoom = () => {
+		setCreateRoom(true);
+	};
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		roominfo.update(name, value);
+		console.log(roominfo);
+	};
 
 	const {
 		data: userData,
@@ -63,6 +82,37 @@ const WelcomePage = () => {
 		}
 	};
 
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const data = await getUserData();
+				userinfo.updateUsername(data.username);
+			} catch (error) {
+				console.error(error);
+			}
+		};
+
+		fetchData();
+	}, []);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const res = await GetAllRoomsApis.getAllRooms();
+			} catch (error) {
+				console.error('Error fetching rooms:', error);
+			}
+		};
+
+		fetchData();
+
+		const intervalId = setInterval(() => {
+			fetchData();
+		}, 10000);
+
+		return () => clearInterval(intervalId);
+	}, []);
+
 	return (
 		<>
 			{/* 전체 컴포넌트와 토스트 컴포넌트 함께 보여주기 */}
@@ -88,7 +138,12 @@ const WelcomePage = () => {
 									{/* Menu */}
 									<div className="Menu-list">
 										<Sidebar.item text="Home" type="list" svg="Home" />
-										<Sidebar.item text="Create" type="list" svg="Create" />
+										<Sidebar.item
+											text="Create"
+											type="list"
+											svg="Create"
+											onClick={handleCreateRoom}
+										/>
 									</div>
 
 									<Sidebar.item text="Category 1" type="category" />
@@ -111,6 +166,17 @@ const WelcomePage = () => {
 							}
 						/>
 					</SideWrapper>
+					<MainContainer>
+						<RoomPreviewList />
+						{CreateRoom && (
+							<CreateRoomPreview
+								onClose={() => setCreateRoom(false)}
+								handleInputChange={handleInputChange}
+								username={userinfo.username}
+								roominfo={roominfo}
+							/>
+						)}
+					</MainContainer>
 				</Wrapper>
 			</Container>
 			{showToast && <Toast messageType="logout" type="success" />}
@@ -133,4 +199,8 @@ const UsernameText = styled.div`
 
 const LogoDiv = styled.div`
 	padding: 12px 16px 0;
+`;
+
+const MainContainer = styled.div`
+	${FlexCenterWrapper}
 `;

@@ -1,4 +1,4 @@
-import ChattingRoomList from "../components/chattingRoomList/ChattingRoomList";
+import ChattingRoomList from "../components/roomPreview/RoomPreviewList";
 
 
 const ChattingList: React.FC = () => {
