@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -51,6 +52,11 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("roomId", roomId);
         userService.moveUser(chatRequest.getUsername(),roomId.toString());
         return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
+    }
+
+    @KafkaListener(topics="enter",groupId = "chatting-consumer")
+    public void enterListener(Object data){
+        System.out.println(data);
     }
 
     @GetMapping("/chat/{roomId}/messages")
