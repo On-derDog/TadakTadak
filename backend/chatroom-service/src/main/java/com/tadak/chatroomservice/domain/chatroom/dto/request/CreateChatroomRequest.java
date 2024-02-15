@@ -14,6 +14,6 @@ public class CreateChatroomRequest {
     private String roomName;
     private String description;
     private String owner;
-    private String category;
+    private String hashtag;
     private Integer capacity;
 }
