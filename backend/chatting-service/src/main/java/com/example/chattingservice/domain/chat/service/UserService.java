@@ -23,7 +23,7 @@ public class UserService {
         UserParticipation newUser = UserParticipation.builder()
                         .userId(0l)
                                 .username(userInformationRequest.getUsername())
-                                        .roomName("")
+                                        .roomName(userInformationRequest.getRoomName())
                                                 .build();
 
         users.put(userInformationRequest.getUsername(),newUser);
