@@ -8,19 +8,20 @@ const CLIENT_ID_2 = import.meta.env.VITE_APP_CLIENT_ID_2;
 export const NaverLoginButton = () => {
   const naverRef = useRef()
 	const { naver } = window
-  const REDIRECT_URI = "http://localhost:5173/signupnaver";
+  const REDIRECT_URI = "http://localhost:5173/signupnaver"
 
   const STATE = "flase";
   const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&state=${STATE}`;
+  const NAVER_AUTH_LOGIN = `http://localhost:8001/oauth2/authorization/naver`
 
   const NaverLogin = () => {
-    window.location.href = NAVER_AUTH_URL;
+    window.location.href = NAVER_AUTH_LOGIN;
   }
 
 	const initializeNaverLogin = () => {
 		const naverLogin = new naver.LoginWithNaverId({
 			clientId: CLIENT_ID_2,
-			callbackUrl: REDIRECT_URI,        
+			callbackUrl: NAVER_AUTH_LOGIN,        
 			isPopup: false,
 			loginButton: { color: 'green', type: 3, height: 58 },
 			callbackHandle: true,
@@ -74,7 +75,7 @@ export const NaverLoginButton = () => {
                 <rect x="2.51801" y="1.81" width="3.62" height="15.4" transform="rotate(-30 2.51801 1.81)" fill="white"/>
               </svg>
             </div>
-            <span className="text">BE에게 전달 가입</span>
+            <span className="text">네이버 간편 가입</span>
           </div>
         </div>
       </NaverButtonStyles>
@@ -88,6 +89,7 @@ const NaverIdLogin = styled.div`
 const NaverButtonStyles = styled.div`
   .NaverLoginButton-wrapper {
     display: flex;
+    justify-content: space-between;
   }
 
   .Logo{
@@ -95,7 +97,7 @@ const NaverButtonStyles = styled.div`
   }
 
   .btn-naver {
-    width: 300px;
+    flex: 1;
     height: 46px;
     background: #03C75A;
     border-radius: 12px;

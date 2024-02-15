@@ -46,13 +46,13 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
 
         createResponseHeader(response, tokenResponseDto);
+
+        response.sendRedirect("http://localhost:5173");
     }
 
     private void createResponseHeader(HttpServletResponse response, TokenResponseDto tokenResponseDto) throws IOException {
         response.addHeader(JwtFilter.ACCESS_AUTHORIZATION_HEADER, "Bearer " + tokenResponseDto.getAccessToken());
         response.addHeader(JwtFilter.REFRESH_AUTHORIZATION_HEADER, "Bearer " + tokenResponseDto.getRefreshToken());
-        new ObjectMapper().writeValue(response.getWriter(), tokenResponseDto);
-        response.flushBuffer();
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(Member member) {

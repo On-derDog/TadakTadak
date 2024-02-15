@@ -4,14 +4,15 @@ import UserProfile from './UserProfile';
 
 import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
 import { useUserListStore } from '../../stores/useUserListStore';
-import { useChatStore } from '../../stores/useChatStore';
-import { useRef } from 'react';
+// import { useChatStore } from '../../stores/useChatStore';
+import { useRef, useEffect } from 'react';
 import { bodyMessage } from '../../interface/CommonInterface';
+import { UserDataProps } from '../../interface/UserListInterface';
 
 type StompClient = StompJs.Client;
 
-const Users = () => {
-	const { id, setId } = useChatStore();
+const List = ({ isLoading, isError, username }: UserDataProps) => {
+	// const { id, setId } = useChatStore();
 	const { userlist, setUserList } = useUserListStore();
 
 	const client = useRef<StompClient | null>(null);
@@ -24,7 +25,7 @@ const Users = () => {
 			brokerURL: 'ws://localhost:8010/ws',
 			onConnect: () => {
 				console.log('success');
-				testSubscribe();
+				userSubscribe();
 			},
 			debug: (str: string) => {
 				console.log(str);
@@ -37,20 +38,16 @@ const Users = () => {
 		client.current.activate();
 	};
 
-	const connectId = () => {
-		connect();
+	useEffect(() => {
+		if (!isLoading && !isError) {
+			connect();
+		}
+	}, [isLoading, isError]);
 
-		return () => {
-			if (client.current) {
-				client.current.deactivate();
-			}
-		};
-	};
-
-	const testSubscribe = () => {
+	const userSubscribe = () => {
 		if (client.current) {
 			const users = {
-				userName: id,
+				userName: username,
 			};
 
 			client.current.publish({
@@ -70,18 +67,28 @@ const Users = () => {
 		}
 	};
 
+	// const connectId = () => {
+	// 	connect();
+
+	// 	return () => {
+	// 		if (client.current) {
+	// 			client.current.deactivate();
+	// 		}
+	// 	};
+	// };
+
 	return (
 		<ChatWrapper>
 			<UserProfile userlist={userlist} />
-			<div>
+			{/* <div>
 				<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
 				<button onClick={connectId}>Connect</button>
-			</div>
+			</div> */}
 		</ChatWrapper>
 	);
 };
 
-export default Users;
+export default List;
 
 const ChatWrapper = styled.div`
 	${ColumnDisplay}

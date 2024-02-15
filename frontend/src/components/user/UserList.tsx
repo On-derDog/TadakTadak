@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { ChattingRoomHeader } from '../../styles/ComponentLayout';
+import { UserDataProps } from '../../interface/UserListInterface';
 import List from './List';
 
-const UserList = () => {
+const UserList = ({ isLoading, isError, username }: UserDataProps) => {
 	return (
 		<UserListContainer>
 			<ListHeader>커뮤니티</ListHeader>
-			<List />
+			<List username={username} isLoading={isLoading} isError={isError} />
 		</UserListContainer>
 	);
 };
