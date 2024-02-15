@@ -10,7 +10,7 @@ interface CreateRoomPreviewProps {
   onAddRoom: () => void;
   username: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-  newRoom: { roomName: string; description:string; owner:string; hashtag: string; capacity: number; };
+  newRoom: { roomName: string; description:string; owner:string; category: string; capacity: number; };
 }
 
 const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoom, newRoom, username, handleInputChange }) => {
@@ -18,7 +18,7 @@ const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoo
     try {
       const roomWithOwner = { ...newRoom, owner: username };
       console.log(roomWithOwner);
-      await axios.post('http://localhost:8001/user-service/create', roomWithOwner);
+      await axios.post('http://localhost:8002/chatroom-service/create', roomWithOwner);
 
       onAddRoom();
       onClose();
@@ -29,13 +29,13 @@ const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, onAddRoo
 
   return (
     <CreateRoomPreviewWrapper>
-      <StyledCloseButton onClick={onClose} >
+      <StyledCloseButton onClick={handleAllRoomClick} >
         <img src={Close} alt='Close' width="16px"/>
       </StyledCloseButton>
       <h1>Create Room</h1>
       <InputForm type="text" name="roomName" value={newRoom.roomName} title="방 이름" onChange={handleInputChange} />
       <InputForm type="text" name="description" value={newRoom.description} title="방 설명" onChange={handleInputChange} />
-      <InputForm type="text" name="hashtag" value={newRoom.hashtag} title="해시태그" onChange={handleInputChange} />
+      <InputForm type="text" name="category" value={newRoom.category} title="해시태그" onChange={handleInputChange} />
       <InputForm
         type="number"
         name="capacity"

@@ -16,7 +16,7 @@ const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
     const [CreateRoom, setCreateRoom] = useState(false);
     const userinfo = useStore(UserInfoStore);
-    const [newRoom, setNewRoom] = useState({ roomName: '', hashtag: '', capacity: 1 });
+    const [newRoom, setNewRoom] = useState({ roomName: '', category: '', capacity: 1 });
 
     const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ const WelcomePage = () => {
 
     const handleAddRoom = () => {
         addRoom(newRoom);
-        setNewRoom({ roomName: '', hashtag: '', capacity: 1 });
+        setNewRoom({ roomName: '', category: '', capacity: 1 });
     };
 
     const handleLoginClick = () => {
@@ -56,6 +56,29 @@ const WelcomePage = () => {
         };
     
         fetchData();
+      }, []);
+
+      const handleAllRoomClick = async () => {
+        try {
+          const res = await axios.get('http://localhost:8002/chatroom-service/rooms');
+          setRooms(res.data); // Assuming the response contains the array of rooms
+        } catch (error) {
+          console.error('Error fetching rooms:', error);
+          setError(error.message);
+        }
+      };
+    
+      useEffect(() => {
+        // Fetch rooms initially
+        handleAllRoomClick();
+    
+        // Fetch rooms every 5 seconds (adjust the interval as needed)
+        const intervalId = setInterval(() => {
+          handleAllRoomClick();
+        }, 5000);
+    
+        // Clear the interval on component unmount
+        return () => clearInterval(intervalId);
       }, []);
 
     return (
