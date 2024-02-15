@@ -1,6 +1,5 @@
 package com.tadak.userservice.global.oauth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.entity.Member;
 import com.tadak.userservice.domain.member.exception.NotFoundMemberException;
@@ -43,6 +42,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
         TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
+        tokenProvider.saveRefreshToken(refreshToken, email);
 
         createResponseHeader(response, tokenResponseDto);
 
