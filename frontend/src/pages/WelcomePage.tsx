@@ -4,10 +4,11 @@ import { Favorite } from "../components/Favorite";
 import Logo from "../assets/Logo.svg"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Wrapper, SideWrapper } from "../styles/Layout";
+import { Container, Wrapper, SideWrapper, MainWrapper } from "../styles/Layout";
 import styled from '@emotion/styled';
 import { UserInfoStore } from "../stores/UserInfoStore";
 import { useStore } from "zustand"
+import ChattingRoomList from "../components/chattingRoomList/ChattingRoomList"
 
 const WelcomePage = () => {
     const [Logintext, setLoginText] = useState("Login");
@@ -64,6 +65,9 @@ const WelcomePage = () => {
         bottom={<Sidebar.item text={Logintext} type="list" svg="Logout" onClick={handleLoginClick} />}
         />
         </SideWrapper>
+
+        
+        <ChattingRoomList/>
     </Wrapper>
     </Container>
   );

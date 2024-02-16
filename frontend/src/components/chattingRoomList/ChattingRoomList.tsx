@@ -9,7 +9,7 @@ const ChattingRoomList: React.FC = () => {
 
 				{/* Grid */}
         <ChattingRoomListGridContainer>
-          {Array.from({ length: 16 }).map((_, index) => (
+          {Array.from({ length: 20 }).map((_, index) => (
             <ChattingRoom key={index} />
           ))}
         </ChattingRoomListGridContainer>
@@ -24,6 +24,6 @@ export default ChattingRoomList;
 
 export const ChattingRoomListGridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 `;
