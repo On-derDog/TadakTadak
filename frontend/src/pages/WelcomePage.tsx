@@ -15,7 +15,7 @@ import { RoomInfo, RoomsInfo } from '../stores/useRoomStore';
 import { UserInfoStore } from '../stores/UserInfoStore';
 import RoomPreviewList from '../components/roomPreview/RoomPreviewList';
 import CreateRoomPreview from '../components/roomPreview/CreateRoomPreview';
-import { GetAllRoomsApis } from '../hooks/useGetAllRoom';
+import { GetAllRoomsApis } from '../hooks/react-query/useGetAllRoom';
 
 const WelcomePage = () => {
 	const navigate = useNavigate();

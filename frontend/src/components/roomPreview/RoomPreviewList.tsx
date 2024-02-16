@@ -33,7 +33,8 @@ export default RoomPreviewList;
 
 
 const RoomPreviewListWrapper = styled.main`
-
+  height: 100%;
+  width: 100%;
 `
 
 const RoomPreviewListSection = styled.section`
@@ -43,4 +44,5 @@ export const ChattingRoomListGridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
+  padding: 1.25rem;
 `;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RoomsInfo } from '../stores/useRoomStore';
+import { RoomsInfo } from '../../stores/useRoomStore';
 import { useStore } from 'zustand';
 
 export const GetAllRoomsApis = {

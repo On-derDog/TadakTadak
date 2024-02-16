@@ -5,7 +5,7 @@ import { Button } from "../components/common/Button";
 import { NaverLoginButton } from "../components/auth/NaverLoginButton";
 import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
-import { AuthApis }  from "../hooks/useAuthQuery";
+import { AuthApis }  from "../hooks/react-query/useAuthQuery";
 import styled from "@emotion/styled"
 import LogoSVG from "../assets/Logo.svg"
 import TadakTadakSVG from "../assets/TadakTadak.svg"

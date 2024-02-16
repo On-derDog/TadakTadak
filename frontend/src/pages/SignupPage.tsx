@@ -6,7 +6,7 @@ import { useStore } from "zustand";
 import { UserInfoStore } from "../stores/UserInfoStore";
 import styled from '@emotion/styled';
 
-import { AuthApis }  from "../hooks/useAuthQuery";
+import { AuthApis }  from "../hooks/react-query/useAuthQuery";
 
 type isValid = {
     passwordIsValid: boolean;
