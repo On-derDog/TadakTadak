@@ -61,6 +61,13 @@ const RoomPreviewWrapper = styled.main`
   align-items: center;
   justify-content: center;
   gap: 1rem;
+
+  cursor: pointer;
+  transition: 0.3s ease;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 `
 
 const RoomPreviewDetail = styled.section`
