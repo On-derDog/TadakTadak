@@ -27,12 +27,12 @@ const ChatRoomInfo: React.FC = () => {
 		} catch (error) {
 			console.error('Error fetching room info:', error);
 			// test 더미데이터
-			// setRoomInfo({
-			// 	roomName: 'Sample Room',
-			// 	participation: 3,
-			// 	owner: 'John Doe',
-			// 	chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
-			// });
+			setRoomInfo({
+				roomName: 'Sample Room',
+				participation: 3,
+				owner: 'John Doe',
+				chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
+			});
 		}
 	};
 

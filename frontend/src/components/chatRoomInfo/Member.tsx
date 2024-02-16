@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import KickBtn from './KickBtn';
+import ChangeBtn from './ChangeBtn';
 
 interface MemberProps {
 	username: string;
@@ -7,9 +9,13 @@ interface MemberProps {
 const Member: React.FC<MemberProps> = ({ username }) => {
 	return (
 		<MemberWrapper>
-			<KickWrapper> - </KickWrapper>
+			<KickWrapper>
+				<KickBtn />
+			</KickWrapper>
 			<MemberName>{username}</MemberName>
-			<ChangeOwner> + </ChangeOwner>
+			<ChangeOwner>
+				<ChangeBtn />
+			</ChangeOwner>
 		</MemberWrapper>
 	);
 };
