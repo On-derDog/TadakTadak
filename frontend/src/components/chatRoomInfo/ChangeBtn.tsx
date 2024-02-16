@@ -1,14 +1,11 @@
-import styled from '@emotion/styled';
 import { MdPublishedWithChanges } from 'react-icons/md';
 
-const ChangeBtn = () => {
-	return (
-		<BtnWrapper>
-			<MdPublishedWithChanges />
-		</BtnWrapper>
-	);
+interface ChangeBtnProps {
+	onClick: () => void;
+}
+
+const ChangeBtn: React.FC<ChangeBtnProps> = ({ onClick }) => {
+	return <MdPublishedWithChanges onClick={onClick} />;
 };
 
 export default ChangeBtn;
-
-const BtnWrapper = styled.div``;

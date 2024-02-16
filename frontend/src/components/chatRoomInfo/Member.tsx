@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import KickBtn from './KickBtn';
 import ChangeBtn from './ChangeBtn';
 
@@ -9,6 +10,8 @@ interface MemberProps {
 }
 
 const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
+	const [isChangingOwner, setIsChangingOwner] = useState(false);
+
 	const handleKick = () => {
 		if (isOwner) {
 			const apiUrl = `/chatroom-service/rooms/${roomId}/kicked/${username}`;
@@ -28,13 +31,30 @@ const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
 		}
 	};
 
+	const handleChangeOwner = () => {
+		setIsChangingOwner(true);
+		const apiUrl = `/chatroom-service/rooms/${roomId}/change-owner/${username}`;
+		fetch(apiUrl, {
+			method: 'PATCH',
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Failed to change owner');
+				}
+			})
+			.catch((error) => {
+				console.error('Error changing owner:', error);
+			})
+			.finally(() => {
+				setIsChangingOwner(false);
+			});
+	};
+
 	return (
 		<MemberWrapper>
 			<KickWrapper>{isOwner && <KickBtn onClick={handleKick} />}</KickWrapper>
 			<MemberName>{username}</MemberName>
-			<ChangeOwner>
-				<ChangeBtn />
-			</ChangeOwner>
+			<ChangeOwner>{isOwner && <ChangeBtn onClick={handleChangeOwner} />}</ChangeOwner>
 		</MemberWrapper>
 	);
 };

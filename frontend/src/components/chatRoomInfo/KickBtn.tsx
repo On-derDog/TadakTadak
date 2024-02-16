@@ -1,15 +1,11 @@
-import styled from '@emotion/styled';
+import { FiMinusCircle } from 'react-icons/fi';
 
 interface KickBtnProps {
-	onClick: () => void; // onClick prop 추가
+	onClick: () => void;
 }
 
 const KickBtn: React.FC<KickBtnProps> = ({ onClick }) => {
-	return <StyledKickBtn onClick={onClick}>Kick</StyledKickBtn>;
+	return <FiMinusCircle onClick={onClick} />;
 };
 
 export default KickBtn;
-
-const StyledKickBtn = styled.button`
-	/* 버튼 스타일 */
-`;

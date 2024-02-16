@@ -16,7 +16,7 @@ interface RoomInfo {
 const ChatRoomInfo: React.FC = () => {
 	const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
 	const { roomId } = useParams<{ roomId: string }>();
-	const [isOwner, setIsOwner] = useState(false);
+	const [isOwner, setIsOwner] = useState(true);
 
 	const userInfo = UserInfoStore();
 
