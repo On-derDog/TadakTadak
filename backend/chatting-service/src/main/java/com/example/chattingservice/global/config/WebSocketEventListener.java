@@ -1,7 +1,5 @@
 package com.example.chattingservice.global.config;
 
-import com.example.chattingservice.domain.chat.dto.request.MessageType;
-import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +23,7 @@ public class WebSocketEventListener {
         String username = (String) headerAccessor.getSessionAttributes().get("username");
 
         if (username != null) {
-            userService.removeUser(username);
+            userService.removeUserWhenSocketDisabled(username);
         }
     }
 }

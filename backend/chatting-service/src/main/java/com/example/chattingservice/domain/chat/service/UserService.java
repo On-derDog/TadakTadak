@@ -2,17 +2,13 @@ package com.example.chattingservice.domain.chat.service;
 
 import com.example.chattingservice.domain.chat.dto.request.UserInformationRequest;
 import com.example.chattingservice.domain.chat.dto.response.UserParticipation;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.json.JsonObject;
-import org.bson.json.JsonParseException;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,8 +18,10 @@ import java.util.TreeMap;
 public class UserService {
 
     private final SimpMessagingTemplate template;
+    private final KafkaTemplate kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final Map<String, UserParticipation> users = new TreeMap();
+    public static final String REFRESH_LIST_TOPIC_NAME = "refresh";
     public void newUserLogin(UserInformationRequest userInformationRequest){
 
         UserParticipation newUser = UserParticipation.builder()
@@ -33,11 +31,11 @@ public class UserService {
                                                 .build();
 
         users.put(userInformationRequest.getUsername(),newUser);
-        template.convertAndSend("/topic/users",users);
+        kafkaTemplate.send(REFRESH_LIST_TOPIC_NAME,null);
     }
-    public void removeUser(String username){
+    public void removeUserWhenSocketDisabled(String username){
         users.remove(username);
-        template.convertAndSend("/topic/users",users);
+        kafkaTemplate.send(REFRESH_LIST_TOPIC_NAME,null);
     }
     public void moveUser(String username, String roomName){
         UserParticipation user = users.get(username);
@@ -45,25 +43,7 @@ public class UserService {
         template.convertAndSend("/topic/users",users);
     }
 
-    public void userEnterRoom(String data)  {
-        try{
-            JsonNode object = objectMapper.readTree(data);
-            String roomName = object.get("roomName").asText();
-            String username = object.get("username").asText();
-            UserParticipation user = users.get(username);
-            if(user ==null){
-                users.put(username,UserParticipation.builder()
-                        .roomName(roomName)
-                        .username(username)
-                        .build());
-            }
-            else{
-                user.changeRoomName(roomName);
-            }
-            template.convertAndSend("/topic/users",users);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new IllegalArgumentException();
-        }
+    public void refreshList(String data)  {
+        template.convertAndSend("/topic/users",users);
     }
 }

@@ -13,12 +13,13 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConsumerConfig {
+    public static final String SOCKET_CONSUMER_ID = "chatting-consumer";
 
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"); //kafka 돌아가는 포트
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "chatting-consumer");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, SOCKET_CONSUMER_ID);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 

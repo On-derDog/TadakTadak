@@ -32,6 +32,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMemberService chatMemberService;
     private final KafkaProducer kafkaProducer;
+    private static final String REFRESH_LIST_TOPIC_NAME = "refresh";
 
     @Transactional
     public CreateChatroomResponse create(CreateChatroomRequest chatroomRequest) {
@@ -56,7 +57,7 @@ public class ChatRoomService {
         // 채팅방에 없는 member 일 경우 save 로직
         if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
             EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
-            kafkaProducer.send("enter", enterKafkaRequest);
+            kafkaProducer.send(REFRESH_LIST_TOPIC_NAME, enterKafkaRequest);
             return chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
         }
 
@@ -65,7 +66,7 @@ public class ChatRoomService {
 
         // kafka send
         EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
-        kafkaProducer.send("enter", enterKafkaRequest);
+        kafkaProducer.send(REFRESH_LIST_TOPIC_NAME, enterKafkaRequest);
 
         return EnterChatMemberResponse.of(existingChatMember, chatRoom.getParticipation());
     }

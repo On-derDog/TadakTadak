@@ -25,15 +25,20 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper;
     private final ChatRepository chatRepository;
-    public static final String chattingTopicName = "chatting";
+    public static final String CHATTING_TOPIC_NAME = "chatting";
 
     public void sendChat(ChatRequest chatRequest, Long roomId){
         Chat chatEntity = Chat.toEntity(chatRequest, roomId);
-        Chat savedEntity = chatRepository.save(chatEntity);
-        Validation.isSuccessSaveChat(savedEntity);
-        kafkaTemplate.send(chattingTopicName, ChatResponse.from(savedEntity));
-    }
+//        Chat savedEntity = chatRepository.save(chatEntity);
+//        Validation.isSuccessSaveChat(savedEntity);
+        try{
+            String objectToString = objectMapper.writeValueAsString(ChatResponse.from(chatEntity));
+            kafkaTemplate.send(CHATTING_TOPIC_NAME, objectToString);
+        }catch (Exception e){
+            throw new IllegalArgumentException();
+        }
 
+    }
     public void receiveChat(String data){
         try{
             JsonNode object = objectMapper.readTree(data);

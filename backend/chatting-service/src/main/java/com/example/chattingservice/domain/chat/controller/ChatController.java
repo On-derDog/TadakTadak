@@ -30,7 +30,6 @@ public class ChatController {
     private final UserService userService;
 
     @MessageMapping("/chat/{roomId}/send-message")
-    @SendTo("/topic/public/{roomId}")
     public void sendMessage(
             @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId
@@ -38,19 +37,19 @@ public class ChatController {
         chatService.sendChat(chatRequest, roomId);
     }
 
-    @MessageMapping("/chat/{roomId}/enter")
-    @SendTo({"/topic/public/{roomId}"})
-    public ChatEnterLeaveResponse enter(
-            @Payload @Valid ChatRequest chatRequest,
-            @DestinationVariable("roomId") Long roomId,
-            SimpMessageHeaderAccessor headerAccessor
-    ) {
-
-        headerAccessor.getSessionAttributes().put("username", chatRequest.getUsername());
-        headerAccessor.getSessionAttributes().put("roomId", roomId);
-        userService.moveUser(chatRequest.getUsername(),roomId.toString());
-        return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
-    }
+//    @MessageMapping("/chat/{roomId}/enter")
+//    @SendTo({"/topic/public/{roomId}"})
+//    public ChatEnterLeaveResponse enter(
+//            @Payload @Valid ChatRequest chatRequest,
+//            @DestinationVariable("roomId") Long roomId,
+//            SimpMessageHeaderAccessor headerAccessor
+//    ) {
+//
+//        headerAccessor.getSessionAttributes().put("username", chatRequest.getUsername());
+//        headerAccessor.getSessionAttributes().put("roomId", roomId);
+//        userService.moveUser(chatRequest.getUsername(),roomId.toString());
+//        return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
+//    }
 
 
 
