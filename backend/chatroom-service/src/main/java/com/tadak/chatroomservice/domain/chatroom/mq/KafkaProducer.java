@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+    public static final String STATUS_TOPIC_NAME ="status-change";
 
     public EnterKafkaRequest send(String topic, EnterKafkaRequest enterKafkaRequest){
         ObjectMapper mapper = new ObjectMapper();

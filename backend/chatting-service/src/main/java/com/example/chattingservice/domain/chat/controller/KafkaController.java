@@ -16,8 +16,10 @@ public class KafkaController {
 
     private final UserService userService;
     private final ChatService chatService;
+    public static final String REFRESH_LIST_TOPIC_NAME = "refresh";
+    public static final String STATUS_TOPIC_NAME ="status-change";
 
-    @KafkaListener(topics=UserService.REFRESH_LIST_TOPIC_NAME,groupId = KafkaConsumerConfig.SOCKET_CONSUMER_ID)
+    @KafkaListener(topics=REFRESH_LIST_TOPIC_NAME,groupId = KafkaConsumerConfig.SOCKET_CONSUMER_ID)
     public void refreshListener(String data)  {
         userService.refreshList(data);
     }

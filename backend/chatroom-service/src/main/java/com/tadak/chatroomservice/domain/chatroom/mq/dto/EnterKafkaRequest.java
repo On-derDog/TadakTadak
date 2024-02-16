@@ -15,11 +15,13 @@ public class EnterKafkaRequest {
 
     private String roomName;
     private String username;
+    private String status;
 
     public static EnterKafkaRequest from(ChatRoom chatRoom, String username){
         return EnterKafkaRequest.builder()
                 .roomName(chatRoom.getRoomName())
                 .username(username)
+                .status("enter")
                 .build();
     }
 }

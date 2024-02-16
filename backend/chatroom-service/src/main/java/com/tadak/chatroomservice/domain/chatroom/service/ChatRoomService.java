@@ -57,7 +57,7 @@ public class ChatRoomService {
         // 채팅방에 없는 member 일 경우 save 로직
         if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
             EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
-            kafkaProducer.send(REFRESH_LIST_TOPIC_NAME, enterKafkaRequest);
+            kafkaProducer.send(KafkaProducer.STATUS_TOPIC_NAME, enterKafkaRequest);
             return chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
         }
 
@@ -66,7 +66,7 @@ public class ChatRoomService {
 
         // kafka send
         EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
-        kafkaProducer.send(REFRESH_LIST_TOPIC_NAME, enterKafkaRequest);
+        kafkaProducer.send(KafkaProducer.STATUS_TOPIC_NAME, enterKafkaRequest);
 
         return EnterChatMemberResponse.of(existingChatMember, chatRoom.getParticipation());
     }

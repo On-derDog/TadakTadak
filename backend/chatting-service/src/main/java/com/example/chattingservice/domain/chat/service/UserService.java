@@ -1,7 +1,10 @@
 package com.example.chattingservice.domain.chat.service;
 
+import com.example.chattingservice.domain.chat.controller.KafkaController;
 import com.example.chattingservice.domain.chat.dto.request.UserInformationRequest;
 import com.example.chattingservice.domain.chat.dto.response.UserParticipation;
+import com.example.chattingservice.domain.chat.entity.OnlineUser;
+import com.example.chattingservice.domain.chat.repository.OnlineUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,30 +24,41 @@ public class UserService {
     private final SimpMessagingTemplate template;
     private final KafkaTemplate kafkaTemplate;
     private final ObjectMapper objectMapper;
-    private final Map<String, UserParticipation> users = new TreeMap();
-    public static final String REFRESH_LIST_TOPIC_NAME = "refresh";
+    private final OnlineUserRepository onlineUserRepository;
+
     public void newUserLogin(UserInformationRequest userInformationRequest){
 
         UserParticipation newUser = UserParticipation.builder()
                         .userId(0l)
                                 .username(userInformationRequest.getUsername())
                                         .roomName(userInformationRequest.getRoomName())
+                                         .status("login")
                                                 .build();
-
-        users.put(userInformationRequest.getUsername(),newUser);
-        kafkaTemplate.send(REFRESH_LIST_TOPIC_NAME,null);
+        try{
+            System.out.println("로그인 완료");
+            kafkaTemplate.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
+        }catch (Exception e){
+            throw new IllegalArgumentException();
+        }
     }
     public void removeUserWhenSocketDisabled(String username){
-        users.remove(username);
-        kafkaTemplate.send(REFRESH_LIST_TOPIC_NAME,null);
+        UserParticipation newUser = UserParticipation.builder()
+                .userId(0l)
+                .username(username)
+                .roomName(null)
+                .status("exit")
+                .build();
+        try{
+            kafkaTemplate.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
+        }catch (Exception e){
+            throw new IllegalArgumentException();
+        }
     }
-    public void moveUser(String username, String roomName){
-        UserParticipation user = users.get(username);
-        user.changeRoomName(roomName);
-        template.convertAndSend("/topic/users",users);
-    }
-
     public void refreshList(String data)  {
-        template.convertAndSend("/topic/users",users);
+        List<OnlineUser> onlineUsers = onlineUserRepository.findAll();
+        for(OnlineUser  onlineUser: onlineUsers){
+            System.out.println(onlineUser.getUsername()+"/"+onlineUser.getRoomName());
+        }
+        template.convertAndSend("/topic/users",onlineUsers);
     }
 }
