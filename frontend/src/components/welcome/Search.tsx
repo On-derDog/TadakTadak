@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import SearchSVG from "../assets/Search.svg"
+import SearchSVG from "../../assets/Search.svg"
 import { useState } from "react"
 
 export const Search = ()=>{

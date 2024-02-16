@@ -15,22 +15,23 @@
 		"@emotion/react": "^11.11.3",
 		"@emotion/styled": "^11.11.0",
 		"@stomp/stompjs": "^7.0.0",
-		"@tanstack/react-query": "^5.18.0",
-		"@tanstack/react-query-devtools": "^5.18.0",
+		"@tanstack/react-query": "^5.20.5",
+		"@tanstack/react-query-devtools": "^5.20.5",
 		"axios": "^1.6.7",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.21.3",
+		"react-icon": "^1.0.0",
+		"react-router-dom": "^6.22.0",
 		"react-toastify": "^10.0.4",
 		"simple-peer": "^9.11.1",
 		"zustand": "^4.5.0"
 	},
 	"devDependencies": {
-		"@types/react": "^18.2.50",
-		"@types/react-dom": "^18.2.18",
+		"@types/react": "^18.2.55",
+		"@types/react-dom": "^18.2.19",
 		"@types/stompjs": "^2.3.9",
-		"@typescript-eslint/eslint-plugin": "^6.20.0",
-		"@typescript-eslint/parser": "^6.20.0",
+		"@typescript-eslint/eslint-plugin": "^6.21.0",
+		"@typescript-eslint/parser": "^6.21.0",
 		"@vitejs/plugin-react": "^4.2.1",
 		"eslint": "^8.56.0",
 		"eslint-config-airbnb": "^19.0.4",
@@ -44,8 +45,8 @@
 		"eslint-plugin-react": "^7.33.2",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"eslint-plugin-react-refresh": "^0.4.5",
-		"prettier": "^3.2.4",
+		"prettier": "^3.2.5",
 		"typescript": "^5.3.3",
-		"vite": "^5.0.12"
+		"vite": "^5.1.2"
 	}
 }

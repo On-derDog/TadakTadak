@@ -3,17 +3,17 @@ import { UserList } from '../../interface/UserListInterface';
 
 import { ColumnDisplay } from '../../styles/ComponentLayout';
 
-type UserListProps = {
+interface UserListProps {
 	userlist: UserList[];
-};
+}
 
 const UserProfile = ({ userlist }: UserListProps) => {
 	return (
 		<>
 			{userlist.map((item, index) => (
 				<ProfileContainer key={index}>
-					<Text>{item.userName}</Text>
-					<SmallText>이것이 취업을 위한 코딩테스트다.-파이썬편-</SmallText>
+					<Text>{item.username}</Text>
+					<SmallText>{item.roomName}</SmallText>
 				</ProfileContainer>
 			))}
 		</>
