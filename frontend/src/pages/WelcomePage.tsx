@@ -36,7 +36,6 @@ const WelcomePage = () => {
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		roominfo.update(name, value);
-		console.log(roominfo);
 	};
 
 	const {
@@ -55,11 +54,13 @@ const WelcomePage = () => {
 		data: roomsPreviewListData,
 		isLoading: roomsIsLoading,
 		isError: roomsIsError,
+		refetch: refetchRooms,
 	} = useQuery({
 		queryKey: ['roomPreviewListData'],
 		queryFn: GetAllRoomsApis.getAllRooms,
 		staleTime: 3000,
 		enabled: isLoggedIn,
+		refetchInterval: 3000,
 	});
 
 	useEffect(() => {
@@ -149,7 +150,7 @@ const WelcomePage = () => {
 						/>
 					</SideWrapper>
 					<MainContainer>
-						<RoomPreviewList />
+						<RoomPreviewList roomsPreviewListData={roomsPreviewListData} refetchRooms={refetchRooms}/>
 						{CreateRoom && (
 							<CreateRoomPreview
 								onClose={() => setCreateRoom(false)}
@@ -187,6 +188,8 @@ const LogoDiv = styled.div`
 `;
 
 const MainContainer = styled.div`
+	height:100%;
+	width: calc(100% - 11.5rem);
 	${FlexCenterWrapper}
 `;
 

@@ -55,7 +55,6 @@ export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:str
 const RoomPreviewWrapper = styled.main`
   width: 100%;
   min-width: 6.25rem;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

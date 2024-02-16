@@ -1,19 +1,20 @@
 import { RoomPreview } from "./RoomPreview";
 import styled from '@emotion/styled';
 import { RoomsInfo } from '../../stores/useRoomStore';
+import { useEffect } from "react";
 
-const RoomPreviewList = () => {
+const RoomPreviewList = ({ roomsPreviewListData, refetchRooms }) => {
 
-  const roomsInfo = RoomsInfo.getState();
-  console.log(roomsInfo.rooms);
+  useEffect(() => {
+    console.log(roomsPreviewListData);
+  }, [roomsPreviewListData]); 
 
 	return (
 		<RoomPreviewListWrapper>
-			<RoomPreviewListSection>
 
 				{/* Grid */}
         <ChattingRoomListGridContainer>
-         {roomsInfo.rooms.map((item, index) => (
+         {roomsPreviewListData?.map((item, index) => (
             <RoomPreview
               key={index}
               roomId={item.roomId}
@@ -24,7 +25,6 @@ const RoomPreviewList = () => {
           ))}
         </ChattingRoomListGridContainer>
 
-			</RoomPreviewListSection>
 		</RoomPreviewListWrapper>
 	)
 };
@@ -37,11 +37,13 @@ const RoomPreviewListWrapper = styled.main`
   width: 100%;
 `
 
-const RoomPreviewListSection = styled.section`
-`
-
-export const ChattingRoomListGridContainer = styled.div`
+const ChattingRoomListGridContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
   display: grid;
+  align-items: start;
+  justify-items: start; 
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   padding: 1.25rem;
