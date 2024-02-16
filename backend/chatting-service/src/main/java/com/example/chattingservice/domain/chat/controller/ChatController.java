@@ -3,7 +3,6 @@ package com.example.chattingservice.domain.chat.controller;
 import com.example.chattingservice.domain.chat.dto.request.ChatRequest;
 import com.example.chattingservice.domain.chat.dto.response.ChatEnterLeaveResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
-import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.ChatService;
 import com.example.chattingservice.domain.chat.service.UserService;
 import jakarta.validation.Valid;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -33,11 +31,11 @@ public class ChatController {
 
     @MessageMapping("/chat/{roomId}/send-message")
     @SendTo("/topic/public/{roomId}")
-    public ChatResponse sendMessage(
+    public void sendMessage(
             @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId
     ) {
-        return chatService.saveChat(chatRequest, roomId);
+        chatService.sendChat(chatRequest, roomId);
     }
 
     @MessageMapping("/chat/{roomId}/enter")
