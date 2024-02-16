@@ -58,7 +58,7 @@ const WelcomePage = () => {
 	} = useQuery({
 		queryKey: ['roomPreviewListData'],
 		queryFn: GetAllRoomsApis.getAllRooms,
-		staleTime: 10000,
+		staleTime: 3000,
 		enabled: isLoggedIn,
 	});
 
@@ -94,7 +94,7 @@ const WelcomePage = () => {
 			setShowToast(true);
 		}
 	};
-    
+
 	return (
 		<>
 			{/* 전체 컴포넌트와 토스트 컴포넌트 함께 보여주기 */}
