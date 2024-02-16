@@ -4,14 +4,33 @@ import ChangeBtn from './ChangeBtn';
 
 interface MemberProps {
 	username: string;
+	isOwner: boolean;
+	roomId: string;
 }
 
-const Member: React.FC<MemberProps> = ({ username }) => {
+const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
+	const handleKick = () => {
+		if (isOwner) {
+			const apiUrl = `/chatroom-service/rooms/${roomId}/kicked/${username}`;
+			fetch(apiUrl, {
+				method: 'POST',
+			})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Failed to kick member');
+					}
+				})
+				.catch((error) => {
+					console.error('Error kicking member:', error);
+				});
+		} else {
+			console.log('You are not the owner. Cannot kick member.');
+		}
+	};
+
 	return (
 		<MemberWrapper>
-			<KickWrapper>
-				<KickBtn />
-			</KickWrapper>
+			<KickWrapper>{isOwner && <KickBtn onClick={handleKick} />}</KickWrapper>
 			<MemberName>{username}</MemberName>
 			<ChangeOwner>
 				<ChangeBtn />

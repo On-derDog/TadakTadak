@@ -1,14 +1,15 @@
 import styled from '@emotion/styled';
-import { LuMinusCircle } from 'react-icons/lu';
 
-const KickBtn = () => {
-	return (
-		<BtnWrapper>
-			<LuMinusCircle />
-		</BtnWrapper>
-	);
+interface KickBtnProps {
+	onClick: () => void; // onClick prop 추가
+}
+
+const KickBtn: React.FC<KickBtnProps> = ({ onClick }) => {
+	return <StyledKickBtn onClick={onClick}>Kick</StyledKickBtn>;
 };
 
 export default KickBtn;
 
-const BtnWrapper = styled.div``;
+const StyledKickBtn = styled.button`
+	/* 버튼 스타일 */
+`;

@@ -3,17 +3,18 @@ import Member from './Member';
 
 interface RoomMemberProps {
 	owner: string;
+	isOwner: boolean;
 	chatMemberResponses: { username: string }[];
 }
 
-const RoomMember: React.FC<RoomMemberProps> = ({ owner, chatMemberResponses }) => {
+const RoomMember: React.FC<RoomMemberProps> = ({ owner, isOwner, chatMemberResponses }) => {
 	return (
 		<RoomMemberWrapper>
 			<OwnerWrapper>방장 : {owner}</OwnerWrapper>
 			<TitleWrapper>팀원</TitleWrapper>
 			<MemberList>
 				{chatMemberResponses.map((member, index) => (
-					<Member key={index} username={member.username} />
+					<Member key={index} username={member.username} isOwner={isOwner} roomId={'1'} />
 				))}
 			</MemberList>
 		</RoomMemberWrapper>
