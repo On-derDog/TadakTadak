@@ -7,16 +7,19 @@ interface MemberProps {
 const Member: React.FC<MemberProps> = ({ username }) => {
 	return (
 		<MemberWrapper>
-			<KickWrapper>Kick</KickWrapper>
+			<KickWrapper> - </KickWrapper>
 			<MemberName>{username}</MemberName>
-			<ChangeOwner>Change</ChangeOwner>
+			<ChangeOwner> + </ChangeOwner>
 		</MemberWrapper>
 	);
 };
 
 export default Member;
 
-const MemberWrapper = styled.div``;
+const MemberWrapper = styled.div`
+	display: flex;
+	flex-direction: row;
+`;
 const KickWrapper = styled.div``;
 const MemberName = styled.div``;
 const ChangeOwner = styled.div``;
