@@ -1,10 +1,10 @@
 import { Message } from '../../interface/ChatInterface';
 import styled from '@emotion/styled';
 
-type ChatMessageListProps = {
+interface ChatMessageListProps {
 	messages: Message[];
 	username: string | undefined;
-};
+}
 
 const ChatMessage = ({ messages, username }: ChatMessageListProps) => {
 	let currentFormattedDate = '';

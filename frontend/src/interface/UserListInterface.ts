@@ -1,5 +1,6 @@
 export interface UserList {
-	userName: string;
+	username: string;
+	roomName: string;
 }
 
 export interface UserData {
@@ -8,7 +9,7 @@ export interface UserData {
 	username: string;
 }
 
-interface UserDataProps {
+export interface UserDataProps {
 	username: string | undefined;
 	isLoading: boolean;
 	isError: boolean;

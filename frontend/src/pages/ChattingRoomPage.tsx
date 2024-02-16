@@ -33,7 +33,7 @@ const ChattingRoomPage = () => {
 					</ChatWrapper>
 				</MainWrapper>
 				<SideWrapper>
-					<UserList username={username} isLoading={isLoading} isError={isError} />
+					<UserList />
 				</SideWrapper>
 			</Wrapper>
 		</Container>
