@@ -20,6 +20,7 @@ public class StatusService {
     private final KafkaTemplate kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final StatusRepository statusRepository;
+    private final KafkaService kafkaService;
     private static final String REFRESH_LIST_TOPIC_NAME = "refresh";
 
     public void changeStatus(String data)  {
@@ -52,7 +53,7 @@ public class StatusService {
             if(status.equals("enter")) newOnlineUser.setRoomName(roomName);
             statusRepository.save(newOnlineUser);
         }
-        kafkaTemplate.send(REFRESH_LIST_TOPIC_NAME,"change");
-         // 리스트 새로 발행하라고 전송
+        kafkaService.sendMessageToAllPartitionsWithoutKey(REFRESH_LIST_TOPIC_NAME,"change");
+         // 모든 파티션에 리스트 새로 발행하라고 전송
     }
 }
