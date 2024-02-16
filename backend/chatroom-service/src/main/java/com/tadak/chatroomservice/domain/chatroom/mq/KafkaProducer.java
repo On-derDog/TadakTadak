@@ -17,16 +17,23 @@ public class KafkaProducer {
     public static final String STATUS_TOPIC_NAME ="status-change";
 
     public EnterKafkaRequest send(String topic, EnterKafkaRequest enterKafkaRequest){
+        String stringToJson = StringToJson(enterKafkaRequest);
+        kafkaTemplate.send(topic, stringToJson);
+        return enterKafkaRequest;
+    }
+    public void sendWithUsernameByKeyToSessionServer(String topic,EnterKafkaRequest enterKafkaRequest){
+        String stringToJson = StringToJson(enterKafkaRequest);
+        kafkaTemplate.send(topic, enterKafkaRequest.getUsername(),stringToJson);
+    }
+
+    private String StringToJson(EnterKafkaRequest enterKafkaRequest) {
         ObjectMapper mapper = new ObjectMapper();
-        String stringToJson = "";
+        String jsonToString = "";
         try {
-            stringToJson = mapper.writeValueAsString(enterKafkaRequest);
+            jsonToString = mapper.writeValueAsString(enterKafkaRequest);
         } catch (JsonProcessingException ex){
             ex.printStackTrace();
         }
-
-        kafkaTemplate.send(topic, stringToJson);
-
-        return enterKafkaRequest;
+        return jsonToString;
     }
 }

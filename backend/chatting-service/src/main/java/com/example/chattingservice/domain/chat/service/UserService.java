@@ -8,13 +8,10 @@ import com.example.chattingservice.domain.chat.repository.OnlineUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 @Service
 @Slf4j
@@ -36,7 +33,7 @@ public class UserService {
                                                 .build();
         try{
             System.out.println("로그인 완료");
-//            kafkaase.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
+            kafkaService.sendWithUsernameByKeyToSessionServerWhenLogin(KafkaController.STATUS_TOPIC_NAME,newUser);
         }catch (Exception e){
             throw new IllegalArgumentException();
         }
@@ -49,7 +46,7 @@ public class UserService {
                 .status("exit")
                 .build();
         try{
-//            kafkaTemplate.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
+           kafkaService.sendWithUsernameByKeyToSessionServerWhenLogin(KafkaController.STATUS_TOPIC_NAME,newUser);
         }catch (Exception e){
             throw new IllegalArgumentException();
         }
