@@ -18,16 +18,16 @@ import CreateRoomPreview from '../components/roomPreview/CreateRoomPreview';
 import { GetAllRoomsApis } from '../hooks/useGetAllRoom';
 
 const WelcomePage = () => {
-	const [loginText, setLoginText] = useState('Login');
-	const [showToast, setShowToast] = useState(false);
-	const { connect, unconnect } = useLoginWebSocket();
 	const navigate = useNavigate();
-	const accessToken = localStorage.getItem('Accesstoken');
-	const isLoggedIn = accessToken !== null;
 	const clientConnected = useRef(false);
-	const [CreateRoom, setCreateRoom] = useState(false);
 	const userinfo = useStore(UserInfoStore);
 	const roominfo = useStore(RoomInfo);
+	const [loginText, setLoginText] = useState('Login');
+	const [showToast, setShowToast] = useState(false);
+	const [CreateRoom, setCreateRoom] = useState(false);
+	const { connect, unconnect } = useLoginWebSocket();
+	const accessToken = localStorage.getItem('Accesstoken');
+	const isLoggedIn = accessToken !== null;
 
 	const handleCreateRoom = () => {
 		setCreateRoom(true);
@@ -50,10 +50,23 @@ const WelcomePage = () => {
 		enabled: isLoggedIn,
 	});
 
+    
+    const {
+		data: roomsPreviewListData,
+		isLoading: roomsIsLoading,
+		isError: roomsIsError,
+	} = useQuery({
+		queryKey: ['roomPreviewListData'],
+		queryFn: GetAllRoomsApis.getAllRooms,
+		staleTime: 10000,
+		enabled: isLoggedIn,
+	});
+
 	useEffect(() => {
 		if (isLoggedIn && userData) {
 			setLoginText('Logout');
 			connect(userData.username);
+            userinfo.updateUsername(userData.username);
 		} else {
 			setLoginText('Login');
 		}
@@ -81,38 +94,7 @@ const WelcomePage = () => {
 			setShowToast(true);
 		}
 	};
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const data = await getUserData();
-				userinfo.updateUsername(data.username);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchData();
-	}, []);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const res = await GetAllRoomsApis.getAllRooms();
-			} catch (error) {
-				console.error('Error fetching rooms:', error);
-			}
-		};
-
-		fetchData();
-
-		const intervalId = setInterval(() => {
-			fetchData();
-		}, 10000);
-
-		return () => clearInterval(intervalId);
-	}, []);
-
+    
 	return (
 		<>
 			{/* 전체 컴포넌트와 토스트 컴포넌트 함께 보여주기 */}

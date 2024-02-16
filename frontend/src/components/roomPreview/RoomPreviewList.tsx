@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { RoomsInfo } from '../../stores/useRoomStore';
 
 const RoomPreviewList = () => {
+
   const roomsInfo = RoomsInfo.getState();
   console.log(roomsInfo.rooms);
 
