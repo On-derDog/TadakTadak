@@ -182,6 +182,7 @@ const WelcomePage = () => {
 			{showToast && <Toast messageType="logout" type="success" />}
 		</>
 	);
+
 };
 
 export default WelcomePage;
@@ -197,6 +198,9 @@ const UsernameText = styled.div`
 	padding: 0px 16px;
 `;
 
+const SideContainer = styled.section`
+`
+
 const LogoDiv = styled.div`
 	padding: 12px 16px 0;
 `;
@@ -204,3 +208,4 @@ const LogoDiv = styled.div`
 const MainContainer = styled.div`
 	${FlexCenterWrapper}
 `;
+

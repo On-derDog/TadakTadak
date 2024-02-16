@@ -10,6 +10,7 @@ import SigninPage from './pages/SigninPage';
 import VideoCallPage from './pages/VideoCallPage';
 import { Global } from '@emotion/react';
 import { GlobalStyle } from './styles/GlobalStyle';
+import ChatRoomInfo from './components/chatRoomInfo/ChatRoomInfo';
 
 const router = createBrowserRouter([
 	{
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
 			{ path: 'chatroom/:chatroom_id', element: <ChattingRoomPage /> },
 			{ path: 'signupnaver', element: <Signupnaver /> },
 			{ path: 'videocall', element: <VideoCallPage /> },
+			{ path: 'chatroominfo', element: <ChatRoomInfo /> },
 		],
 	},
 ]);
