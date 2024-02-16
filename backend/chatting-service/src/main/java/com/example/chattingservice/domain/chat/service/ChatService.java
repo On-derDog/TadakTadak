@@ -25,6 +25,7 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper;
     private final ChatRepository chatRepository;
+    private final KafkaService kafkaService;
     public static final String CHATTING_TOPIC_NAME = "chatting";
 
     public void sendChat(ChatRequest chatRequest, Long roomId){
@@ -33,7 +34,7 @@ public class ChatService {
 //        Validation.isSuccessSaveChat(savedEntity);
         try{
             String objectToString = objectMapper.writeValueAsString(ChatResponse.from(chatEntity));
-            kafkaTemplate.send(CHATTING_TOPIC_NAME, objectToString);
+            kafkaService.sendMessageToAllPartitionsWithoutKey(CHATTING_TOPIC_NAME,objectToString);
         }catch (Exception e){
             throw new IllegalArgumentException();
         }

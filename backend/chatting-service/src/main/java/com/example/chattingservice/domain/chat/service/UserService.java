@@ -22,7 +22,7 @@ import java.util.TreeMap;
 public class UserService {
 
     private final SimpMessagingTemplate template;
-    private final KafkaTemplate kafkaTemplate;
+    private final KafkaService kafkaService;
     private final ObjectMapper objectMapper;
     private final OnlineUserRepository onlineUserRepository;
 
@@ -36,7 +36,7 @@ public class UserService {
                                                 .build();
         try{
             System.out.println("로그인 완료");
-            kafkaTemplate.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
+//            kafkaase.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
         }catch (Exception e){
             throw new IllegalArgumentException();
         }
@@ -49,7 +49,7 @@ public class UserService {
                 .status("exit")
                 .build();
         try{
-            kafkaTemplate.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
+//            kafkaTemplate.send(KafkaController.STATUS_TOPIC_NAME,objectMapper.writeValueAsString(newUser));
         }catch (Exception e){
             throw new IllegalArgumentException();
         }
