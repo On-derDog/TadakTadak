@@ -11,10 +11,9 @@ import java.util.Map;
 
 @AllArgsConstructor
 public class OAuth2CustomMember implements OAuth2User, Serializable {
-    private String registrationId;
+    private String email;
     private Map<String, Object> attributes;
     private List<GrantedAuthority> authorities;
-    private String email;
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -28,10 +27,6 @@ public class OAuth2CustomMember implements OAuth2User, Serializable {
 
     @Override
     public String getName() {
-        return this.registrationId;
-    }
-
-    public String getEmail() {
-        return email;
+        return this.email;
     }
 }

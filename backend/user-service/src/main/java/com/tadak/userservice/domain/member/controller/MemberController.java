@@ -2,11 +2,9 @@ package com.tadak.userservice.domain.member.controller;
 
 import com.tadak.userservice.domain.member.dto.request.LoginRequestDto;
 import com.tadak.userservice.domain.member.dto.request.SignupRequestDto;
-import com.tadak.userservice.domain.member.dto.response.CheckEmailResponseDto;
-import com.tadak.userservice.domain.member.dto.response.DuplicateCheckResponseDto;
-import com.tadak.userservice.domain.member.dto.response.SignupResponseDto;
-import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
+import com.tadak.userservice.domain.member.dto.response.*;
 import com.tadak.userservice.domain.member.service.MemberService;
+import com.tadak.userservice.global.jwt.filter.JwtFilter;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +75,14 @@ public class MemberController {
     public ResponseEntity<CheckEmailResponseDto> checkEmail(@PathVariable("email") String email) throws MessagingException {
         CheckEmailResponseDto checkEmailResponseDto = memberService.existsEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(checkEmailResponseDto);
+    }
+
+    /**
+     * member 정보 조회
+     */
+    @GetMapping("/user-info")
+    public ResponseEntity<MemberResponseDto> userInfo(@RequestHeader(JwtFilter.ACCESS_AUTHORIZATION_HEADER) String token){
+        MemberResponseDto member = memberService.findByMember(token);
+        return ResponseEntity.status(HttpStatus.OK).body(member);
     }
 }

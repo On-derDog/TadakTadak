@@ -1,9 +1,10 @@
 package com.tadak.userservice.global.oauth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tadak.userservice.domain.member.dto.response.TokenResponseDto;
 import com.tadak.userservice.domain.member.entity.Member;
+import com.tadak.userservice.domain.member.exception.NotFoundMemberException;
 import com.tadak.userservice.domain.member.repository.MemberRepository;
+import com.tadak.userservice.global.error.ErrorCode;
 import com.tadak.userservice.global.jwt.filter.JwtFilter;
 import com.tadak.userservice.global.jwt.provider.TokenProvider;
 import jakarta.servlet.ServletException;
@@ -32,27 +33,25 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("onAuthenticationSuccess 실행");
         OAuth2CustomMember oAuth2User = (OAuth2CustomMember) authentication.getPrincipal();
+        String email = oAuth2User.getName();
 
-        String email = oAuth2User.getEmail();
-
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
-
-        List<GrantedAuthority> authorities = getGrantedAuthorities(member);
+        memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER_ERROR));
 
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
         TokenResponseDto tokenResponseDto = tokenProvider.createTokenResponseDto(accessToken, refreshToken);
+        tokenProvider.saveRefreshToken(refreshToken, email);
 
         createResponseHeader(response, tokenResponseDto);
+
+        response.sendRedirect("http://localhost:5173");
     }
 
     private void createResponseHeader(HttpServletResponse response, TokenResponseDto tokenResponseDto) throws IOException {
         response.addHeader(JwtFilter.ACCESS_AUTHORIZATION_HEADER, "Bearer " + tokenResponseDto.getAccessToken());
         response.addHeader(JwtFilter.REFRESH_AUTHORIZATION_HEADER, "Bearer " + tokenResponseDto.getRefreshToken());
-        new ObjectMapper().writeValue(response.getWriter(), tokenResponseDto);
-        response.flushBuffer();
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(Member member) {

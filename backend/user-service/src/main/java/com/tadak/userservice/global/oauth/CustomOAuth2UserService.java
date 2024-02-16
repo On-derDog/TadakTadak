@@ -42,7 +42,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // 권한 저장
         List<GrantedAuthority> authorities = getGrantedAuthorities(member);
 
-        return new OAuth2CustomMember(socialName, originAttributes, authorities, email);
+        return new OAuth2CustomMember(email, originAttributes, authorities);
     }
 
     private Member getOrCreate(OAuthAttributes attributes){

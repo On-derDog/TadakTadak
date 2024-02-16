@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @ToString
@@ -45,6 +46,7 @@ public class OAuthAttributes {
         return Member.builder()
                 .username(name)
                 .email(email)
+                .password(UUID.randomUUID().toString()) // 임시 비밀번호 UUID로 생성
                 .state(State.ACTIVE)
                 .role(Role.ROLE_USER)
                 .build();

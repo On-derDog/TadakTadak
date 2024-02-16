@@ -39,13 +39,14 @@ export const AuthApis = {
     return { data, isLoading, error };
   },
 
-  signup: async (userInfo:UserInfo, passwordConfirm: string) => {
+  signup: async (userInfo:UserInfo, passwordConfirm: string, authCode: string) => {
     try {
       const response = await AuthApis.instance.post('/signup', {
         username: userInfo.username,
         email: userInfo.email,
         password: userInfo.password,
         passwordConfirm: passwordConfirm,
+        authCode: authCode
       });
       const data = response.data;
 
@@ -65,12 +66,10 @@ export const AuthApis = {
 
 
   signin: async (userInfo:UserInfo) => {
-    try {
       const response = await AuthApis.instance.post('/login', {
         email: userInfo.email,
         password: userInfo.password,
       });
-      const data = response.data;
 
       const rawAccessToken = response.headers.get('Accesstoken');
       const rawRefreshToken = response.headers.get('RefreshToken');
@@ -83,10 +82,7 @@ export const AuthApis = {
       localStorage.setItem('Accesstoken', Accesstoken);
       localStorage.setItem('Refreshtoken', Refreshtoken);
 
-      return data;
-    } catch (error) {
-      console.error("API 통신 에러:", error);
-    }
+      return response;
   },
 
   //refreshToken

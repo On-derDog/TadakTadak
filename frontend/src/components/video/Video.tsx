@@ -1,166 +1,207 @@
-import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useRef, useState } from 'react';
 
 const VideoCall = () => {
-  const socketRef = useRef<Socket>();
-  const myVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const pcRef = useRef<RTCPeerConnection>();
+	// 상태 및 참조 변수 선언
+	const socketRef = useRef<WebSocket>();
+	const myVideo = useRef<HTMLVideoElement>(null);
+	const remoteVideo = useRef<HTMLVideoElement>(null);
+	const myId = Math.floor(Math.random() * 1000).toString();
+	const pcRef = useRef<RTCPeerConnection>(
+		new RTCPeerConnection({
+			iceServers: [
+				{
+					urls: [
+						'stun:stun.l.google.com:19302',
+						'stun:stun1.l.google.com:19302',
+						'stun:stun2.l.google.com:19302',
+						'stun:stun3.l.google.com:19302',
+						'stun:stun4.l.google.com:19302',
+					],
+				},
+			],
+		}),
+	);
+	const [audioEnabled, setAudioEnabled] = useState(true);
+	const [videoEnabled, setVideoEnabled] = useState(true);
 
-  const { roomName } = useParams();
+	// 미디어 가져오기 함수 정의
+	const getMedia = async () => {
+		try {
+			const stream = await navigator.mediaDevices.getUserMedia({
+				video: videoEnabled,
+				audio: audioEnabled,
+			});
 
-  const getMedia = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
+			if (myVideo.current) {
+				myVideo.current.srcObject = stream;
+			}
 
-      if (myVideoRef.current) {
-        myVideoRef.current.srcObject = stream;
-      }
-      if (!(pcRef.current && socketRef.current)) {
-        return;
-      }
-      stream.getTracks().forEach((track) => {
-        if (!pcRef.current) {
-          return;
-        }
-        pcRef.current.addTrack(track, stream);
-      });
+			stream.getTracks().forEach((track) => {
+				pcRef.current?.addTrack(track, stream);
+			});
 
-      pcRef.current.onicecandidate = (e) => {
-        if (e.candidate) {
-          if (!socketRef.current) {
-            return;
-          }
-          console.log("recv candidate");
-          socketRef.current.emit("candidate", e.candidate, roomName);
-        }
-      };
+			pcRef.current.onicecandidate = handleIceCandidate;
+			pcRef.current.ontrack = handleTrack;
 
-      pcRef.current.ontrack = (e) => {
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = e.streams[0];
-        }
-      };
-    } catch (e) {
-      console.error(e);
-    }
-  };
+			createOffer();
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-  const createOffer = async () => {
-    console.log("create Offer");
-    if (!(pcRef.current && socketRef.current)) {
-      return;
-    }
-    try {
-      const sdp = await pcRef.current.createOffer();
-      pcRef.current.setLocalDescription(sdp);
-      console.log("sent the offer");
-      socketRef.current.emit("offer", sdp, roomName);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+	// Offer 생성 함수 정의
+	const createOffer = async () => {
+		console.log('Creating Offer...');
+		try {
+			const sdp = await pcRef.current.createOffer();
+			await pcRef.current.setLocalDescription(sdp);
 
-  const createAnswer = async (sdp: RTCSessionDescription) => {
-    console.log("createAnswer");
-    if (!(pcRef.current && socketRef.current)) {
-      return;
-    }
+			const message = {
+				fromUserId: myId,
+				type: 'offer',
+				roomId: '1',
+				candidate: null,
+				sdp: pcRef.current.localDescription,
+			};
 
-    try {
-      pcRef.current.setRemoteDescription(sdp);
-      const answerSdp = await pcRef.current.createAnswer();
-      pcRef.current.setLocalDescription(answerSdp);
+			socketRef.current?.send(JSON.stringify(message));
+			console.log('Offer sent');
+		} catch (e) {
+			console.error('Error creating Offer:', e);
+		}
+	};
 
-      console.log("sent the answer");
-      socketRef.current.emit("answer", answerSdp, roomName);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+	// Answer 생성 함수 정의
+	const createAnswer = async (offerSdp: RTCSessionDescriptionInit) => {
+		console.log('Creating Answer...');
+		try {
+			await pcRef.current.setRemoteDescription(new RTCSessionDescription(offerSdp));
 
-  useEffect(() => {
-    socketRef.current = io("localhost:8080/signal/1");
+			const answerSdp = await pcRef.current.createAnswer();
+			await pcRef.current.setLocalDescription(answerSdp);
 
-    pcRef.current = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: "stun:stun.l.google.com:19302",
-        },
-      ],
-    });
+			console.log('Sending Answer...');
 
-    socketRef.current.on("all_users", (allUsers: Array<{ id: string }>) => {
-      if (allUsers.length > 0) {
-        createOffer();
-      }
-    });
+			const message = {
+				fromUserId: myId,
+				type: 'answer',
+				roomId: '1',
+				candidate: null,
+				sdp: pcRef.current.localDescription,
+			};
 
-    socketRef.current.on("getOffer", (sdp: RTCSessionDescription) => {
-      console.log("recv Offer");
-      createAnswer(sdp);
-    });
+			socketRef.current?.send(JSON.stringify(message));
+		} catch (e) {
+			console.error('Error creating Answer:', e);
+		}
+	};
 
-    socketRef.current.on("getAnswer", (sdp: RTCSessionDescription) => {
-      console.log("recv Answer");
-      if (!pcRef.current) {
-        return;
-      }
-      pcRef.current.setRemoteDescription(sdp);
-    });
+	// WebSocket 이벤트 핸들러 함수 정의
+	useEffect(() => {
+		socketRef.current = new WebSocket('ws://localhost:8080/signal/1');
+		getMedia();
 
-    socketRef.current.on("getCandidate", async (candidate: RTCIceCandidate) => {
-      if (!pcRef.current) {
-        return;
-      }
+		socketRef.current.onopen = () => {
+			console.log('WebSocket connected');
 
-      await pcRef.current.addIceCandidate(candidate);
-    });
+			const message = {
+				fromUserId: myId,
+				type: 'join',
+				roomId: '1',
+				candidate: null,
+				sdp: null,
+			};
 
-    socketRef.current.emit("join_room", {
-      room: roomName,
-    });
+			socketRef.current?.send(JSON.stringify(message));
+		};
 
-    getMedia();
+		socketRef.current.onmessage = handleSocketMessage;
+		socketRef.current.onclose = () => {
+			console.log('WebSocket disconnected');
+		};
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-      if (pcRef.current) {
-        pcRef.current.close();
-      }
-    };
-  }, []);
+		return () => {
+			if (socketRef.current) {
+				socketRef.current.close();
+			}
+		};
+	}, []);
 
-  return (
-    <div>
-      <video
-        id="remotevideo"
-        style={{
-          width: 400,
-          height: 400,
-          backgroundColor: "black",
-        }}
-        ref={myVideoRef}
-        autoPlay
-      />
-      <video
-        id="remotevideo"
-        style={{
-          width: 400,
-          height: 400,
-          backgroundColor: "black",
-        }}
-        ref={remoteVideoRef}
-        autoPlay
-      />
-    </div>
-  );
+	// ICE Candidate 이벤트 핸들러 함수 정의
+	const handleIceCandidate = (e: RTCPeerConnectionIceEvent) => {
+		if (e.candidate && socketRef.current) {
+			console.log('Sending ICE Candidate...');
+			const message = {
+				fromUserId: myId,
+				type: 'ice',
+				roomId: '1',
+				candidate: e.candidate,
+			};
+			socketRef.current.send(JSON.stringify(message));
+		}
+	};
+
+	// Track 이벤트 핸들러 함수 정의
+	const handleTrack = (e: RTCTrackEvent) => {
+		if (remoteVideo.current) {
+			remoteVideo.current.srcObject = e.streams[0];
+		}
+	};
+
+	// WebSocket 메시지 이벤트 핸들러 함수 정의
+	const handleSocketMessage = (event: MessageEvent) => {
+		const message = JSON.parse(event.data);
+		switch (message.type) {
+			case 'offer':
+				console.log('Received Offer');
+				createAnswer(message.sdp);
+				break;
+			case 'answer':
+				console.log('Received Answer');
+				pcRef.current?.setRemoteDescription(new RTCSessionDescription(message.sdp));
+				break;
+			case 'ice':
+				console.log('Received ICE Candidate');
+				pcRef.current
+					?.addIceCandidate(new RTCIceCandidate(message.candidate))
+					.then(() => {
+						console.log('ICE Candidate added successfully.');
+						console.log(message.candidate);
+					})
+					.catch((error) => {
+						console.error('Error adding ICE Candidate:', error);
+					});
+				break;
+			default:
+				break;
+		}
+	};
+
+	// 렌더링
+	return (
+		<div
+			id="Wrapper"
+			style={{
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+			}}
+		>
+			<video
+				id="localvideo"
+				style={{ width: 200, height: 200, backgroundColor: 'black' }}
+				ref={myVideo}
+				autoPlay
+				muted
+			/>
+			<video
+				id="remotevideo"
+				style={{ width: 200, height: 200, backgroundColor: 'black' }}
+				ref={remoteVideo}
+				autoPlay
+			/>
+		</div>
+	);
 };
 
 export default VideoCall;

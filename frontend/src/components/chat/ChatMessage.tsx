@@ -1,11 +1,12 @@
 import { Message } from '../../interface/ChatInterface';
 import styled from '@emotion/styled';
 
-type ChatMessageListProps = {
+interface ChatMessageListProps {
 	messages: Message[];
-};
+	username: string | undefined;
+}
 
-const ChatMessage = ({ messages }: ChatMessageListProps) => {
+const ChatMessage = ({ messages, username }: ChatMessageListProps) => {
 	let currentFormattedDate = '';
 
 	return (
@@ -40,7 +41,7 @@ const ChatMessage = ({ messages }: ChatMessageListProps) => {
 						{shouldDisplayYear && <DateWrapper>{formattedDate}</DateWrapper>}
 						<MessageWrapper>
 							{/* 추후 코드 본인일 경우 상태관리 추가해야됨 */}
-							{item.sender === '123' ? (
+							{item.sender === username ? (
 								<ChatReverseWrapper>
 									<ChatOwnBox>{item.content}</ChatOwnBox>
 									<ChatDateWrapper>

@@ -27,7 +27,7 @@ public class WebSocketEventListener {
             log.info("User disconnected: {} in room id {}", username, roomId);
             ChatResponse chatResponse = ChatResponse.builder()
                     .type(MessageType.LEAVE)
-                    .sender(username)
+                    .username(username)
                     .build();
 
             messageTemplate.convertAndSend("/topic/public/" + roomId, chatResponse);

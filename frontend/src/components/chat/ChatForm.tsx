@@ -1,14 +1,26 @@
-import { useRef } from 'react';
 import * as StompJs from '@stomp/stompjs';
-import { useChatStore } from '../../stores/useChatStore';
 import styled from '@emotion/styled';
 import ChatMessage from './ChatMessage';
 
-type StompClient = StompJs.Client;
+import { useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useChatStore } from '../../stores/useChatStore';
+import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
+import { FlexCenterWrapper } from '../../styles/Layout';
+import { bodyMessage } from '../../interface/CommonInterface';
+import { UserDataProps } from '../../interface/UserListInterface';
+import { StompClient } from '../../interface/ChatInterface';
 
-const ChatForm = () => {
-	const { id, messages, inputMessage, setId, setMessages, setInputMessage } = useChatStore();
+const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
+	const { messages, inputMessage, setMessages, setInputMessage } = useChatStore();
+	const { chatroom_id } = useParams();
 	const client = useRef<StompClient | null>(null);
+
+	useEffect(() => {
+		if (!isLoading && !isError) {
+			connect();
+		}
+	}, [isLoading, isError]);
 
 	const connect = () => {
 		if (client.current) {
@@ -33,7 +45,7 @@ const ChatForm = () => {
 
 	const subscribe = () => {
 		if (client.current) {
-			client.current.subscribe('/topic/public/5', (message: any) => {
+			client.current.subscribe(`/topic/public/${chatroom_id}`, (message: bodyMessage) => {
 				const receivedMessage = JSON.parse(message.body);
 				setMessages((prevMessages) => [
 					...prevMessages,
@@ -47,26 +59,16 @@ const ChatForm = () => {
 		}
 	};
 
-	const connectId = () => {
-		connect();
-
-		return () => {
-			if (client.current) {
-				client.current.deactivate();
-			}
-		};
-	};
-
 	const sendMessage = () => {
 		if (client.current && inputMessage.trim() !== '') {
 			const message = {
 				content: inputMessage,
-				sender: id,
+				sender: username,
 				type: 'CHAT',
 			};
 
 			client.current.publish({
-				destination: '/app/chat/5/send-message',
+				destination: `/app/chat/${chatroom_id}/send-message`,
 				body: JSON.stringify(message),
 			});
 
@@ -74,26 +76,35 @@ const ChatForm = () => {
 		}
 	};
 
+	// const connectId = () => {
+	// 	connect();
+
+	// 	return () => {
+	// 		if (client.current) {
+	// 			client.current.deactivate();
+	// 		}
+	// 	};
+	// };
+
 	return (
 		<ChatWrapper>
 			<ChattingContainer>
-				<ChatMessage messages={messages} />
+				<ChatMessage messages={messages} username={username} />
 			</ChattingContainer>
 			<InputContainer>
-				<input
-					type="text"
+				<ChatInput
 					value={inputMessage}
 					onChange={(e) => setInputMessage(e.target.value)}
-					onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
+					onKeyUp={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 						if (e.key === 'Enter') {
 							sendMessage();
 						}
 					}}
 				/>
-				<div>
+				{/* <div>
 					<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
 					<button onClick={connectId}>Connect</button>
-				</div>
+				</div> */}
 			</InputContainer>
 		</ChatWrapper>
 	);
@@ -104,36 +115,30 @@ export default ChatForm;
 const InputContainer = styled.footer`
 	width: 100%;
 	height: 4rem;
+	${FlexCenterWrapper}
+	flex-direction: column;
 	background-color: var(--color-shark);
 `;
 
 const ChattingContainer = styled.section`
+	${OverFlowScrollbar}
 	width: 100%;
 	height: 100%;
 	background-color: var(--color-white);
-	overflow: auto;
-
-	&::-webkit-scrollbar {
-		width: 0.5rem;
-		height: 0rem;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--color-crusta);
-		border-radius: 0.25rem;
-	}
-
-	&::-webkit-scrollbar-track {
-		background-color: transparent;
-	}
-
-	&::-webkit-scrollbar-thumb:hover {
-		background-color: var(--color-pumpkin);
-	}
 `;
 
 const ChatWrapper = styled.div`
+	${ColumnDisplay}
 	height: calc(100% - 3.125rem);
-	display: flex;
-	flex-direction: column;
+`;
+
+const ChatInput = styled.textarea`
+	${OverFlowScrollbar}
+	width: calc(100% - 6px);
+	height: 100%;
+	margin: 0.5rem 0rem 0rem 0rem;
+	border: 3px solid var(--color-crusta);
+	border-radius: 5px;
+	resize: none;
+	font-size: var(--font-size-sm);
 `;

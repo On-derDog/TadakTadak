@@ -26,3 +26,8 @@ jwt:
   secret: WkhJMjVlYXo4V25xdGxaNW12WFdTRTZTamMwekt5V0FFNHVjdmFUOUM0R2tKQTVCTEw0WTlsYWo5OE5DdGpaWg==
   access-validity-in-seconds: 3600
   refresh-validity-in-seconds: 604800
+
+# logging
+logging:
+  level:
+    org.springframework.security: trace

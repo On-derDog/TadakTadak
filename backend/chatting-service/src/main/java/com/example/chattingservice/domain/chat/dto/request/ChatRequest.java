@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChatRequest {
     private String content;
-    private String sender;
+    private String username;
+    private Long userId;
     private MessageType type;
     private LocalDateTime createdAt;
 }
