@@ -91,6 +91,7 @@ const RoomPreviewDetail = styled.section`
   title{
     display: flex;
     align-items: center;
+    justify-content: center;
     align-self: stretch;
   }
 
@@ -100,6 +101,7 @@ const RoomPreviewDetail = styled.section`
     font-size: var(--font-size-sm);
     font-weight: 700;
     align-self: stretch;
+    align-self: center;
   }
 
   p {
