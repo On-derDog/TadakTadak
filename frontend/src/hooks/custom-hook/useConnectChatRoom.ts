@@ -43,7 +43,7 @@ export const useConnectChatRoom = () => {
 					...prevMessages,
 					{
 						content: receivedMessage.content,
-						sender: receivedMessage.sender,
+						username: receivedMessage.username,
 						createdAt: receivedMessage.createdAt,
 					},
 				]);
@@ -55,7 +55,7 @@ export const useConnectChatRoom = () => {
 		if (client.current && inputMessage.trim() !== '') {
 			const message = {
 				content: inputMessage,
-				sender: username,
+				username: username,
 				type: 'CHAT',
 			};
 			client.current.publish({
