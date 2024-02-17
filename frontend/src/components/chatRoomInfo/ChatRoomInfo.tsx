@@ -8,13 +8,13 @@ import { UserInfoStore } from '../../stores/UserInfoStore';
 
 const ChatRoomInfo: React.FC = () => {
 	const { setRoomInfo, setIsOwner, chatMemberResponses, owner } = useRoomInfoStore();
-	const { roomId } = useParams<{ roomId: string }>();
+	const { chatroom_id } = useParams();
 
 	const userInfo = UserInfoStore();
 
 	useEffect(() => {
 		fetchRoomInfo();
-	}, [roomId, chatMemberResponses, owner]);
+	}, [chatroom_id, chatMemberResponses, owner]);
 
 	const fetchRoomInfo = async () => {
 		try {
