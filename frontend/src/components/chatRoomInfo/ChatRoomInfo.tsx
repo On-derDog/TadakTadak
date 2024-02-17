@@ -6,7 +6,7 @@ import RoomMember from './RoomMember';
 import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
 
 const ChatRoomInfo: React.FC = () => {
-	const { setRoomInfo, owner } = useRoomInfoStore();
+	const { setRoomInfo, owner, kicked } = useRoomInfoStore();
 	const { chatroom_id } = useParams();
 	const [refreshIntervalId, setRefreshIntervalId] = useState<number>();
 
@@ -17,7 +17,7 @@ const ChatRoomInfo: React.FC = () => {
 		setRefreshIntervalId(intervalId);
 
 		return () => clearInterval(intervalId);
-	}, [chatroom_id, owner]);
+	}, [chatroom_id, owner, kicked]);
 
 	const fetchRoomInfo = async () => {
 		try {

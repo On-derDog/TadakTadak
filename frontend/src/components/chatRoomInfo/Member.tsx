@@ -9,7 +9,7 @@ interface MemberProps {
 }
 
 const Member: React.FC<MemberProps> = ({ username }) => {
-	const { owner, setOwner, setChatMemberResponses } = useRoomInfoStore();
+	const { owner, setOwner, setChatMemberResponses, setKicked, kicked } = useRoomInfoStore();
 	const { chatroom_id } = useParams();
 
 	const userInfo = UserInfoStore();
@@ -29,7 +29,7 @@ const Member: React.FC<MemberProps> = ({ username }) => {
 					throw new Error('Failed to kick member');
 				}
 				// 강퇴 후 리렌더링
-				setChatMemberResponses([]);
+				setKicked(!kicked);
 			})
 			.catch((error) => {
 				console.error('Error kicking member:', error);
