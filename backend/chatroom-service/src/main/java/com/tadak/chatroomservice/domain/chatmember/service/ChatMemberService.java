@@ -8,11 +8,14 @@ import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
 import com.tadak.chatroomservice.domain.chatroom.exception.AlreadyKickedException;
 import com.tadak.chatroomservice.domain.chatroom.exception.CannotTransferOwnershipException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatMemberException;
+import com.tadak.chatroomservice.domain.chatroom.exception.OverParticipationException;
 import com.tadak.chatroomservice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -29,9 +32,14 @@ public class ChatMemberService {
                 .username(username)
                 .build();
 
-        chatMemberRepository.save(chatMember);
+        if (Objects.equals(chatRoom.getCapacity(), chatRoom.getParticipation())){
+            throw new OverParticipationException(ErrorCode.OVER_CHATROOM_PARTICIPATION_ERROR);
+        }
+
         // 채팅방 인원 증가
         chatRoom.increaseParticipation();
+
+        chatMemberRepository.save(chatMember);
 
         return EnterChatMemberResponse.of(chatMember, chatRoom.getParticipation());
     }

@@ -15,6 +15,7 @@ public class ChatRoomResponse {
     private Long roomId;
     private String roomName;
     private String description;
+    private String hashtag;
     private Integer participation;
     private Integer capacity;
     private String owner;
@@ -24,6 +25,7 @@ public class ChatRoomResponse {
                 .roomId(chatRoom.getId())
                 .roomName(chatRoom.getRoomName())
                 .description(chatRoom.getDescription())
+                .hashtag(chatRoom.getHashtag())
                 .participation(chatRoom.getParticipation())
                 .capacity(chatRoom.getCapacity())
                 .owner(chatRoom.getOwner())
