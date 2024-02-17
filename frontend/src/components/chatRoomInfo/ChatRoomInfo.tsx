@@ -18,20 +18,20 @@ const ChatRoomInfo: React.FC = () => {
 
 	const fetchRoomInfo = async () => {
 		try {
-			// const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${roomId}`, {
-			// 	method: 'GET',
-			// });
-			// const data = await response.json();
-			// setRoomInfo(data);
-			// setIsOwner(userInfo.email === data.owner);
+			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}`, {
+				method: 'GET',
+			});
+			const data = await response.json();
+			setRoomInfo(data);
+			setIsOwner(userInfo.email === data.owner);
 
 			// test 더미데이터
-			setRoomInfo({
-				roomName: 'Sample Room',
-				participation: 3,
-				owner: 'John Doe',
-				chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
-			});
+			// setRoomInfo({
+			// 	roomName: 'Sample Room',
+			// 	participation: 3,
+			// 	owner: 'John Doe',
+			// 	chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
+			// });
 		} catch (error) {
 			console.error('Error fetching room info:', error);
 		}
