@@ -1,90 +1,28 @@
-import * as StompJs from '@stomp/stompjs';
 import styled from '@emotion/styled';
 import ChatMessage from './ChatMessage';
 
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChatStore } from '../../stores/useChatStore';
 import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
 import { FlexCenterWrapper } from '../../styles/Layout';
-import { bodyMessage } from '../../interface/CommonInterface';
 import { UserDataProps } from '../../interface/UserListInterface';
-import { StompClient } from '../../interface/ChatInterface';
+import { useConnectChatRoom } from '../../hooks/custom-hook/useConnectChatRoom';
 
 const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
-	const { messages, inputMessage, setMessages, setInputMessage } = useChatStore();
-	const { chatroom_id } = useParams();
-	const client = useRef<StompClient | null>(null);
+	const { messages, inputMessage, setInputMessage } = useChatStore();
+	const { chatroom_id } = useParams<{ chatroom_id: string }>();
+	const roomId = chatroom_id ?? '';
+	const { chatConnect, sendMessage } = useConnectChatRoom();
 
 	useEffect(() => {
-		if (!isLoading && !isError) {
-			connect();
+		if (!isLoading && !isError && username) {
+			chatConnect(username, roomId);
 		}
 	}, [isLoading, isError]);
 
-	const connect = () => {
-		if (client.current) {
-			client.current.deactivate();
-		}
-		client.current = new StompJs.Client({
-			brokerURL: 'ws://localhost:8010/ws',
-			onConnect: () => {
-				console.log('success');
-				subscribe();
-			},
-			debug: (str: string) => {
-				console.log(str);
-			},
-			reconnectDelay: 5000,
-			heartbeatIncoming: 4000,
-			heartbeatOutgoing: 4000,
-		});
-
-		client.current.activate();
-	};
-
-	const subscribe = () => {
-		if (client.current) {
-			client.current.subscribe(`/topic/public/${chatroom_id}`, (message: bodyMessage) => {
-				const receivedMessage = JSON.parse(message.body);
-				setMessages((prevMessages) => [
-					...prevMessages,
-					{
-						content: receivedMessage.content,
-						sender: receivedMessage.sender,
-						createdAt: receivedMessage.createdAt,
-					},
-				]);
-			});
-		}
-	};
-
-	const sendMessage = () => {
-		if (client.current && inputMessage.trim() !== '') {
-			const message = {
-				content: inputMessage,
-				sender: username,
-				type: 'CHAT',
-			};
-
-			client.current.publish({
-				destination: `/app/chat/${chatroom_id}/send-message`,
-				body: JSON.stringify(message),
-			});
-
-			setInputMessage('');
-		}
-	};
-
-	// const connectId = () => {
-	// 	connect();
-
-	// 	return () => {
-	// 		if (client.current) {
-	// 			client.current.deactivate();
-	// 		}
-	// 	};
-	// };
+	// console.log(username);
+	// console.log(messages);
 
 	return (
 		<ChatWrapper>
@@ -97,14 +35,12 @@ const ChatForm = ({ isLoading, isError, username }: UserDataProps) => {
 					onChange={(e) => setInputMessage(e.target.value)}
 					onKeyUp={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 						if (e.key === 'Enter') {
-							sendMessage();
+							if (username && chatroom_id) {
+								sendMessage(username, chatroom_id);
+							}
 						}
 					}}
 				/>
-				{/* <div>
-					<input type="text" value={id} onChange={(e) => setId(e.target.value)} />
-					<button onClick={connectId}>Connect</button>
-				</div> */}
 			</InputContainer>
 		</ChatWrapper>
 	);

@@ -5,11 +5,11 @@ import { bodyMessage } from '../../interface/CommonInterface';
 import { UserList } from '../../interface/UserListInterface';
 import { StompClient } from '../../interface/ChatInterface';
 
-export const useLoginWebSocket = () => {
+export const useConnectList = () => {
 	const { setUserList } = useUserListStore();
 	const client = useRef<StompClient | null>(null);
 
-	const connect = (username: string, roomName: string) => {
+	const listConnect = () => {
 		if (client.current) {
 			client.current.deactivate();
 		}
@@ -18,9 +18,6 @@ export const useLoginWebSocket = () => {
 			onConnect: () => {
 				console.log('success');
 				userSubscribe();
-				if (username) {
-					publishUser(username, roomName);
-				}
 			},
 			debug: (str: string) => {
 				console.log(str);
@@ -32,7 +29,7 @@ export const useLoginWebSocket = () => {
 		client.current.activate();
 	};
 
-	const unconnect = () => {
+	const listUnconnect = () => {
 		if (client.current && client.current.deactivate) {
 			client.current.deactivate();
 		}
@@ -66,5 +63,5 @@ export const useLoginWebSocket = () => {
 		throw new Error('Failed to publish user: username is empty');
 	};
 
-	return { connect, publishUser, unconnect, userSubscribe };
+	return { listConnect, publishUser, listUnconnect, userSubscribe };
 };
