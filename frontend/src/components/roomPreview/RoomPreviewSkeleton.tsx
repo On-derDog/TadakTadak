@@ -36,6 +36,8 @@ const RoomPreviewDetailSkeleton = styled.section`
   border-radius: 0.0625rem;
   border: 1px solid var(--color-mercury);
   background: var(--color-wildsand);
+  justify-content: center;
+  align-items: center;
 `;
 
 const PreviewImgSkeleton = styled.div`
