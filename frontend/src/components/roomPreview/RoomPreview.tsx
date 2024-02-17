@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import BookmarkSVG from "../../assets/Bookmark.svg"
 import DefaultUserSVG from "../../assets/DefaultUser.svg"
+import { RoomPreviewSkeleton } from "./RoomPreviewSkeleton"
 
 export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:string, roomName:string, description:string, hashtag: string}) =>{
 
@@ -21,7 +22,7 @@ export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:str
   const thumbnailUrl = data?.thumbnailUrl;
   
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <RoomPreviewSkeleton />;
   }
 
   if (isError) {
@@ -33,22 +34,28 @@ export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:str
   }
 
   return(
-    <RoomPreviewWrapper onClick={handlieRoomClick}>
-        {/* 이미지 썸네일 */}
-        <PreviewImg>
-          { thumbnailUrl ? <img src={thumbnailUrl} alt="썸네일" />:<img src={DefaultUserSVG} alt="DefaultUserSVG"/> }
-        </PreviewImg>
+ <>
+    {/* {isLoading && <RoomPreviewSkeleton />} */}
+      {!isLoading && !isError && (
+        <RoomPreviewWrapper onClick={handlieRoomClick}>
+          {/* 이미지 썸네일 */}
+          <PreviewImg>
+            {thumbnailUrl ? <img src={thumbnailUrl} alt="썸네일" /> : <img src={DefaultUserSVG} alt="DefaultUserSVG" />}
+          </PreviewImg>
 
-        {/* 채팅룸 설명 */}
-        <RoomPreviewDetail>
-          <title>
-            <h1>{roomName}</h1>
-            <img src={BookmarkSVG} alt="BookmarkSVG"/>
-          </title>
-          <p>{description}</p>
-          <em>{hashtag}</em>
-        </RoomPreviewDetail>
-    </RoomPreviewWrapper>
+          {/* 채팅룸 설명 */}
+          <RoomPreviewDetail>
+            <title>
+              <h1>{roomName}</h1>
+              <img src={BookmarkSVG} alt="BookmarkSVG" />
+            </title>
+            <p>{description}</p>
+            <em>{hashtag}</em>
+          </RoomPreviewDetail>
+        </RoomPreviewWrapper>
+      )}
+      {isError && <div>에러</div>}
+    </>
   )
 }
 
