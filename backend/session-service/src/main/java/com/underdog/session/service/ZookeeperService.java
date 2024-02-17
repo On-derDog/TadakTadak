@@ -19,7 +19,6 @@ public class ZookeeperService {
     private final DiscoveryClient discoveryClient;
     private final LoadBalancerClient loadBalancerClient;
     private final String CHATTING_SERVICE_NAME = "chatting";
-    private final ObjectMapper objectMapper;
     public ServerInfoDto getPort(){
         ServiceInstance selectedInstance = loadBalancerClient.choose(CHATTING_SERVICE_NAME);
         ServerInfoDto serverInfoDto = ServerInfoDto.builder().port(selectedInstance.getPort()).build();
