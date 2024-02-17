@@ -10,12 +10,12 @@ interface MemberProps {
 
 const Member: React.FC<MemberProps> = ({ username }) => {
 	const { isOwner, setOwner, setChatMemberResponses } = useRoomInfoStore();
-	const { roomId } = useParams<{ roomId: string }>();
+	const { chatroom_id } = useParams();
 
 	// 멤버 강퇴 함수
 	const handleKick = () => {
 		if (isOwner) {
-			const apiUrl = `/chatroom-service/rooms/${roomId}/kicked/${username}`;
+			const apiUrl = `/chatroom-service/rooms/${chatroom_id}/kicked/${username}`;
 			fetch(apiUrl, {
 				method: 'POST',
 			})
@@ -36,7 +36,7 @@ const Member: React.FC<MemberProps> = ({ username }) => {
 
 	// 방장 변경 함수
 	const handleChangeOwner = () => {
-		const apiUrl = `/chatroom-service/rooms/${roomId}/change-owner/${username}`;
+		const apiUrl = `/chatroom-service/rooms/${chatroom_id}/change-owner/${username}`;
 		fetch(apiUrl, {
 			method: 'PATCH',
 		})

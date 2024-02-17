@@ -6,6 +6,7 @@ import UserList from '../components/user/UserList';
 
 import { useQuery } from '@tanstack/react-query';
 import { getUserData } from '../hooks/react-query/useUserData';
+import ChatRoomInfo from '../components/chatRoomInfo/ChatRoomInfo';
 
 const ChattingRoomPage = () => {
 	const {
@@ -25,7 +26,9 @@ const ChattingRoomPage = () => {
 	return (
 		<Container>
 			<Wrapper>
-				<SideWrapper>채팅방이름</SideWrapper>
+				<SideWrapper>
+					<ChatRoomInfo />
+				</SideWrapper>
 				<MainWrapper>
 					<VideoWrapper>비디오</VideoWrapper>
 					<ChatWrapper>
