@@ -18,13 +18,8 @@ const VideoBox: React.FC<VideoBoxProps> = ({ id, stream, userId }) => {
 
 	return (
 		<VideoBoxWrapper>
-			<video
-				id={id}
-				style={{ width: 200, height: 200, backgroundColor: 'black' }}
-				ref={videoRef}
-				autoPlay
-			/>
-			<VideoTitel>{userId}</VideoTitel>
+			<video id={id} ref={videoRef} autoPlay />
+			<VideoTitle>{id === 'localvideo' ? 'My Video' : userId}</VideoTitle>
 		</VideoBoxWrapper>
 	);
 };
@@ -32,11 +27,13 @@ const VideoBox: React.FC<VideoBoxProps> = ({ id, stream, userId }) => {
 export default VideoBox;
 
 const VideoBoxWrapper = styled.div`
-	width: 300;
-	height: 300;
-	backgroundcolor: black;
+	width: 90%;
+	height: 90%;
+	background-color: white
 	display: flex;
 	flex-direction: column;
 `;
 
-const VideoTitel = styled.div``;
+const VideoTitle = styled.div`
+	text-align: center;
+`;
