@@ -180,15 +180,12 @@ const UsernameText = styled.div`
 	padding: 0px 16px;
 `;
 
-const SideContainer = styled.section`
-`
-
 const LogoDiv = styled.div`
 	padding: 12px 16px 0;
 `;
 
 const MainContainer = styled.div`
-	height:100%;
+	height: 100%;
 	width: calc(100% - 11.5rem);
 	${FlexCenterWrapper}
 `;

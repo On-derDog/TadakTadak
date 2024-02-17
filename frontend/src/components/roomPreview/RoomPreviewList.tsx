@@ -10,8 +10,7 @@ const RoomPreviewList = ({ roomsPreviewListData, refetchRooms }) => {
   }, [roomsPreviewListData]); 
 
 	return (
-		<RoomPreviewListWrapper>
-
+<>
 				{/* Grid */}
         <ChattingRoomListGridContainer>
          {roomsPreviewListData?.map((item, index) => (
@@ -24,18 +23,12 @@ const RoomPreviewList = ({ roomsPreviewListData, refetchRooms }) => {
             />
           ))}
         </ChattingRoomListGridContainer>
-
-		</RoomPreviewListWrapper>
+        </>
 	)
 };
 
 export default RoomPreviewList;
 
-
-const RoomPreviewListWrapper = styled.main`
-  height: 100%;
-  width: 100%;
-`
 
 const ChattingRoomListGridContainer = styled.div`
   height: 100%;
