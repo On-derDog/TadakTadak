@@ -21,7 +21,7 @@ const RoomNameWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: left;
-	align-items: center;
+	align-items: left;
 `;
 
 const NameWrapper = styled.div`

@@ -64,9 +64,11 @@ const Member: React.FC<MemberProps> = ({ username }) => {
 export default Member;
 
 const MemberWrapper = styled.div`
+	width: 100%;
+	hight: 2rem;
 	display: flex;
 	flex-direction: row;
-	padding: 0.5em 0rem 0rem 0rem;
+	padding: 0.3em 0rem 0.3rem 0rem;
 `;
 const KickWrapper = styled.div`
 	margin-right: auto;
