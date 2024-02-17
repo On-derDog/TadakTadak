@@ -173,7 +173,8 @@ const SignupPage = () => {
                 {/* email input */}
                 <InputForm onChange={onChange}type = 'text' title="이메일" imgSVG="Email"  name="email" value={userInfo?.email} placeholder="이메일 (xxx@naver.com)"/>
                 <Button onClick={ () => onButtonClick("onSetEmailCheck")} backgroundColor="primary" label={"이메일 인증하기"}></Button>
-                <span> {messageEmail} </span>          
+                <span> {messageEmail} </span>   
+
                 {/* emailToggle */}
                 {   isValid.emailIsValid ? <div className="ToggleEmailCode-wrapper">
                     <InputForm
@@ -185,8 +186,7 @@ const SignupPage = () => {
                     value={isValid.authCode}
                     placeholder="인증코드 입력"
                 />
-                <span>이메일을 받지 못하셨나요?</span>
-                <Button onClick={ () => onButtonClick("onSetEmailCheck")} label={"재전송"} backgroundColor={"secondary"}></Button>
+                <em onClick={ () => onButtonClick("onSetEmailCheck")}>이메일을 받지 못하셨나요?</em>
                  </div> : null}
 
                 {/* pw input */}
@@ -231,17 +231,29 @@ const SignInWrapper = styled.main`
 const SignInContainer = styled.section`
   display: flex;
   flex-direction: column;
-  width: 351px;
+  width: 70%;
+  max-width: 361px;
 
   p {
     position: relative;
     font-size: var(--font-size-xs);
   }
 
-  span{
+  span {
     position: relative;
+    margin-left: auto;
     padding: 0.5rem;
-    right: -50%;
     font-size: var(--font-size-xs);
+  }
+
+  em {
+    display: flex;
+    position: relative;
+    width: 100%;
+    justify-content: flex-end;
+    margin-left: auto;
+    padding: 0.5rem;
+    cursor: pointer;    
+    font-size: var(--font-size-xxs);
   }
 `
