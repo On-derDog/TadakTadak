@@ -7,6 +7,16 @@ spring:
       host: localhost
   profiles:
     active: local
+  application:
+    name: chatting
+  cloud:
+    zookeeper:
+      connect-string: localhost:22181
+      discovery:
+        enabled: true
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: WARN
 
 #spring:
 #  application:
