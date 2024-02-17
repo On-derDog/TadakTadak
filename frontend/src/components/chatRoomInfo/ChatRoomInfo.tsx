@@ -1,29 +1,34 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import RoomName from './RoomName';
 import RoomMember from './RoomMember';
 import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
-import { UserInfoStore } from '../../stores/UserInfoStore';
 
 const ChatRoomInfo: React.FC = () => {
-	const { setRoomInfo, setIsOwner, chatMemberResponses, owner } = useRoomInfoStore();
+	const { setRoomInfo, owner } = useRoomInfoStore();
 	const { chatroom_id } = useParams();
-
-	const userInfo = UserInfoStore();
+	const [refreshIntervalId, setRefreshIntervalId] = useState<number>();
 
 	useEffect(() => {
 		fetchRoomInfo();
-	}, [chatroom_id, chatMemberResponses, owner]);
+
+		const intervalId = setInterval(fetchRoomInfo, 5000);
+		setRefreshIntervalId(intervalId);
+
+		return () => clearInterval(intervalId);
+	}, [chatroom_id, owner]);
 
 	const fetchRoomInfo = async () => {
 		try {
-			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}`, {
-				method: 'GET',
-			});
+			const response = await fetch(
+				`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/information`,
+				{
+					method: 'GET',
+				},
+			);
 			const data = await response.json();
 			setRoomInfo(data);
-			setIsOwner(userInfo.email === data.owner);
 
 			// test 더미데이터
 			// setRoomInfo({
@@ -51,6 +56,21 @@ const ChatRoomInfo: React.FC = () => {
 
 export default ChatRoomInfo;
 
-const ChatRoomInfoWrapper = styled.div``;
-const UpWrapper = styled.div``;
-const DownWrapper = styled.div``;
+const ChatRoomInfoWrapper = styled.div`
+	width: 100%;
+	height: 100%;
+	border-radius: 0px 0px 5px 5px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-white);
+	/* border: 1px solid var(--color-rangoongreen); */
+`;
+const UpWrapper = styled.div`
+	background-color: var(--color-pumpkin);
+	color: var(--color-white);
+	border-radius: 0px 5px 0px 0px;
+`;
+const DownWrapper = styled.div`
+	background-color: var(--color-white);
+	border-radius: 0px 0px 5px 0px;
+`;

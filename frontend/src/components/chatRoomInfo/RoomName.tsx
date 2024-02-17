@@ -7,7 +7,7 @@ const RoomName: React.FC = () => {
 	return (
 		<RoomNameWrapper>
 			<NameWrapper>{roomName}</NameWrapper>
-			<ParticipantNum>{participation}</ParticipantNum>
+			<ParticipantNum>참여자수 : {participation}</ParticipantNum>
 		</RoomNameWrapper>
 	);
 };
@@ -15,10 +15,20 @@ const RoomName: React.FC = () => {
 export default RoomName;
 
 const RoomNameWrapper = styled.div`
+	width: calc(100% - 1.25rem);
+	height: 2.5rem;
+	padding: 0.5rem 0.625rem 0.5rem 0.625rem;
 	display: flex;
 	flex-direction: column;
+	justify-content: left;
+	align-items: left;
 `;
 
-const NameWrapper = styled.div``;
+const NameWrapper = styled.div`
+	margin-bottom: 0.2rem;
+	font-size: var(--font-size-lg);
+`;
 
-const ParticipantNum = styled.div``;
+const ParticipantNum = styled.div`
+	font-size: var(--font-size-mg);
+`;
