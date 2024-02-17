@@ -126,12 +126,20 @@ public class ChatRoomService {
         return ChangeOwnerResponse.from(chatRoom);
     }
 
-    public OneChatRoomResponse findChatRoom(Long roomId) {
+    // 방 제목 엔드포인트
+    public ChatRoomNameResponse findChatRoom(Long roomId) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+
+        return ChatRoomNameResponse.from(chatRoom);
+    }
+
+    // 방장, 참여자 수, 참여 멤버 엔드포인트
+    public ChatRoomInfoResponse findChatRoomInfo(Long roomId) {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
         List<ChatMemberResponse> chatMemberResponses = chatRoom.getChatMembers().stream()
                 .map(ChatMemberResponse::from).toList();
 
-        return OneChatRoomResponse.of(chatRoom, chatMemberResponses);
+        return ChatRoomInfoResponse.of(chatRoom, chatMemberResponses);
     }
 }

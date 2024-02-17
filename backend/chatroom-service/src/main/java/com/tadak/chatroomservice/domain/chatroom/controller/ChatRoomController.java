@@ -79,11 +79,17 @@ public class ChatRoomController {
     }
 
     /**
-     * 개별 방 조회
+     * 개별 방 조회 (채팅방 제목)
      */
-    @GetMapping("/rooms/{roomId}")
-    public ResponseEntity<OneChatRoomResponse> getChatRoom(@PathVariable Long roomId){
-        OneChatRoomResponse getChatRoom = chatRoomService.findChatRoom(roomId);
+    @GetMapping("/rooms/{roomId}/roomName")
+    public ResponseEntity<ChatRoomNameResponse> getChatRoomName(@PathVariable Long roomId){
+        ChatRoomNameResponse getChatRoom = chatRoomService.findChatRoom(roomId);
         return ResponseEntity.status(HttpStatus.OK).body(getChatRoom);
+    }
+
+    @GetMapping("/rooms/{roomId}/roomInformation")
+    public ResponseEntity<ChatRoomInfoResponse> getChatRoomInfo(@PathVariable Long roomId){
+        ChatRoomInfoResponse getChatRoomInfo = chatRoomService.findChatRoomInfo(roomId);
+        return ResponseEntity.status(HttpStatus.OK).body(getChatRoomInfo);
     }
 }
