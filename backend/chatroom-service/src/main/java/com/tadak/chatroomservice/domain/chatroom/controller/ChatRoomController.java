@@ -61,10 +61,10 @@ public class ChatRoomController {
     /**
      * 강퇴
      */
-    @PostMapping("/rooms/{roomId}/kicked/{chatMemberId}")
-    public ResponseEntity<KickMemberResponse> kickedMember(@PathVariable Long roomId, @PathVariable Long chatMemberId,
+    @PostMapping("/rooms/{roomId}/kicked/{username}")
+    public ResponseEntity<KickMemberResponse> kickedMember(@PathVariable Long roomId, @PathVariable String username,
                                                            @RequestBody ChatRoomRequest chatRoomRequest){
-        KickMemberResponse kickMemberResponse = chatRoomService.kickMember(roomId, chatMemberId, chatRoomRequest.getUsername());
+        KickMemberResponse kickMemberResponse = chatRoomService.kickMember(roomId, username, chatRoomRequest.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(kickMemberResponse);
     }
 
@@ -87,6 +87,9 @@ public class ChatRoomController {
         return ResponseEntity.status(HttpStatus.OK).body(getChatRoom);
     }
 
+    /**
+     * 개별 방 조회 (참여자 수, 방장, 참여 멤버)
+     */
     @GetMapping("/rooms/{roomId}/roomInformation")
     public ResponseEntity<ChatRoomInfoResponse> getChatRoomInfo(@PathVariable Long roomId){
         ChatRoomInfoResponse getChatRoomInfo = chatRoomService.findChatRoomInfo(roomId);

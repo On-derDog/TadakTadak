@@ -78,11 +78,11 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public KickMemberResponse kickMember(Long roomId, Long chatMemberId, String username) {
+    public KickMemberResponse kickMember(Long roomId, String kickedUsername, String owner) {
         ChatRoom chatRoom = findByChatRoom(roomId);
-        ChatMember chatMember = chatMemberService.findByChatMember(chatMemberId);
+        ChatMember chatMember = chatMemberService.findByChatRoomAndChatUsername(chatRoom, kickedUsername);
         // 방장 검증
-        validOwner(username, chatRoom.getOwner());
+        validOwner(owner, chatRoom.getOwner());
 
         // 상태를 KICKED로 변경
         chatMember.updateState();

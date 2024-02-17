@@ -81,4 +81,8 @@ public class ChatMemberService {
         return chatMember;
     }
 
+    public ChatMember findByChatRoomAndChatUsername(ChatRoom chatRoom, String kickedUsername) {
+        return chatMemberRepository.findByChatRoomAndUsername(chatRoom, kickedUsername)
+                .orElseThrow(() -> new NotFoundChatMemberException(ErrorCode.NOT_FOUND_CHAT_MEMBER_ERROR));
+    }
 }
