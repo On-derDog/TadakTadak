@@ -1,20 +1,17 @@
 import styled from '@emotion/styled';
 import Member from './Member';
+import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
 
-interface RoomMemberProps {
-	owner: string;
-	isOwner: boolean;
-	chatMemberResponses: { username: string }[];
-}
+const RoomMember: React.FC = () => {
+	const { owner, chatMemberResponses } = useRoomInfoStore();
 
-const RoomMember: React.FC<RoomMemberProps> = ({ owner, isOwner, chatMemberResponses }) => {
 	return (
 		<RoomMemberWrapper>
 			<OwnerWrapper>방장 : {owner}</OwnerWrapper>
 			<TitleWrapper>팀원</TitleWrapper>
 			<MemberList>
 				{chatMemberResponses.map((member, index) => (
-					<Member key={index} username={member.username} isOwner={isOwner} roomId={'1'} />
+					<Member key={index} username={member.username} />
 				))}
 			</MemberList>
 		</RoomMemberWrapper>

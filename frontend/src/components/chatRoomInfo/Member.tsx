@@ -1,17 +1,18 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import KickBtn from './KickBtn';
 import ChangeBtn from './ChangeBtn';
+import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
+import { useParams } from 'react-router-dom';
 
 interface MemberProps {
 	username: string;
-	isOwner: boolean;
-	roomId: string;
 }
 
-const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
-	const [isChangingOwner, setIsChangingOwner] = useState(false);
+const Member: React.FC<MemberProps> = ({ username }) => {
+	const { isOwner, setOwner, setChatMemberResponses } = useRoomInfoStore();
+	const { roomId } = useParams<{ roomId: string }>();
 
+	// 멤버 강퇴 함수
 	const handleKick = () => {
 		if (isOwner) {
 			const apiUrl = `/chatroom-service/rooms/${roomId}/kicked/${username}`;
@@ -22,6 +23,8 @@ const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
 					if (!response.ok) {
 						throw new Error('Failed to kick member');
 					}
+					// 강퇴 후 리렌더링
+					setChatMemberResponses([]);
 				})
 				.catch((error) => {
 					console.error('Error kicking member:', error);
@@ -31,8 +34,8 @@ const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
 		}
 	};
 
+	// 방장 변경 함수
 	const handleChangeOwner = () => {
-		setIsChangingOwner(true);
 		const apiUrl = `/chatroom-service/rooms/${roomId}/change-owner/${username}`;
 		fetch(apiUrl, {
 			method: 'PATCH',
@@ -41,12 +44,11 @@ const Member: React.FC<MemberProps> = ({ username, isOwner, roomId }) => {
 				if (!response.ok) {
 					throw new Error('Failed to change owner');
 				}
+				// 강퇴 후 리렌더링
+				setOwner(username);
 			})
 			.catch((error) => {
 				console.error('Error changing owner:', error);
-			})
-			.finally(() => {
-				setIsChangingOwner(false);
 			});
 	};
 

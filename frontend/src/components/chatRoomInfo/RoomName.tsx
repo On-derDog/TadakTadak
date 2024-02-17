@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
+import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
 
-interface RoomNameProps {
-	roomName: string;
-	participation: number;
-}
+const RoomName: React.FC = () => {
+	const { roomName, participation } = useRoomInfoStore();
 
-const RoomName: React.FC<RoomNameProps> = ({ roomName, participation }) => {
 	return (
 		<RoomNameWrapper>
 			<NameWrapper>{roomName}</NameWrapper>
