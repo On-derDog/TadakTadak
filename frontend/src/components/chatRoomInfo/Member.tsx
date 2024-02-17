@@ -66,7 +66,15 @@ export default Member;
 const MemberWrapper = styled.div`
 	display: flex;
 	flex-direction: row;
+	padding: 0.5em 0rem 0rem 0rem;
 `;
-const KickWrapper = styled.div``;
-const MemberName = styled.div``;
-const ChangeOwner = styled.div``;
+const KickWrapper = styled.div`
+	margin-right: auto;
+`;
+const MemberName = styled.div`
+	margin: auto;
+	margin-left: 0.5rem;
+`;
+const ChangeOwner = styled.div`
+	margin-left: auto;
+`;

@@ -18,20 +18,21 @@ const ChatRoomInfo: React.FC = () => {
 
 	const fetchRoomInfo = async () => {
 		try {
-			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}`, {
-				method: 'GET',
-			});
-			const data = await response.json();
-			setRoomInfo(data);
-			setIsOwner(userInfo.email === data.owner);
-
-			// test 더미데이터
-			// setRoomInfo({
-			// 	roomName: 'Sample Room',
-			// 	participation: 3,
-			// 	owner: 'John Doe',
-			// 	chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
+			// const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}`, {
+			// 	method: 'GET',
 			// });
+			// const data = await response.json();
+			// setRoomInfo(data);
+			// setIsOwner(userInfo.email === data.owner);
+
+			setIsOwner(true);
+			// test 더미데이터
+			setRoomInfo({
+				roomName: 'Sample Room',
+				participation: 3,
+				owner: 'John Doe',
+				chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
+			});
 		} catch (error) {
 			console.error('Error fetching room info:', error);
 		}
@@ -51,6 +52,21 @@ const ChatRoomInfo: React.FC = () => {
 
 export default ChatRoomInfo;
 
-const ChatRoomInfoWrapper = styled.div``;
-const UpWrapper = styled.div``;
-const DownWrapper = styled.div``;
+const ChatRoomInfoWrapper = styled.div`
+	width: 100%;
+	height: 100%;
+	border-radius: 0px 0px 5px 5px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-white);
+	/* border: 1px solid var(--color-rangoongreen); */
+`;
+const UpWrapper = styled.div`
+	background-color: var(--color-pumpkin);
+	color: var(--color-white);
+	border-radius: 0px 5px 0px 0px;
+`;
+const DownWrapper = styled.div`
+	background-color: var(--color-white);
+	border-radius: 0px 0px 5px 0px;
+`;
