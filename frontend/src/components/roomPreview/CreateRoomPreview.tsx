@@ -12,13 +12,13 @@ interface CreateRoomPreviewProps {
   roominfo: RoomInfo;
   username: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-  newRoom: { roomName: string; description:string; owner:string; category: string; capacity: number; };
+  newRoom: { roomName: string; description:string; owner:string; hashtag: string; capacity: number; };
 }
 
 const CreateRoomPreview: React.FC<CreateRoomPreviewProps> = ({ onClose, roominfo, username, handleInputChange }) => {
   const handleAddRoomClick = async () => {
     try {
-      const roomWithOwner = { roomName: roominfo.roomName,category:roominfo.hashtag, capacity:roominfo.capacity, description:roominfo.description, owner: username };
+      const roomWithOwner = { roomName: roominfo.roomName, hashtag:roominfo.hashtag, capacity:roominfo.capacity, description:roominfo.description, owner: username };
       console.log(roomWithOwner);
       await axios.post('http://localhost:8002/chatroom-service/create', roomWithOwner);
       onClose();
