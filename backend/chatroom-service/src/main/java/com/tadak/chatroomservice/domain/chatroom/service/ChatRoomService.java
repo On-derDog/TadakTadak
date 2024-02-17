@@ -3,6 +3,7 @@ package com.tadak.chatroomservice.domain.chatroom.service;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.ChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
+import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
@@ -138,6 +139,7 @@ public class ChatRoomService {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
         List<ChatMemberResponse> chatMemberResponses = chatRoom.getChatMembers().stream()
+                .filter(chatMember -> chatMember.getType() == ChatMemberType.IN_ROOM)
                 .map(ChatMemberResponse::from).toList();
 
         return ChatRoomInfoResponse.of(chatRoom, chatMemberResponses);
