@@ -1,20 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import RoomName from './RoomName';
 import RoomMember from './RoomMember';
 import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
-import { UserInfoStore } from '../../stores/UserInfoStore';
 
 const ChatRoomInfo: React.FC = () => {
-	const { setRoomInfo, setIsOwner, chatMemberResponses, owner } = useRoomInfoStore();
+	const { setRoomInfo, owner } = useRoomInfoStore();
 	const { chatroom_id } = useParams();
-
-	const userInfo = UserInfoStore();
+	const [refreshIntervalId, setRefreshIntervalId] = useState<number>();
 
 	useEffect(() => {
 		fetchRoomInfo();
-	}, [chatroom_id, chatMemberResponses, owner]);
+
+		const intervalId = setInterval(fetchRoomInfo, 5000);
+		setRefreshIntervalId(intervalId);
+
+		return () => clearInterval(intervalId);
+	}, [chatroom_id, owner]);
 
 	const fetchRoomInfo = async () => {
 		try {
@@ -23,9 +26,7 @@ const ChatRoomInfo: React.FC = () => {
 			// });
 			// const data = await response.json();
 			// setRoomInfo(data);
-			// setIsOwner(userInfo.email === data.owner);
 
-			setIsOwner(true);
 			// test 더미데이터
 			setRoomInfo({
 				roomName: 'Sample Room',
