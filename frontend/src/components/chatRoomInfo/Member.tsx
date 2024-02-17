@@ -16,54 +16,46 @@ const Member: React.FC<MemberProps> = ({ username }) => {
 	const userId = userInfo.username;
 	// 멤버 강퇴 함수
 	const handleKick = () => {
-		if (userId === owner) {
-			const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}/kicked/${username}`;
-			fetch(apiUrl, {
-				method: 'POST',
-				body: JSON.stringify(userId),
-				headers: {
-					'Content-Type': 'application/json',
-				},
+		const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}/kicked/${username}`;
+		fetch(apiUrl, {
+			method: 'POST',
+			body: JSON.stringify(userId),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Failed to kick member');
+				}
+				// 강퇴 후 리렌더링
+				setChatMemberResponses([]);
 			})
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error('Failed to kick member');
-					}
-					// 강퇴 후 리렌더링
-					setChatMemberResponses([]);
-				})
-				.catch((error) => {
-					console.error('Error kicking member:', error);
-				});
-		} else {
-			console.log('You are not the owner. Cannot kick member.');
-		}
+			.catch((error) => {
+				console.error('Error kicking member:', error);
+			});
 	};
 
 	// 방장 변경 함수
 	const handleChangeOwner = () => {
-		if (userId === owner) {
-			const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}/change-owner/${username}`;
-			fetch(apiUrl, {
-				method: 'PATCH',
-				body: JSON.stringify(userId),
-				headers: {
-					'Content-Type': 'application/json',
-				},
+		const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}/change-owner/${username}`;
+		fetch(apiUrl, {
+			method: 'PATCH',
+			body: JSON.stringify(userId),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Failed to change owner');
+				}
+				// 강퇴 후 리렌더링
+				setOwner(username);
 			})
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error('Failed to change owner');
-					}
-					// 강퇴 후 리렌더링
-					setOwner(username);
-				})
-				.catch((error) => {
-					console.error('Error changing owner:', error);
-				});
-		} else {
-			console.log('You are not the owner. Cannot change owner.');
-		}
+			.catch((error) => {
+				console.error('Error changing owner:', error);
+			});
 	};
 
 	return (
