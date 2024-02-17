@@ -17,12 +17,16 @@ const ChatRoomInfo: React.FC = () => {
 		setRefreshIntervalId(intervalId);
 
 		return () => clearInterval(intervalId);
-	}, [chatroom_id, owner, kicked]);
+	}, [chatroom_id, owner]);
+
+	useEffect(() => {
+		fetchRoomInfo();
+	}, [owner, kicked]);
 
 	const fetchRoomInfo = async () => {
 		try {
 			const response = await fetch(
-				`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/information`,
+				`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roominformation`,
 				{
 					method: 'GET',
 				},

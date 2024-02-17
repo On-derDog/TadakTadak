@@ -29,7 +29,7 @@ const Member: React.FC<MemberProps> = ({ username }) => {
 					throw new Error('Failed to kick member');
 				}
 				// 강퇴 후 리렌더링
-				setKicked(!kicked);
+				setKicked(username);
 			})
 			.catch((error) => {
 				console.error('Error kicking member:', error);
