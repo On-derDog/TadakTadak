@@ -6,15 +6,14 @@ import { useVideoCallStore } from '../../stores/useVideoCallStore';
 import styled from '@emotion/styled';
 import VideoBtn from './VideoBtn';
 import AudioBtn from './AudioBtn';
-import { FlexCenterWrapper } from '../../styles/Layout';
 import { useParams } from 'react-router-dom';
 
 const VideoCall = () => {
 	const userInfo = UserInfoStore();
-	// const myId = userInfo.username;
+	const myId = userInfo.username;
+	// const myId = Math.floor(Math.random() * 1000).toString();
 	const { audioEnabled, videoEnabled } = useVideoCallStore();
 	const { chatroom_id } = useParams<{ chatroom_id: string }>();
-	const myId = Math.floor(Math.random() * 1000).toString();
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
 	const pcRef = useRef<RTCPeerConnection>(
@@ -72,7 +71,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'offer',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: null,
 				sdp: pcRef.current.localDescription,
 			};
@@ -97,7 +96,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'answer',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: null,
 				sdp: pcRef.current.localDescription,
 			};
@@ -119,7 +118,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'join',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: null,
 				sdp: null,
 			};
@@ -130,13 +129,6 @@ const VideoCall = () => {
 
 		socketRef.current.onmessage = handleSocketMessage;
 		socketRef.current.onclose = () => {
-			// const message = {
-			// 	fromUserId: myId,
-			// 	roomId: '1',
-			// 	type: 'leave',
-			// };
-			// socketRef.current?.send(JSON.stringify(message));
-			// console.log('leave room');
 			console.log('WebSocket disconnected');
 		};
 
@@ -154,7 +146,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'ice',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: e.candidate,
 			};
 			socketRef.current.send(JSON.stringify(message));
