@@ -9,7 +9,7 @@ export const getRoomName = async (chatroomId: string): Promise<roomNameInfo> => 
 			throw new Error('AccessToken이 없습니다.');
 		}
 
-		const response = await axios.get(`http://localhost:8001/rooms/${chatroomId}/roomName`, {
+		const response = await axios.get(`http://localhost:8002/chatroom-service/rooms/${chatroomId}/roomName`, {
 			headers: {
 				'Content-Type': 'application/json',
 				Accesstoken: `Bearer ${accessToken}`,

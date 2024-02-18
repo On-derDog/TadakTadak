@@ -21,12 +21,9 @@ const ChatRoomInfo: React.FC = () => {
 
 	const fetchRoomInfo = async () => {
 		try {
-			const response = await fetch(
-				`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/information`,
-				{
-					method: 'GET',
-				},
-			);
+			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roomName`, {
+				method: 'GET',
+			});
 			const data = await response.json();
 			setRoomInfo(data);
 
