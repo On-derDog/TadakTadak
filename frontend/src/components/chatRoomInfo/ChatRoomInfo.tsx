@@ -22,7 +22,7 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 
 	const fetchRoomInfo = async () => {
 		try {
-			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roominformation`, {
+			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roomInformation`, {
 				method: 'GET',
 			});
 			const data = await response.json();
