@@ -1,16 +1,16 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { FaVideoSlash } from 'react-icons/fa';
 import { FaVideo } from 'react-icons/fa';
+import { useVideoCallStore } from '../../stores/useVideoCallStore';
 
 const VideoBtn = () => {
-	const [isVideoOn, setIsVideoOn] = useState(true);
+	const { videoEnabled, setVideoEnabled } = useVideoCallStore();
 
 	const toggleVideo = () => {
-		setIsVideoOn((prevState) => !prevState);
+		setVideoEnabled(!videoEnabled);
 	};
 
-	return <VideoBtnWrapper onClick={toggleVideo}>{isVideoOn ? <FaVideo /> : <FaVideoSlash />}</VideoBtnWrapper>;
+	return <VideoBtnWrapper onClick={toggleVideo}>{videoEnabled ? <FaVideo /> : <FaVideoSlash />}</VideoBtnWrapper>;
 };
 
 export default VideoBtn;

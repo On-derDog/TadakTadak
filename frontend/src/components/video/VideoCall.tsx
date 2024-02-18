@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import VideoBox from './VideoBox';
 import { UserInfoStore } from '../../stores/UserInfoStore';
+import { useVideoCallStore } from '../../stores/useVideoCallStore';
+
 import styled from '@emotion/styled';
 import VideoBtn from './VideoBtn';
 import AudioBtn from './AudioBtn';
 
 const VideoCall = () => {
 	const userInfo = UserInfoStore();
-	const myId = userInfo.username;
-	// const myId = Math.floor(Math.random() * 1000).toString();
+	// const myId = userInfo.username;
+	const { audioEnabled, videoEnabled } = useVideoCallStore();
+	const myId = Math.floor(Math.random() * 1000).toString();
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
 	const pcRef = useRef<RTCPeerConnection>(
@@ -26,8 +29,6 @@ const VideoCall = () => {
 			],
 		}),
 	);
-	const [audioEnabled, setAudioEnabled] = useState(false);
-	const [videoEnabled, setVideoEnabled] = useState(true);
 	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 	const [remoteId, setRemoteId] = useState(null);
@@ -79,7 +80,6 @@ const VideoCall = () => {
 			console.error('Error creating Offer:', e);
 		}
 	};
-
 	// Answer 생성 함수
 	const createAnswer = async (offerSdp: RTCSessionDescriptionInit) => {
 		console.log('Creating Answer...');
@@ -135,7 +135,7 @@ const VideoCall = () => {
 				socketRef.current.close();
 			}
 		};
-	}, []);
+	}, [videoEnabled, audioEnabled]);
 
 	// ICE Candidate 이벤트 핸들러 함수
 	const handleIceCandidate = (e: RTCPeerConnectionIceEvent) => {

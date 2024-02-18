@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { useVideoCallStore } from '../../stores/useVideoCallStore';
 
 const AudioBtn = () => {
-	const [isAudioOn, setIsAudioOn] = useState(false);
+	const { audioEnabled, setAudioEnabled } = useVideoCallStore();
 
 	const toggleAudio = () => {
-		setIsAudioOn((prevState) => !prevState);
+		setAudioEnabled(!audioEnabled);
 	};
 
-	return <AudioBtnWrapper onClick={toggleAudio}>{isAudioOn ? <FaVolumeUp /> : <FaVolumeMute />}</AudioBtnWrapper>;
+	return <AudioBtnWrapper onClick={toggleAudio}>{audioEnabled ? <FaVolumeUp /> : <FaVolumeMute />}</AudioBtnWrapper>;
 };
 
 export default AudioBtn;
