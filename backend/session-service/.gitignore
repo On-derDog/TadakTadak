@@ -5,7 +5,6 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-
 ### STS ###
 .apt_generated
 .classpath
@@ -36,9 +35,4 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### macOS ###
-.DS_store
-
-/src/main/resources/application-local.yml
 application-local.properties

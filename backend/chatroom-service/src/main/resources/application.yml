@@ -6,6 +6,13 @@ spring:
     name: chatroom-service
   profiles:
     active: local
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+      discovery:
+        enabled: true
+
+
 
 eureka:
   instance:
