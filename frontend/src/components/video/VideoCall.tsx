@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import VideoBox from './VideoBox';
+import { UserInfoStore } from '../../stores/UserInfoStore';
+import styled from '@emotion/styled';
 
 const VideoCall = () => {
+	const userInfo = UserInfoStore();
+	const myId = userInfo.username;
+	// const myId = Math.floor(Math.random() * 1000).toString();
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
-	const myId = Math.floor(Math.random() * 1000).toString();
 	const pcRef = useRef<RTCPeerConnection>(
 		new RTCPeerConnection({
 			iceServers: [
@@ -183,18 +187,24 @@ const VideoCall = () => {
 	};
 
 	return (
-		<div
-			id="Wrapper"
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				alignItems: 'center',
-			}}
-		>
+		<VideoCallWrapper>
 			<VideoBox id="localvideo" stream={localStream} userId={myId} />
 			<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
-		</div>
+			<ButtonWrapper></ButtonWrapper>
+		</VideoCallWrapper>
 	);
 };
 
 export default VideoCall;
+
+const VideoCallWrapper = styled.div`
+	display: flex;
+	flex-direction: column-reverse;
+	width: 100%;
+	height: 100%;
+`;
+
+const ButtonWrapper = styled.div`
+	display: flex;
+	flex-direction: row;
+`;
