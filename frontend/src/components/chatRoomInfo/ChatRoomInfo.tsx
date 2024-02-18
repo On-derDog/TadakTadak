@@ -26,9 +26,11 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 	useEffect(() => {
 		if (fetchInitialRoomIn) {
 			fetchRoomIn();
-			console.log('ChatRoom In');
+			console.log('ChatRoom 입장');
 			setFetchInitialRoomIn(false);
-			console.log('Never request ChatRoom In API');
+			console.log('ChatRoom 입장 API 1회 호출');
+		} else {
+			console.log('ChatRoom 입장 API 호출 불가능');
 		}
 	}, []);
 
