@@ -37,7 +37,7 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 
 	const fetchRoomIn = async () => {
 		try {
-			const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}`;
+			const apiUrl = `http://localhost:8002/chatroom-service/room-in/${chatroom_id}`;
 			fetch(apiUrl, {
 				method: 'POST',
 				body: JSON.stringify(userId),
@@ -52,15 +52,6 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 
 	const fetchRoomInfo = async () => {
 		try {
-			const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}`;
-			fetch(apiUrl, {
-				method: 'POST',
-				body: JSON.stringify(userId),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-
 			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roomInformation`, {
 				method: 'GET',
 			});
