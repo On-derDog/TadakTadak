@@ -5,71 +5,66 @@ import axios from 'axios';
 import { GetAllRoomsApis } from '../../hooks/react-query/useGetAllRoom';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import BookmarkSVG from '../../assets/Bookmark.svg';
-import DefaultUserSVG from '../../assets/DefaultUser.svg';
+import BookmarkSVG from "../../assets/Bookmark.svg"
+import DefaultUserSVG from "../../assets/DefaultUser.svg"
+import { RoomPreviewSkeleton } from "./RoomPreviewSkeleton"
 
-export const RoomPreview = ({
-	roomId,
-	roomName,
-	description,
-	hashtag,
-}: {
-	roomId: string;
-	roomName: string;
-	description: string;
-	hashtag: string;
-}) => {
-	const navigate = useNavigate();
+export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:string, roomName:string, description:string, hashtag: string}) =>{
+
+  const navigate = useNavigate();
+  const navigate = useNavigate();
 	const accessToken = localStorage.getItem('Accesstoken');
 	const isLoggedIn = accessToken !== null;
-
-	// 에러가 발생하면 react-query update를 하기
-	const { isLoading, data, isError } = useQuery({
-		queryKey: ['GetAllRoomsApis'],
-		queryFn: GetAllRoomsApis.getAllRooms,
-		staleTime: 5 * 1000,
-	});
-	const thumbnailUrl = data?.thumbnailUrl;
-
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
-
-	if (isError) {
-		return <div>에러</div>;
-	}
-
-	const handleRoomClick = () => {
-		if (isLoggedIn) {
+  
+  // 에러가 발생하면 react-query update를 하기
+  const { isLoading, data, isError } = useQuery({
+    queryKey: ["GetAllRoomsApis"],
+    queryFn: GetAllRoomsApis.getAllRooms,
+    staleTime: 5 * 1000 
+  });
+  const thumbnailUrl = data?.thumbnailUrl;
+  
+  const handleRoomClick = () => {
+	if (isLoggedIn) {
 			navigate(`/chatroom/${roomId.toString()}`);
-		} else {
+	} else {
 			alert('로그인이 필요한 서비스입니다.');
 		}
 	};
+  
+  if (isLoading) {
+    return <RoomPreviewSkeleton />;
+  }
 
-	return (
-		<RoomPreviewWrapper onClick={handleRoomClick}>
-			{/* 이미지 썸네일 */}
-			<PreviewImg>
-				{thumbnailUrl ? (
-					<img src={thumbnailUrl} alt="썸네일" />
-				) : (
-					<img src={DefaultUserSVG} alt="DefaultUserSVG" />
-				)}
-			</PreviewImg>
+  if (isError) {
+    return <div>에러</div>;
+  }
 
-			{/* 채팅룸 설명 */}
-			<RoomPreviewDetail>
-				<title>
-					<h1>{roomName}</h1>
-					<img src={BookmarkSVG} alt="BookmarkSVG" />
-				</title>
-				<p>{description}</p>
-				<em>{hashtag}</em>
-			</RoomPreviewDetail>
-		</RoomPreviewWrapper>
-	);
-};
+  return(
+ <>
+    {/* {isLoading && <RoomPreviewSkeleton />} */}
+      {!isLoading && !isError && (
+        <RoomPreviewWrapper onClick={handlieRoomClick}>
+          {/* 이미지 썸네일 */}
+          <PreviewImg>
+            {thumbnailUrl ? <img src={thumbnailUrl} alt="썸네일" /> : <img src={DefaultUserSVG} alt="DefaultUserSVG" />}
+          </PreviewImg>
+
+          {/* 채팅룸 설명 */}
+          <RoomPreviewDetail>
+            <title>
+              <h1>{roomName}</h1>
+              <img src={BookmarkSVG} alt="BookmarkSVG" />
+            </title>
+            <p>{description}</p>
+            <em>{hashtag}</em>
+          </RoomPreviewDetail>
+        </RoomPreviewWrapper>
+      )}
+      {isError && <div>에러</div>}
+    </>
+  )
+}
 
 const RoomPreviewWrapper = styled.main`
 	width: 100%;
