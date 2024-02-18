@@ -70,14 +70,13 @@ const ChattingRoomPage = () => {
 export default ChattingRoomPage;
 
 export const VideoWrapper = styled.div`
-	width: 50%;
-	height: 100%;
+	width: calc(50% - 1rem);
+	height: calc(100% - 1rem);
 	background-color: var(--color-shark);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	padding: 0.5rem;
 `;
 
 export const ChatWrapper = styled.div`
