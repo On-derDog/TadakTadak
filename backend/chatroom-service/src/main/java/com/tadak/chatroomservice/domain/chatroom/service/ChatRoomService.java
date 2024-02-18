@@ -3,6 +3,7 @@ package com.tadak.chatroomservice.domain.chatroom.service;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.ChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
+import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
@@ -89,11 +90,11 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public KickMemberResponse kickMember(Long roomId, Long chatMemberId, String username) {
+    public KickMemberResponse kickMember(Long roomId, String kickedUsername, String owner) {
         ChatRoom chatRoom = findByChatRoom(roomId);
-        ChatMember chatMember = chatMemberService.findByChatMember(chatMemberId);
+        ChatMember chatMember = chatMemberService.findByChatRoomAndChatUsername(chatRoom, kickedUsername);
         // 방장 검증
-        validOwner(username, chatRoom.getOwner());
+        validOwner(owner, chatRoom.getOwner());
 
         // 상태를 KICKED로 변경
         chatMember.updateState();
@@ -137,12 +138,21 @@ public class ChatRoomService {
         return ChangeOwnerResponse.from(chatRoom);
     }
 
-    public OneChatRoomResponse findChatRoom(Long roomId) {
+    // 방 제목 엔드포인트
+    public ChatRoomNameResponse findChatRoom(Long roomId) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+
+        return ChatRoomNameResponse.from(chatRoom);
+    }
+
+    // 방장, 참여자 수, 참여 멤버 엔드포인트
+    public ChatRoomInfoResponse findChatRoomInfo(Long roomId) {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
         List<ChatMemberResponse> chatMemberResponses = chatRoom.getChatMembers().stream()
+                .filter(chatMember -> chatMember.getType() == ChatMemberType.IN_ROOM)
                 .map(ChatMemberResponse::from).toList();
 
-        return OneChatRoomResponse.of(chatRoom, chatMemberResponses);
+        return ChatRoomInfoResponse.of(chatRoom, chatMemberResponses);
     }
 }

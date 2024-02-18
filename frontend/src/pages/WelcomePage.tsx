@@ -15,19 +15,19 @@ import { RoomInfo, RoomsInfo } from '../stores/useRoomStore';
 import { UserInfoStore } from '../stores/UserInfoStore';
 import RoomPreviewList from '../components/roomPreview/RoomPreviewList';
 import CreateRoomPreview from '../components/roomPreview/CreateRoomPreview';
-import { GetAllRoomsApis } from '../hooks/useGetAllRoom';
+import { GetAllRoomsApis } from '../hooks/react-query/useGetAllRoom';
 
 const WelcomePage = () => {
-	const [loginText, setLoginText] = useState('Login');
-	const [showToast, setShowToast] = useState(false);
-	const { connect, unconnect } = useLoginWebSocket();
 	const navigate = useNavigate();
-	const accessToken = localStorage.getItem('Accesstoken');
-	const isLoggedIn = accessToken !== null;
 	const clientConnected = useRef(false);
-	const [CreateRoom, setCreateRoom] = useState(false);
 	const userinfo = useStore(UserInfoStore);
 	const roominfo = useStore(RoomInfo);
+	const [loginText, setLoginText] = useState('Login');
+	const [showToast, setShowToast] = useState(false);
+	const [CreateRoom, setCreateRoom] = useState(false);
+	const { connect, unconnect } = useLoginWebSocket();
+	const accessToken = localStorage.getItem('Accesstoken');
+	const isLoggedIn = accessToken !== null;
 
 	const handleCreateRoom = () => {
 		setCreateRoom(true);
@@ -36,7 +36,6 @@ const WelcomePage = () => {
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		roominfo.update(name, value);
-		console.log(roominfo);
 	};
 
 	const {
@@ -46,14 +45,28 @@ const WelcomePage = () => {
 	} = useQuery({
 		queryKey: ['userData'],
 		queryFn: getUserData,
-		staleTime: 5000,
+		staleTime: 60000,
 		enabled: isLoggedIn,
+	});
+
+	const {
+		data: roomsPreviewListData,
+		isLoading: roomsIsLoading,
+		isError: roomsIsError,
+		refetch: refetchRooms,
+	} = useQuery({
+		queryKey: ['roomPreviewListData'],
+		queryFn: GetAllRoomsApis.getAllRooms,
+		staleTime: 3000,
+		enabled: isLoggedIn,
+		refetchInterval: 3000,
 	});
 
 	useEffect(() => {
 		if (isLoggedIn && userData) {
 			setLoginText('Logout');
-			connect(userData.username);
+			connect(userData.username, '온라인');
+			userinfo.updateUsername(userData.username);
 		} else {
 			setLoginText('Login');
 		}
@@ -82,37 +95,6 @@ const WelcomePage = () => {
 		}
 	};
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const data = await getUserData();
-				userinfo.updateUsername(data.username);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchData();
-	}, []);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const res = await GetAllRoomsApis.getAllRooms();
-			} catch (error) {
-				console.error('Error fetching rooms:', error);
-			}
-		};
-
-		fetchData();
-
-		const intervalId = setInterval(() => {
-			fetchData();
-		}, 10000);
-
-		return () => clearInterval(intervalId);
-	}, []);
-
 	return (
 		<>
 			{/* 전체 컴포넌트와 토스트 컴포넌트 함께 보여주기 */}
@@ -128,9 +110,7 @@ const WelcomePage = () => {
 									</LogoDiv>
 
 									<ServiceText>TadakTadak</ServiceText>
-									<UsernameText>
-										{isLoggedIn ? userData?.username : '로그인이 필요한 서비스입니다.'}
-									</UsernameText>
+									<UsernameText>{isLoggedIn ? userData?.username : '로그인이 필요한 서비스입니다.'}</UsernameText>
 
 									{/* Search */}
 									<Search />
@@ -138,12 +118,7 @@ const WelcomePage = () => {
 									{/* Menu */}
 									<div className="Menu-list">
 										<Sidebar.item text="Home" type="list" svg="Home" />
-										<Sidebar.item
-											text="Create"
-											type="list"
-											svg="Create"
-											onClick={handleCreateRoom}
-										/>
+										<Sidebar.item text="Create" type="list" svg="Create" onClick={handleCreateRoom} />
 									</div>
 
 									<Sidebar.item text="Category 1" type="category" />
@@ -156,18 +131,11 @@ const WelcomePage = () => {
 									<Favorite />
 								</>
 							}
-							bottom={
-								<Sidebar.item
-									text={loginText}
-									type="list"
-									svg="Logout"
-									onClick={handleLoginClick}
-								/>
-							}
+							bottom={<Sidebar.item text={loginText} type="list" svg="Logout" onClick={handleLoginClick} />}
 						/>
 					</SideWrapper>
 					<MainContainer>
-						<RoomPreviewList />
+						<RoomPreviewList roomsPreviewListData={roomsPreviewListData} refetchRooms={refetchRooms} />
 						{CreateRoom && (
 							<CreateRoomPreview
 								onClose={() => setCreateRoom(false)}
@@ -182,7 +150,6 @@ const WelcomePage = () => {
 			{showToast && <Toast messageType="logout" type="success" />}
 		</>
 	);
-
 };
 
 export default WelcomePage;
@@ -198,14 +165,12 @@ const UsernameText = styled.div`
 	padding: 0px 16px;
 `;
 
-const SideContainer = styled.section`
-`
-
 const LogoDiv = styled.div`
 	padding: 12px 16px 0;
 `;
 
 const MainContainer = styled.div`
+	height: 100%;
+	width: calc(100% - 11.5rem);
 	${FlexCenterWrapper}
 `;
-

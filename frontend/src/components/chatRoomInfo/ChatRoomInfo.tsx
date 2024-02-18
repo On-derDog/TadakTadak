@@ -1,31 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import RoomName from './RoomName';
 import RoomMember from './RoomMember';
-
-interface RoomInfo {
-	roomName: string;
-	participation: number;
-	owner: string;
-	chatMemberResponses: { username: string }[];
-}
+import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
 
 const ChatRoomInfo: React.FC = () => {
-	const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
+	const { setRoomInfo, owner } = useRoomInfoStore();
+	const { chatroom_id } = useParams();
+	const [refreshIntervalId, setRefreshIntervalId] = useState<number>();
 
 	useEffect(() => {
 		fetchRoomInfo();
-	}, []);
+
+		const intervalId = setInterval(fetchRoomInfo, 5000);
+		setRefreshIntervalId(intervalId);
+
+		return () => clearInterval(intervalId);
+	}, [chatroom_id, owner]);
 
 	const fetchRoomInfo = async () => {
 		try {
-			const response = await fetch('http://localhost:8002/chatroom-service/rooms/1', {
-				method: 'GET',
-			});
-			const data: RoomInfo = await response.json();
+			const response = await fetch(
+				`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/information`,
+				{
+					method: 'GET',
+				},
+			);
+			const data = await response.json();
 			setRoomInfo(data);
-		} catch (error) {
-			console.error('Error fetching room info:', error);
+
 			// test 더미데이터
 			// setRoomInfo({
 			// 	roomName: 'Sample Room',
@@ -33,20 +37,18 @@ const ChatRoomInfo: React.FC = () => {
 			// 	owner: 'John Doe',
 			// 	chatMemberResponses: [{ username: 'Alice' }, { username: 'Bob' }, { username: 'Charlie' }],
 			// });
+		} catch (error) {
+			console.error('Error fetching room info:', error);
 		}
 	};
 
 	return (
 		<ChatRoomInfoWrapper>
 			<UpWrapper>
-				{roomInfo && (
-					<RoomName roomName={roomInfo.roomName} participation={roomInfo.participation} />
-				)}
+				<RoomName />
 			</UpWrapper>
 			<DownWrapper>
-				{roomInfo && (
-					<RoomMember owner={roomInfo.owner} chatMemberResponses={roomInfo.chatMemberResponses} />
-				)}
+				<RoomMember />
 			</DownWrapper>
 		</ChatRoomInfoWrapper>
 	);
@@ -54,6 +56,21 @@ const ChatRoomInfo: React.FC = () => {
 
 export default ChatRoomInfo;
 
-const ChatRoomInfoWrapper = styled.div``;
-const UpWrapper = styled.div``;
-const DownWrapper = styled.div``;
+const ChatRoomInfoWrapper = styled.div`
+	width: 100%;
+	height: 100%;
+	border-radius: 0px 0px 5px 5px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-white);
+	/* border: 1px solid var(--color-rangoongreen); */
+`;
+const UpWrapper = styled.div`
+	background-color: var(--color-pumpkin);
+	color: var(--color-white);
+	border-radius: 0px 5px 0px 0px;
+`;
+const DownWrapper = styled.div`
+	background-color: var(--color-white);
+	border-radius: 0px 0px 5px 0px;
+`;

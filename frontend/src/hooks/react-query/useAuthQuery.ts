@@ -1,5 +1,5 @@
 import axios,{ AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { UserInfo } from '../stores/UserInfoStore';
+import { UserInfo } from '../../stores/UserInfoStore';
 import { useQuery } from '@tanstack/react-query';
 
 

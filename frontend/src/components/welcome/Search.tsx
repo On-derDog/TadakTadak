@@ -3,20 +3,36 @@ import SearchSVG from "../../assets/Search.svg"
 import { useState } from "react"
 
 export const Search = ()=>{
-  const [searchData,setSearchData] = useState<string>("Search...")
+  const [searchData,setSearchData] = useState<string>("")
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchData(event.target.value);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
+    handleSearch();
+  };
+
+
+  const handleSearch = () => {
+    console.log("검색:", searchData);
+  };
+
   return (
     <SearchDiv>
-      <img src={SearchSVG} alt='SearchSVG' />
+      <img src={SearchSVG} alt='SearchSVG' onClick={handleClick}/>
       <SearchInput
         type="text"
         placeholder="Search..."
         value={searchData}
         onChange={handleInputChange}
+        onKeyPress={handleKeyPress}
       />
     </SearchDiv>
   )

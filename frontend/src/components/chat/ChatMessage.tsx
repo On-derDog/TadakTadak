@@ -8,7 +8,7 @@ interface ChatMessageListProps {
 
 const ChatMessage = ({ messages, username }: ChatMessageListProps) => {
 	let currentFormattedDate = '';
-	console.log('메시지', username);
+	// console.log('본인', username);
 
 	return (
 		<>
@@ -29,7 +29,7 @@ const ChatMessage = ({ messages, username }: ChatMessageListProps) => {
 
 				const isLastMessageForWriter =
 					index === array.length - 1 ||
-					array[index + 1].sender !== item.sender ||
+					array[index + 1].username !== item.username ||
 					new Date(array[index + 1].createdAt).toISOString().slice(0, 16) !==
 						new Date(item.createdAt).toISOString().slice(0, 16);
 
@@ -37,15 +37,25 @@ const ChatMessage = ({ messages, username }: ChatMessageListProps) => {
 
 				currentFormattedDate = formattedDate;
 
+				// console.log('boolean', item.sender === username);
+				// console.log(item.sender);
+
 				return (
 					<MessageContainer key={index}>
 						{shouldDisplayYear && <DateWrapper>{formattedDate}</DateWrapper>}
 						<MessageWrapper>
 							{/* 추후 코드 본인일 경우 상태관리 추가해야됨 */}
-							{item.sender === username ? (
+							{item.username === username ? (
+								<ChatReverseWrapper>
+									<ChatOwnBox>{item.content}</ChatOwnBox>
+									<ChatDateWrapper>
+										<FormattedTime>{isLastMessageForWriter && formattedTime}</FormattedTime>
+									</ChatDateWrapper>
+								</ChatReverseWrapper>
+							) : (
 								<>
 									<ChatSenderWrapper>
-										<ChatSender>{item.sender}</ChatSender>
+										<ChatSender>{item.username}</ChatSender>
 									</ChatSenderWrapper>
 									<ChatWrapper>
 										<ChatBox>{item.content}</ChatBox>
@@ -54,13 +64,6 @@ const ChatMessage = ({ messages, username }: ChatMessageListProps) => {
 										</ChatDateWrapper>
 									</ChatWrapper>
 								</>
-							) : (
-								<ChatReverseWrapper>
-									<ChatOwnBox>{item.content}</ChatOwnBox>
-									<ChatDateWrapper>
-										<FormattedTime>{isLastMessageForWriter && formattedTime}</FormattedTime>
-									</ChatDateWrapper>
-								</ChatReverseWrapper>
 							)}
 						</MessageWrapper>
 					</MessageContainer>
