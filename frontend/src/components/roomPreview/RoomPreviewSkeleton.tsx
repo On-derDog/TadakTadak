@@ -4,7 +4,7 @@ import Skeleton from '@mui/material/Skeleton';
 export const RoomPreviewSkeleton = () => (
   <RoomPreviewWrapperSkeleton>
     <PreviewImgSkeleton>
-      <Skeleton variant="rectangular" width={100} height={150} />
+      <Skeleton variant="rectangular" width={"100%"} height={"100%"} />
     </PreviewImgSkeleton>
     <RoomPreviewDetailSkeleton>
       <Skeleton variant="text" width={"90%"} height={30} />
