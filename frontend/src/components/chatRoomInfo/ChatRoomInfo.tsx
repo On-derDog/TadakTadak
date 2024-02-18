@@ -29,6 +29,7 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 			console.log('ChatRoom 입장');
 			setFetchInitialRoomIn(false);
 			console.log('ChatRoom 입장 API 1회 호출');
+			fetchRoomInfo();
 		} else {
 			console.log('ChatRoom 입장 API 호출 불가능');
 		}
