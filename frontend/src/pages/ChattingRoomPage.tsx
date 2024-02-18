@@ -9,6 +9,7 @@ import { getUserData } from '../hooks/react-query/useUserData';
 import ChatRoomInfo from '../components/chatRoomInfo/ChatRoomInfo';
 import { getRoomName } from '../hooks/react-query/useGetRoomNames';
 import { useParams } from 'react-router-dom';
+import VideoCall from '../components/video/VideoCall';
 
 const ChattingRoomPage = () => {
 	const accessToken = localStorage.getItem('Accesstoken');
@@ -48,10 +49,12 @@ const ChattingRoomPage = () => {
 		<Container>
 			<Wrapper>
 				<SideWrapper>
-					<ChatRoomInfo />
+					<ChatRoomInfo roomName={roomName} username={undefined} />
 				</SideWrapper>
 				<MainWrapper>
-					<VideoWrapper>비디오</VideoWrapper>
+					<VideoWrapper>
+						<VideoCall />
+					</VideoWrapper>
 					<ChatWrapper>
 						<ChatRoom username={username} isLoading={isLoading} isError={isError} />
 					</ChatWrapper>
@@ -69,7 +72,12 @@ export default ChattingRoomPage;
 export const VideoWrapper = styled.div`
 	width: 50%;
 	height: 100%;
-	background-color: lightblue;
+	background-color: var(--color-shark);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5rem;
 `;
 
 export const ChatWrapper = styled.div`
