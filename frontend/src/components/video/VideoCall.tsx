@@ -7,12 +7,14 @@ import styled from '@emotion/styled';
 import VideoBtn from './VideoBtn';
 import AudioBtn from './AudioBtn';
 import { FlexCenterWrapper } from '../../styles/Layout';
+import { useParams } from 'react-router-dom';
 
 const VideoCall = () => {
 	const userInfo = UserInfoStore();
-	const myId = userInfo.username;
+	// const myId = userInfo.username;
 	const { audioEnabled, videoEnabled } = useVideoCallStore();
-	// const myId = Math.floor(Math.random() * 1000).toString();
+	const { chatroom_id } = useParams<{ chatroom_id: string }>();
+	const myId = Math.floor(Math.random() * 1000).toString();
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
 	const pcRef = useRef<RTCPeerConnection>(
@@ -128,12 +130,13 @@ const VideoCall = () => {
 
 		socketRef.current.onmessage = handleSocketMessage;
 		socketRef.current.onclose = () => {
-			const message = {
-				fromUserId: myId,
-				type: 'leave',
-			};
-			socketRef.current?.send(JSON.stringify(message));
-			console.log('leave room');
+			// const message = {
+			// 	fromUserId: myId,
+			// 	roomId: '1',
+			// 	type: 'leave',
+			// };
+			// socketRef.current?.send(JSON.stringify(message));
+			// console.log('leave room');
 			console.log('WebSocket disconnected');
 		};
 
@@ -197,10 +200,10 @@ const VideoCall = () => {
 
 	return (
 		<VideoCallWrapper>
-			<>
+			<BoxWrapper>
 				<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
 				<VideoBox id="localvideo" stream={localStream} userId={myId} />
-			</>
+			</BoxWrapper>
 			<ButtonWrapper>
 				<VideoBtn />
 				<AudioBtn />
@@ -216,12 +219,27 @@ const VideoCallWrapper = styled.div`
 	flex-direction: column;
 	width: 100%;
 	height: 100%;
+	background-color: var(--color-shark);
+	align-items: center;
+	position: relative;
+`;
+
+const BoxWrapper = styled.div`
+	background-color: var(--color-shark);
+	justify-content: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+	width: 100%;
+	height: calc(100% - 4rem);
 `;
 
 const ButtonWrapper = styled.div`
-	display: flex;
-	flex-direction: row;
-	${FlexCenterWrapper}
-	width: 100%
+	background-color: var(--color-shark);
+	width: 100%;
 	height: 4rem;
+	display: flex;
+	justify-content: center;
+	bottom: 0;
 `;

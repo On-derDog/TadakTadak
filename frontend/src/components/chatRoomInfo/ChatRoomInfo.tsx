@@ -61,7 +61,6 @@ const ChatRoomInfoWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	background-color: var(--color-white);
-	/* border: 1px solid var(--color-rangoongreen); */
 `;
 const UpWrapper = styled.div`
 	background-color: var(--color-pumpkin);

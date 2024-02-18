@@ -72,7 +72,12 @@ export default ChattingRoomPage;
 export const VideoWrapper = styled.div`
 	width: 50%;
 	height: 100%;
-	background-color: lightblue;
+	background-color: var(--color-shark);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5rem;
 `;
 
 export const ChatWrapper = styled.div`
