@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import VideoBox from './VideoBox';
 import { UserInfoStore } from '../../stores/UserInfoStore';
 import styled from '@emotion/styled';
+import VideoBtn from './VideoBtn';
+import AudioBtn from './AudioBtn';
 
 const VideoCall = () => {
 	const userInfo = UserInfoStore();
@@ -24,7 +26,7 @@ const VideoCall = () => {
 			],
 		}),
 	);
-	const [audioEnabled, setAudioEnabled] = useState(true);
+	const [audioEnabled, setAudioEnabled] = useState(false);
 	const [videoEnabled, setVideoEnabled] = useState(true);
 	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -190,7 +192,10 @@ const VideoCall = () => {
 		<VideoCallWrapper>
 			<VideoBox id="localvideo" stream={localStream} userId={myId} />
 			<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
-			<ButtonWrapper></ButtonWrapper>
+			<ButtonWrapper>
+				<VideoBtn />
+				<AudioBtn />
+			</ButtonWrapper>
 		</VideoCallWrapper>
 	);
 };
