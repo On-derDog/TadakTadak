@@ -5,11 +5,14 @@ import RoomName from './RoomName';
 import RoomMember from './RoomMember';
 import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
 import { listDataProps } from '../../interface/UserListInterface';
+import { UserInfoStore } from '../../stores/UserInfoStore';
 
 const ChatRoomInfo = ({ roomName }: listDataProps) => {
-	const { setRoomInfo, owner } = useRoomInfoStore();
+	const { setRoomInfo, owner, fetchInitialRoomIn, setFetchInitialRoomIn } = useRoomInfoStore();
 	const { chatroom_id } = useParams();
 	const [refreshIntervalId, setRefreshIntervalId] = useState<number>();
+	const userInfo = UserInfoStore();
+	const userId = userInfo.username;
 
 	useEffect(() => {
 		fetchRoomInfo();
@@ -20,8 +23,41 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 		return () => clearInterval(intervalId);
 	}, [chatroom_id, owner]);
 
+	useEffect(() => {
+		if (fetchInitialRoomIn) {
+			fetchRoomIn();
+			console.log('ChatRoom In');
+			setFetchInitialRoomIn(false);
+			console.log('Never request ChatRoom In API');
+		}
+	}, []);
+
+	const fetchRoomIn = async () => {
+		try {
+			const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}`;
+			fetch(apiUrl, {
+				method: 'POST',
+				body: JSON.stringify(userId),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+		} catch (error) {
+			console.error('Error fetching room in:', error);
+		}
+	};
+
 	const fetchRoomInfo = async () => {
 		try {
+			const apiUrl = `http://localhost:8002/chatroom-service/rooms/${chatroom_id}`;
+			fetch(apiUrl, {
+				method: 'POST',
+				body: JSON.stringify(userId),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+
 			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roomInformation`, {
 				method: 'GET',
 			});
