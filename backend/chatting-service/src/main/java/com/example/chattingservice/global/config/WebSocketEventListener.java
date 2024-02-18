@@ -1,7 +1,6 @@
 package com.example.chattingservice.global.config;
 
-import com.example.chattingservice.domain.chat.dto.request.MessageType;
-import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
+import com.example.chattingservice.domain.chat.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -16,21 +15,15 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 public class WebSocketEventListener {
 
     private final SimpMessageSendingOperations messageTemplate;
+    private final UserService userService;
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String username = (String) headerAccessor.getSessionAttributes().get("username");
-        Long roomId = (Long) headerAccessor.getSessionAttributes().get("roomId");
 
-        if (username != null && roomId != null) {
-            log.info("User disconnected: {} in room id {}", username, roomId);
-            ChatResponse chatResponse = ChatResponse.builder()
-                    .type(MessageType.LEAVE)
-                    .username(username)
-                    .build();
-
-            messageTemplate.convertAndSend("/topic/public/" + roomId, chatResponse);
+        if (username != null) {
+            userService.removeUserWhenSocketDisabled(username);
         }
     }
 }

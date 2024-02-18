@@ -23,11 +23,18 @@ export default RoomMember;
 const RoomMemberWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	padding: 0.5rem 0.625rem 0.5rem 0.625rem;
 `;
 
-const OwnerWrapper = styled.div``;
+const OwnerWrapper = styled.div`
+	font-size: var(--font-size-mg);
+	margin-bottom: 1rem;
+`;
 
-const TitleWrapper = styled.div``;
+const TitleWrapper = styled.div`
+	font-size: var(--font-size-mg);
+	margin-bottom: 0.5rem;
+`;
 
 const MemberList = styled.div`
 	display: flex;

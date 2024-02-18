@@ -2,7 +2,7 @@ import * as StompJs from '@stomp/stompjs';
 
 export interface Message {
 	content: string;
-	sender: string;
+	username: string;
 	createdAt: Date | string;
 }
 

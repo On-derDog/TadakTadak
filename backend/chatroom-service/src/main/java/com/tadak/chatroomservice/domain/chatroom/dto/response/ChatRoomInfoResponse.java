@@ -13,16 +13,14 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OneChatRoomResponse {
+public class ChatRoomInfoResponse {
 
-    private String roomName;
     private Integer participation;
     private String owner;
     private List<ChatMemberResponse> chatMemberResponses;
 
-    public static OneChatRoomResponse of(ChatRoom chatRoom, List<ChatMemberResponse> chatMemberResponses){
-        return OneChatRoomResponse.builder()
-                .roomName(chatRoom.getRoomName())
+    public static ChatRoomInfoResponse of(ChatRoom chatRoom, List<ChatMemberResponse> chatMemberResponses){
+        return ChatRoomInfoResponse.builder()
                 .participation(chatRoom.getParticipation())
                 .owner(chatRoom.getOwner())
                 .chatMemberResponses(chatMemberResponses)

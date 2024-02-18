@@ -14,3 +14,8 @@ export interface UserDataProps {
 	isLoading: boolean;
 	isError: boolean;
 }
+
+export interface listDataProps {
+	username: string | undefined;
+	roomName: string | undefined;
+}

@@ -1,10 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import VideoBox from './VideoBox';
+import { UserInfoStore } from '../../stores/UserInfoStore';
+import { useVideoCallStore } from '../../stores/useVideoCallStore';
+
+import styled from '@emotion/styled';
+import VideoBtn from './VideoBtn';
+import AudioBtn from './AudioBtn';
+import { useParams } from 'react-router-dom';
 
 const VideoCall = () => {
+	const userInfo = UserInfoStore();
+	const myId = userInfo.username;
+	// const myId = Math.floor(Math.random() * 1000).toString();
+	const { audioEnabled, videoEnabled } = useVideoCallStore();
+	const { chatroom_id } = useParams<{ chatroom_id: string }>();
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
-	const myId = Math.floor(Math.random() * 1000).toString();
 	const pcRef = useRef<RTCPeerConnection>(
 		new RTCPeerConnection({
 			iceServers: [
@@ -20,8 +31,6 @@ const VideoCall = () => {
 			],
 		}),
 	);
-	const [audioEnabled, setAudioEnabled] = useState(true);
-	const [videoEnabled, setVideoEnabled] = useState(true);
 	const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 	const [remoteId, setRemoteId] = useState(null);
@@ -62,7 +71,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'offer',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: null,
 				sdp: pcRef.current.localDescription,
 			};
@@ -73,7 +82,6 @@ const VideoCall = () => {
 			console.error('Error creating Offer:', e);
 		}
 	};
-
 	// Answer 생성 함수
 	const createAnswer = async (offerSdp: RTCSessionDescriptionInit) => {
 		console.log('Creating Answer...');
@@ -88,7 +96,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'answer',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: null,
 				sdp: pcRef.current.localDescription,
 			};
@@ -110,7 +118,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'join',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: null,
 				sdp: null,
 			};
@@ -129,7 +137,7 @@ const VideoCall = () => {
 				socketRef.current.close();
 			}
 		};
-	}, []);
+	}, [videoEnabled, audioEnabled]);
 
 	// ICE Candidate 이벤트 핸들러 함수
 	const handleIceCandidate = (e: RTCPeerConnectionIceEvent) => {
@@ -138,7 +146,7 @@ const VideoCall = () => {
 			const message = {
 				fromUserId: myId,
 				type: 'ice',
-				roomId: '1',
+				roomId: chatroom_id,
 				candidate: e.candidate,
 			};
 			socketRef.current.send(JSON.stringify(message));
@@ -183,18 +191,47 @@ const VideoCall = () => {
 	};
 
 	return (
-		<div
-			id="Wrapper"
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				alignItems: 'center',
-			}}
-		>
-			<VideoBox id="localvideo" stream={localStream} userId={myId} />
-			<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
-		</div>
+		<VideoCallWrapper>
+			<BoxWrapper>
+				<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
+				<VideoBox id="localvideo" stream={localStream} userId={myId} />
+			</BoxWrapper>
+			<ButtonWrapper>
+				<VideoBtn />
+				<AudioBtn />
+			</ButtonWrapper>
+		</VideoCallWrapper>
 	);
 };
 
 export default VideoCall;
+
+const VideoCallWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	background-color: var(--color-shark);
+	align-items: center;
+	position: relative;
+`;
+
+const BoxWrapper = styled.div`
+	background-color: var(--color-shark);
+	justify-content: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+	width: 100%;
+	height: calc(100% - 4rem);
+`;
+
+const ButtonWrapper = styled.div`
+	background-color: var(--color-shark);
+	width: 100%;
+	height: 4rem;
+	display: flex;
+	justify-content: center;
+	bottom: 0;
+`;

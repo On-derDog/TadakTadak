@@ -3,12 +3,15 @@ package com.tadak.chatroomservice.domain.chatroom.service;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.ChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.dto.response.EnterChatMemberResponse;
 import com.tadak.chatroomservice.domain.chatmember.entity.ChatMember;
+import com.tadak.chatroomservice.domain.chatmember.entity.ChatMemberType;
 import com.tadak.chatroomservice.domain.chatmember.service.ChatMemberService;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.ChatRoomRequest;
 import com.tadak.chatroomservice.domain.chatroom.dto.response.*;
 import com.tadak.chatroomservice.domain.chatroom.exception.AlreadyKickedException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotFoundChatRoomException;
 import com.tadak.chatroomservice.domain.chatroom.exception.NotRoomOwnerException;
+import com.tadak.chatroomservice.domain.chatroom.mq.KafkaProducer;
+import com.tadak.chatroomservice.domain.chatroom.mq.dto.EnterKafkaRequest;
 import com.tadak.chatroomservice.domain.chatroom.repository.ChatRoomRepository;
 import com.tadak.chatroomservice.domain.chatroom.dto.request.CreateChatroomRequest;
 import com.tadak.chatroomservice.domain.chatroom.entity.ChatRoom;
@@ -29,6 +32,8 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMemberService chatMemberService;
+    private final KafkaProducer kafkaProducer;
+    private static final String REFRESH_LIST_TOPIC_NAME = "refresh";
 
     @Transactional
     public CreateChatroomResponse create(CreateChatroomRequest chatroomRequest) {
@@ -52,11 +57,18 @@ public class ChatRoomService {
 
         // 채팅방에 없는 member 일 경우 save 로직
         if (!chatMemberService.existsChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername())) {
+            EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
+            kafkaProducer.sendWithUsernameByKeyToSessionServer(KafkaProducer.STATUS_TOPIC_NAME, enterKafkaRequest);
             return chatMemberService.enterMember(chatRoom, chatRoomRequest.getUsername());
         }
 
         // 채팅방에 member가 있을 경우 get으로 가져와서 전달
         ChatMember existingChatMember = chatMemberService.getChatMemberByChatRoomAndUsername(chatRoom, chatRoomRequest.getUsername());
+
+        // kafka send
+        EnterKafkaRequest enterKafkaRequest = EnterKafkaRequest.from(chatRoom, chatRoomRequest.getUsername());
+        kafkaProducer.sendWithUsernameByKeyToSessionServer(KafkaProducer.STATUS_TOPIC_NAME, enterKafkaRequest);
+
         return EnterChatMemberResponse.of(existingChatMember, chatRoom.getParticipation());
     }
 
@@ -78,11 +90,11 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public KickMemberResponse kickMember(Long roomId, Long chatMemberId, String username) {
+    public KickMemberResponse kickMember(Long roomId, String kickedUsername, String owner) {
         ChatRoom chatRoom = findByChatRoom(roomId);
-        ChatMember chatMember = chatMemberService.findByChatMember(chatMemberId);
+        ChatMember chatMember = chatMemberService.findByChatRoomAndChatUsername(chatRoom, kickedUsername);
         // 방장 검증
-        validOwner(username, chatRoom.getOwner());
+        validOwner(owner, chatRoom.getOwner());
 
         // 상태를 KICKED로 변경
         chatMember.updateState();
@@ -126,12 +138,21 @@ public class ChatRoomService {
         return ChangeOwnerResponse.from(chatRoom);
     }
 
-    public OneChatRoomResponse findChatRoom(Long roomId) {
+    // 방 제목 엔드포인트
+    public ChatRoomNameResponse findChatRoom(Long roomId) {
+        ChatRoom chatRoom = findByChatRoom(roomId);
+
+        return ChatRoomNameResponse.from(chatRoom);
+    }
+
+    // 방장, 참여자 수, 참여 멤버 엔드포인트
+    public ChatRoomInfoResponse findChatRoomInfo(Long roomId) {
         ChatRoom chatRoom = findByChatRoom(roomId);
 
         List<ChatMemberResponse> chatMemberResponses = chatRoom.getChatMembers().stream()
+                .filter(chatMember -> chatMember.getType() == ChatMemberType.IN_ROOM)
                 .map(ChatMemberResponse::from).toList();
 
-        return OneChatRoomResponse.of(chatRoom, chatMemberResponses);
+        return ChatRoomInfoResponse.of(chatRoom, chatMemberResponses);
     }
 }

@@ -1,5 +1,22 @@
 server:
   port: 8010
+spring:
+  data:
+    redis:
+      port: 6379
+      host: localhost
+  profiles:
+    active: local
+  application:
+    name: chatting
+  cloud:
+    zookeeper:
+      connect-string: localhost:22181
+      discovery:
+        enabled: true
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: WARN
 
 #spring:
 #  application:
@@ -10,7 +27,7 @@ server:
 #eureka:
 ##  instance:
 ##    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-#  client:
+#  client:ㅎ
 #    register-with-eureka: true
 #    fetch-registry: true
 #    service-url:

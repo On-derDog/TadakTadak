@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { ChattingRoomHeader } from '../../styles/ComponentLayout';
 import List from './List';
+import { listDataProps } from '../../interface/UserListInterface';
 
-const UserList = () => {
+const UserList = ({ username, roomName }: listDataProps) => {
 	return (
 		<UserListContainer>
 			<ListHeader>커뮤니티</ListHeader>
-			<List />
+			<List username={username} roomName={roomName} />
 		</UserListContainer>
 	);
 };

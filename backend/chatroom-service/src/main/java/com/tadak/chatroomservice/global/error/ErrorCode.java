@@ -20,6 +20,7 @@ public enum ErrorCode {
     NOT_OWNER_ERROR(1301, "G1300", "방장 권한이 없습니다."),
     KICKED_MEMBER_ERROR(1302, "G1300", "현재 강퇴당한 채팅 방 입니다."),
     CANNOT_TRANSFER_OWNER_ERROR(1303, "G1300", "해당 유저는 강퇴당한 유저이기 떄문에 방장 위임을 할 수 없습니다."),
+    OVER_CHATROOM_PARTICIPATION_ERROR(1304, "G1300", "해당 채팅 방은 인원이 가득차 있습니다."),
 
     /**
      * 1400 ~ 1499

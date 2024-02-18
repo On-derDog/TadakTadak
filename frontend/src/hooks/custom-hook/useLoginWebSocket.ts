@@ -9,7 +9,7 @@ export const useLoginWebSocket = () => {
 	const { setUserList } = useUserListStore();
 	const client = useRef<StompClient | null>(null);
 
-	const connect = (username: string) => {
+	const connect = (username: string, roomName: string) => {
 		if (client.current) {
 			client.current.deactivate();
 		}
@@ -19,7 +19,7 @@ export const useLoginWebSocket = () => {
 				console.log('success');
 				userSubscribe();
 				if (username) {
-					publishUser(username, '');
+					publishUser(username, roomName);
 				}
 			},
 			debug: (str: string) => {
@@ -66,5 +66,5 @@ export const useLoginWebSocket = () => {
 		throw new Error('Failed to publish user: username is empty');
 	};
 
-	return { connect, publishUser, unconnect };
+	return { connect, publishUser, unconnect, userSubscribe };
 };

@@ -4,13 +4,21 @@ import UserProfile from './UserProfile';
 
 import { ColumnDisplay, OverFlowScrollbar } from '../../styles/ComponentLayout';
 import { useUserListStore } from '../../stores/useUserListStore';
-// import { useRef, useEffect } from 'react';
-// import { bodyMessage } from '../../interface/CommonInterface';
-// import { UserDataProps } from '../../interface/UserListInterface';
+import { useLoginWebSocket } from '../../hooks/custom-hook/useLoginWebSocket';
+import { listDataProps } from '../../interface/UserListInterface';
+import { useEffect } from 'react';
 
-// type StompClient = StompJs.Client;
+const List = ({ username, roomName }: listDataProps) => {
+	const { connect, unconnect } = useLoginWebSocket();
+	useEffect(() => {
+		if (username && roomName) {
+			connect(username, roomName);
+		}
+		return () => {
+			unconnect();
+		};
+	}, []);
 
-const List = () => {
 	const { userlist } = useUserListStore();
 	console.log(userlist);
 

@@ -45,12 +45,11 @@ const WelcomePage = () => {
 	} = useQuery({
 		queryKey: ['userData'],
 		queryFn: getUserData,
-		staleTime: 5000,
+		staleTime: 60000,
 		enabled: isLoggedIn,
 	});
 
-    
-    const {
+	const {
 		data: roomsPreviewListData,
 		isLoading: roomsIsLoading,
 		isError: roomsIsError,
@@ -66,8 +65,8 @@ const WelcomePage = () => {
 	useEffect(() => {
 		if (isLoggedIn && userData) {
 			setLoginText('Logout');
-			connect(userData.username);
-            userinfo.updateUsername(userData.username);
+			connect(userData.username, '온라인');
+			userinfo.updateUsername(userData.username);
 		} else {
 			setLoginText('Login');
 		}
@@ -111,9 +110,7 @@ const WelcomePage = () => {
 									</LogoDiv>
 
 									<ServiceText>TadakTadak</ServiceText>
-									<UsernameText>
-										{isLoggedIn ? userData?.username : '로그인이 필요한 서비스입니다.'}
-									</UsernameText>
+									<UsernameText>{isLoggedIn ? userData?.username : '로그인이 필요한 서비스입니다.'}</UsernameText>
 
 									{/* Search */}
 									<Search />
@@ -121,12 +118,7 @@ const WelcomePage = () => {
 									{/* Menu */}
 									<div className="Menu-list">
 										<Sidebar.item text="Home" type="list" svg="Home" />
-										<Sidebar.item
-											text="Create"
-											type="list"
-											svg="Create"
-											onClick={handleCreateRoom}
-										/>
+										<Sidebar.item text="Create" type="list" svg="Create" onClick={handleCreateRoom} />
 									</div>
 
 									<Sidebar.item text="Category 1" type="category" />
@@ -139,18 +131,11 @@ const WelcomePage = () => {
 									<Favorite />
 								</>
 							}
-							bottom={
-								<Sidebar.item
-									text={loginText}
-									type="list"
-									svg="Logout"
-									onClick={handleLoginClick}
-								/>
-							}
+							bottom={<Sidebar.item text={loginText} type="list" svg="Logout" onClick={handleLoginClick} />}
 						/>
 					</SideWrapper>
 					<MainContainer>
-						<RoomPreviewList roomsPreviewListData={roomsPreviewListData} refetchRooms={refetchRooms}/>
+						<RoomPreviewList roomsPreviewListData={roomsPreviewListData} refetchRooms={refetchRooms} />
 						{CreateRoom && (
 							<CreateRoomPreview
 								onClose={() => setCreateRoom(false)}
@@ -189,4 +174,3 @@ const MainContainer = styled.div`
 	width: calc(100% - 11.5rem);
 	${FlexCenterWrapper}
 `;
-
