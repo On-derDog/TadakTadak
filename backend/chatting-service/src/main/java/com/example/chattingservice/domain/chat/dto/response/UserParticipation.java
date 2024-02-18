@@ -13,6 +13,7 @@ public class UserParticipation {
     private String username;
     private String roomName;
     private Long userId;
+    private String status;
 
     public void changeRoomName(String newRoomName){
         this.roomName = newRoomName;

@@ -41,3 +41,4 @@ out/
 .DS_store
 
 /src/main/resources/application-local.yml
+application-local.properties

@@ -3,7 +3,6 @@ package com.example.chattingservice.domain.chat.controller;
 import com.example.chattingservice.domain.chat.dto.request.ChatRequest;
 import com.example.chattingservice.domain.chat.dto.response.ChatEnterLeaveResponse;
 import com.example.chattingservice.domain.chat.dto.response.ChatListResponse;
-import com.example.chattingservice.domain.chat.dto.response.ChatResponse;
 import com.example.chattingservice.domain.chat.service.ChatService;
 import com.example.chattingservice.domain.chat.service.UserService;
 import jakarta.validation.Valid;
@@ -31,27 +30,28 @@ public class ChatController {
     private final UserService userService;
 
     @MessageMapping("/chat/{roomId}/send-message")
-    @SendTo("/topic/public/{roomId}")
-    public ChatResponse sendMessage(
+    public void sendMessage(
             @Payload @Valid ChatRequest chatRequest,
             @DestinationVariable("roomId") Long roomId
     ) {
-        return chatService.saveChat(chatRequest, roomId);
+        chatService.sendChat(chatRequest, roomId);
     }
 
-    @MessageMapping("/chat/{roomId}/enter")
-    @SendTo({"/topic/public/{roomId}"})
-    public ChatEnterLeaveResponse enter(
-            @Payload @Valid ChatRequest chatRequest,
-            @DestinationVariable("roomId") Long roomId,
-            SimpMessageHeaderAccessor headerAccessor
-    ) {
+//    @MessageMapping("/chat/{roomId}/enter")
+//    @SendTo({"/topic/public/{roomId}"})
+//    public ChatEnterLeaveResponse enter(
+//            @Payload @Valid ChatRequest chatRequest,
+//            @DestinationVariable("roomId") Long roomId,
+//            SimpMessageHeaderAccessor headerAccessor
+//    ) {
+//
+//        headerAccessor.getSessionAttributes().put("username", chatRequest.getUsername());
+//        headerAccessor.getSessionAttributes().put("roomId", roomId);
+//        userService.moveUser(chatRequest.getUsername(),roomId.toString());
+//        return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
+//    }
 
-        headerAccessor.getSessionAttributes().put("username", chatRequest.getUsername());
-        headerAccessor.getSessionAttributes().put("roomId", roomId);
-        userService.moveUser(chatRequest.getUsername(),roomId.toString());
-        return ChatEnterLeaveResponse.of(chatRequest, LocalDateTime.now());
-    }
+
 
     @GetMapping("/chat/{roomId}/messages")
     @ResponseBody
