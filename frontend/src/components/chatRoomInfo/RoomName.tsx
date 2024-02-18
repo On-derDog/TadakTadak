@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
+import { listDataProps } from '../../interface/UserListInterface';
 
-const RoomName: React.FC = () => {
-	const { roomName, participation } = useRoomInfoStore();
+const RoomName = ({ roomName }: listDataProps) => {
+	const { participation } = useRoomInfoStore();
 
 	return (
 		<RoomNameWrapper>

@@ -6,12 +6,13 @@ import { useVideoCallStore } from '../../stores/useVideoCallStore';
 import styled from '@emotion/styled';
 import VideoBtn from './VideoBtn';
 import AudioBtn from './AudioBtn';
+import { FlexCenterWrapper } from '../../styles/Layout';
 
 const VideoCall = () => {
 	const userInfo = UserInfoStore();
-	// const myId = userInfo.username;
+	const myId = userInfo.username;
 	const { audioEnabled, videoEnabled } = useVideoCallStore();
-	const myId = Math.floor(Math.random() * 1000).toString();
+	// const myId = Math.floor(Math.random() * 1000).toString();
 	const socketRef = useRef<WebSocket>();
 	const myVideo = useRef<HTMLVideoElement>(null);
 	const pcRef = useRef<RTCPeerConnection>(
@@ -127,6 +128,12 @@ const VideoCall = () => {
 
 		socketRef.current.onmessage = handleSocketMessage;
 		socketRef.current.onclose = () => {
+			const message = {
+				fromUserId: myId,
+				type: 'leave',
+			};
+			socketRef.current?.send(JSON.stringify(message));
+			console.log('leave room');
 			console.log('WebSocket disconnected');
 		};
 
@@ -190,8 +197,10 @@ const VideoCall = () => {
 
 	return (
 		<VideoCallWrapper>
-			<VideoBox id="localvideo" stream={localStream} userId={myId} />
-			<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
+			<>
+				<VideoBox id="remotevideo" stream={remoteStream} userId={remoteId} />
+				<VideoBox id="localvideo" stream={localStream} userId={myId} />
+			</>
 			<ButtonWrapper>
 				<VideoBtn />
 				<AudioBtn />
@@ -204,7 +213,7 @@ export default VideoCall;
 
 const VideoCallWrapper = styled.div`
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: column;
 	width: 100%;
 	height: 100%;
 `;
@@ -212,4 +221,7 @@ const VideoCallWrapper = styled.div`
 const ButtonWrapper = styled.div`
 	display: flex;
 	flex-direction: row;
+	${FlexCenterWrapper}
+	width: 100%
+	height: 4rem;
 `;

@@ -4,8 +4,9 @@ import styled from '@emotion/styled';
 import RoomName from './RoomName';
 import RoomMember from './RoomMember';
 import { useRoomInfoStore } from '../../stores/useRoomInfoStore';
+import { listDataProps } from '../../interface/UserListInterface';
 
-const ChatRoomInfo: React.FC = () => {
+const ChatRoomInfo = ({ roomName }: listDataProps) => {
 	const { setRoomInfo, owner } = useRoomInfoStore();
 	const { chatroom_id } = useParams();
 	const [refreshIntervalId, setRefreshIntervalId] = useState<number>();
@@ -21,12 +22,9 @@ const ChatRoomInfo: React.FC = () => {
 
 	const fetchRoomInfo = async () => {
 		try {
-			const response = await fetch(
-				`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/information`,
-				{
-					method: 'GET',
-				},
-			);
+			const response = await fetch(`http://localhost:8002/chatroom-service/rooms/${chatroom_id}/roominformation`, {
+				method: 'GET',
+			});
 			const data = await response.json();
 			setRoomInfo(data);
 
@@ -45,7 +43,7 @@ const ChatRoomInfo: React.FC = () => {
 	return (
 		<ChatRoomInfoWrapper>
 			<UpWrapper>
-				<RoomName />
+				<RoomName roomName={roomName} username={undefined} />
 			</UpWrapper>
 			<DownWrapper>
 				<RoomMember />
