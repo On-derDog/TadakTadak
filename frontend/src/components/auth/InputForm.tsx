@@ -1,8 +1,8 @@
-import EmailSVG from "../../assets/Email.svg"
-import UserSVG from "../../assets/User.svg"
-import PasswordSVG from "../../assets/Password.svg"
+import styled from '@emotion/styled';
 
-import styled from "@emotion/styled";
+import EmailSVG from '../../assets/Email.svg';
+import PasswordSVG from '../../assets/Password.svg';
+import UserSVG from '../../assets/User.svg';
 
 interface InputFormProps {
   type: string;
@@ -14,25 +14,33 @@ interface InputFormProps {
   imgSVG: string;
 }
 
-function ChangeSVG(imgSVG: string){
-  switch(imgSVG){
-    case "Email":
+function ChangeSVG(imgSVG: string) {
+  switch (imgSVG) {
+    case 'Email':
       return EmailSVG;
-    case "User":
+    case 'User':
       return UserSVG;
-    case "Password":
+    case 'Password':
       return PasswordSVG;
   }
 }
 
-export const InputForm = ({ type, name, value, onChange, title, imgSVG, ...rest }: InputFormProps) => {
+export const InputForm = ({
+  type,
+  name,
+  value,
+  onChange,
+  title,
+  imgSVG,
+  ...rest
+}: InputFormProps) => {
   return (
     <InputFormWrapper>
       <p>{title}</p>
       <InputFormContainer>
         {imgSVG && (
           <picture>
-            <img src={ChangeSVG(imgSVG)} alt="img" />
+            <img src={ChangeSVG(imgSVG)} alt='img' />
           </picture>
         )}
         {type === 'number' ? (
@@ -44,7 +52,13 @@ export const InputForm = ({ type, name, value, onChange, title, imgSVG, ...rest 
             ))}
           </StyledSelect>
         ) : (
-          <input type={type} name={name} value={value} onChange={onChange} {...rest} />
+          <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            {...rest}
+          />
         )}
       </InputFormContainer>
     </InputFormWrapper>
@@ -57,7 +71,7 @@ const InputFormWrapper = styled.section`
     margin: 0;
     padding: 1rem 0.5rem 0.3rem;
   }
-`
+`;
 
 const InputFormContainer = styled.div`
   height: 44px;
@@ -68,7 +82,6 @@ const InputFormContainer = styled.div`
   padding: 0 11px;
 
   picture {
-
   }
 
   input {
@@ -77,8 +90,8 @@ const InputFormContainer = styled.div`
     outline: none;
   }
 
-  border: solid 1px var(--color-crusta)
-`
+  border: solid 1px var(--color-crusta);
+`;
 
 const StyledSelect = styled.select`
   width: 100%;

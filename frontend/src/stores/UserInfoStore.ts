@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 export interface UserInfo {
   email: string;
@@ -23,7 +23,9 @@ let userInfoStoreTemp;
 
 //devtools
 if (import.meta.env.DEV) {
-  userInfoStoreTemp = create<UserInfo>()(devtools(createUserInfoStore, { name: 'userInfo' }));
+  userInfoStoreTemp = create<UserInfo>()(
+    devtools(createUserInfoStore, { name: 'userInfo' })
+  );
 } else {
   userInfoStoreTemp = create<UserInfo>()(createUserInfoStore);
 }

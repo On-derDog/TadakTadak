@@ -1,8 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { UserInfoStore } from '../stores/UserInfoStore';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import axios from 'axios';
 import { useStore } from 'zustand';
+
+import { UserInfoStore } from '../stores/UserInfoStore';
 
 const Signupnaver = () => {
   const navigate = useNavigate();
@@ -33,24 +35,23 @@ const Signupnaver = () => {
     //   console.error("FE proxy 오류",error);
     // }
 
-
     // BE에게 전달
     try {
       const response = await axios.post('/oauth2/token', {
-        code: code
+        code: code,
       });
       console.log(response.data);
 
       navigate('/');
     } catch (error) {
-      console.error('BE 전달오류',error);
+      console.error('BE 전달오류', error);
     }
   };
 
   useEffect(() => {
-    let code = new URL(window.location.href).searchParams.get("code");
+    let code = new URL(window.location.href).searchParams.get('code');
     setCode(code);
-    console.log("BE 전달:",code);
+    console.log('BE 전달:', code);
     userAccessToken();
   }, []);
 

@@ -1,9 +1,11 @@
-import styled from '@emotion/styled';
-import SearchSVG from "../../assets/Search.svg"
-import { useState } from "react"
+import { useState } from 'react';
 
-export const Search = ()=>{
-  const [searchData,setSearchData] = useState<string>("")
+import styled from '@emotion/styled';
+
+import SearchSVG from '../../assets/Search.svg';
+
+export const Search = () => {
+  const [searchData, setSearchData] = useState<string>('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchData(event.target.value);
@@ -19,25 +21,23 @@ export const Search = ()=>{
     handleSearch();
   };
 
-
   const handleSearch = () => {
-    console.log("검색:", searchData);
+    console.log('검색:', searchData);
   };
 
   return (
     <SearchDiv>
-      <img src={SearchSVG} alt='SearchSVG' onClick={handleClick}/>
+      <img src={SearchSVG} alt='SearchSVG' onClick={handleClick} />
       <SearchInput
-        type="text"
-        placeholder="Search..."
+        type='text'
+        placeholder='Search...'
         value={searchData}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
       />
     </SearchDiv>
-  )
-}
-
+  );
+};
 
 const SearchDiv = styled.div`
   width: 70%;

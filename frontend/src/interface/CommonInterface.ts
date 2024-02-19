@@ -1,3 +1,3 @@
 export interface bodyMessage {
-	body: string;
+  body: string;
 }
