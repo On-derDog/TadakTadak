@@ -40,7 +40,7 @@ public class StatusService {
         if(onlineUser.isPresent()){ //db에 존재하는 User라면
             OnlineUser onlineUser1 = onlineUser.get();
             if(status.equals("exit")) statusRepository.delete(onlineUser1);
-            if(status.equals("login")) onlineUser1.setRoomName("");
+            if(status.equals("login")) onlineUser1.setRoomName(roomName);
             if(status.equals("enter")) onlineUser1.setRoomName(roomName);
             statusRepository.save(onlineUser1);
         }
