@@ -12,7 +12,6 @@ import { RoomPreviewSkeleton } from "./RoomPreviewSkeleton"
 export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:string, roomName:string, description:string, hashtag: string}) =>{
 
   const navigate = useNavigate();
-  const navigate = useNavigate();
 	const accessToken = localStorage.getItem('Accesstoken');
 	const isLoggedIn = accessToken !== null;
   
@@ -44,7 +43,7 @@ export const RoomPreview = ({roomId, roomName, description, hashtag}:{roomId:str
  <>
     {/* {isLoading && <RoomPreviewSkeleton />} */}
       {!isLoading && !isError && (
-        <RoomPreviewWrapper onClick={handlieRoomClick}>
+        <RoomPreviewWrapper onClick={handleRoomClick}>
           {/* 이미지 썸네일 */}
           <PreviewImg>
             {thumbnailUrl ? <img src={thumbnailUrl} alt="썸네일" /> : <img src={DefaultUserSVG} alt="DefaultUserSVG" />}
