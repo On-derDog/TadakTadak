@@ -12,6 +12,7 @@ import { Global } from '@emotion/react';
 import { GlobalStyle } from './styles/GlobalStyle';
 import ChatRoomInfo from './components/chatRoomInfo/ChatRoomInfo';
 
+
 const router = createBrowserRouter([
 	{
 		path: '/',

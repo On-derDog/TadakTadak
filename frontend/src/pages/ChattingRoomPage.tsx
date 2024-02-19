@@ -1,4 +1,3 @@
-// import Layout from '../components/layout/Layout';
 import { Container, Wrapper, SideWrapper, MainWrapper } from '../styles/Layout';
 import styled from '@emotion/styled';
 import ChatRoom from '../components/chat/ChatRoom';
