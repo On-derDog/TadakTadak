@@ -1,6 +1,6 @@
 import axios from 'axios';
+
 import { RoomsInfo } from '../../stores/useRoomStore';
-import { useStore } from 'zustand';
 
 export const GetAllRoomsApis = {
   instance: axios.create({
@@ -12,7 +12,9 @@ export const GetAllRoomsApis = {
     const roomsInfo = RoomsInfo.getState();
 
     try {
-      const res = await axios.get('http://localhost:8002/chatroom-service/rooms');
+      const res = await axios.get(
+        'http://localhost:8002/chatroom-service/rooms'
+      );
       roomsInfo.setRooms(res.data);
       return res.data;
     } catch (error) {

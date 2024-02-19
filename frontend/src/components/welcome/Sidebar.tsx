@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import Home from "../../assets/Home.svg"
-import Create from "../../assets/Create.svg"
-import Star from "../../assets/Star.svg"
-import Logout from "../../assets/Logout.svg"
 
-interface SidebarProps{
+import Create from '../../assets/Create.svg';
+import Home from '../../assets/Home.svg';
+import Logout from '../../assets/Logout.svg';
+import Star from '../../assets/Star.svg';
+
+interface SidebarProps {
   top: React.ReactNode;
   bottom: React.ReactNode;
 }
@@ -16,24 +17,19 @@ interface SidebarItemProps {
   onClick?: () => void;
 }
 
-
-export const Sidebar ={
+export const Sidebar = {
   wrapper: ({ top, bottom }: SidebarProps) => (
     <SidebarWrapper>
-      <SidebarTop>
-        {top}
-      </SidebarTop>
+      <SidebarTop>{top}</SidebarTop>
 
-      <SidebarBottom>
-        {bottom}
-      </SidebarBottom>
+      <SidebarBottom>{bottom}</SidebarBottom>
     </SidebarWrapper>
   ),
 
   item: ({ text, type, svg, onClick }: SidebarItemProps) => {
     const SvgComponent = getSVG(svg);
     switch (type) {
-      case "list":
+      case 'list':
         return (
           <MenuListItem onClick={onClick}>
             <Icons>
@@ -42,42 +38,37 @@ export const Sidebar ={
             <MenuListItemText>{text}</MenuListItemText>
           </MenuListItem>
         );
-  
-      case "category":
+
+      case 'category':
         return (
           <MenuCategoryItem>
-            <MenuCategoryItemText>
-              {text}
-            </MenuCategoryItemText>
+            <MenuCategoryItemText>{text}</MenuCategoryItemText>
           </MenuCategoryItem>
         );
-  
-      default:
-        return null; 
-    }
-  }
-  ,
 
-  line: ()=>{
-    return(<Line/>)
-  }
-}
+      default:
+        return null;
+    }
+  },
+  line: () => {
+    return <Line />;
+  },
+};
 
 const getSVG = (svg: string) => {
   switch (svg) {
-    case "Home":
+    case 'Home':
       return Home;
-    case "Create":
+    case 'Create':
       return Create;
-    case "Star":
+    case 'Star':
       return Star;
-    case "Logout":
+    case 'Logout':
       return Logout;
     default:
-      return null; 
+      return null;
   }
 };
-
 
 const MenuListItem = styled.div`
   display: flex;
@@ -87,9 +78,9 @@ const MenuListItem = styled.div`
   height: 48px;
   position: relative;
   transition: background-color 0.3s ease;
-  
+
   &:hover {
-    background-color: var(--color-mercury); 
+    background-color: var(--color-mercury);
     cursor: pointer;
   }
 `;
@@ -119,10 +110,9 @@ const MenuCategoryItem = styled.div`
 
   &:hover {
     background-color: var(--color-mercury);
-    cursor: pointer; 
+    cursor: pointer;
   }
 `;
-
 
 const MenuCategoryItemText = styled.span`
   width: 70px;
@@ -132,7 +122,6 @@ const MenuCategoryItemText = styled.span`
   color: var(--color-rangoongreen);
 `;
 
-
 const SidebarWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
@@ -140,8 +129,8 @@ const SidebarWrapper = styled.div`
   gap: 32px;
   background: var(--color-white);
   border-right: 1px solid var(--color-mercury);
-  height: 100%; 
-  padding-bottom: 32px; 
+  height: 100%;
+  padding-bottom: 32px;
 `;
 
 const SidebarTop = styled.div`
@@ -160,9 +149,9 @@ const SidebarBottom = styled.div`
   align-self: stretch;
 `;
 
-const Line= styled.div`
+const Line = styled.div`
   display: flex;
   width: 70%;
   margin: 0 auto;
   border: 1px solid var(--color-mercury);
-`
+`;

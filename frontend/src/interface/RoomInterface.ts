@@ -1,3 +1,3 @@
 export interface roomNameInfo {
-	roomName: string;
+  roomName: string;
 }

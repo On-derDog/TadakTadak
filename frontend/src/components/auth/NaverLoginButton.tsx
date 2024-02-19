@@ -1,54 +1,53 @@
+import { useEffect, useRef } from 'react';
+
 import styled from '@emotion/styled';
-import { useEffect, useRef } from 'react'
 
 const CLIENT_ID = import.meta.env.VITE_APP_CLIENT_ID;
 const CLIENT_ID_2 = import.meta.env.VITE_APP_CLIENT_ID_2;
 
-
 export const NaverLoginButton = () => {
-  const naverRef = useRef()
-	const { naver } = window
-  const REDIRECT_URI = "http://localhost:5173/signupnaver"
+  const naverRef = useRef();
+  const { naver } = window;
+  const REDIRECT_URI = 'http://localhost:5173/signupnaver';
 
-  const STATE = "flase";
+  const STATE = 'flase';
   const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&state=${STATE}`;
-  const NAVER_AUTH_LOGIN = `http://localhost:8001/oauth2/authorization/naver`
+  const NAVER_AUTH_LOGIN = `http://localhost:8001/oauth2/authorization/naver`;
 
   const NaverLogin = () => {
     window.location.href = NAVER_AUTH_LOGIN;
-  }
+  };
 
-	const initializeNaverLogin = () => {
-		const naverLogin = new naver.LoginWithNaverId({
-			clientId: CLIENT_ID_2,
-			callbackUrl: NAVER_AUTH_LOGIN,        
-			isPopup: false,
-			loginButton: { color: 'green', type: 3, height: 58 },
-			callbackHandle: true,
-		})
-		naverLogin.init()
-    
+  const initializeNaverLogin = () => {
+    const naverLogin = new naver.LoginWithNaverId({
+      clientId: CLIENT_ID_2,
+      callbackUrl: NAVER_AUTH_LOGIN,
+      isPopup: false,
+      loginButton: { color: 'green', type: 3, height: 58 },
+      callbackHandle: true,
+    });
+    naverLogin.init();
+
     naverLogin.getLoginStatus(async function (status) {
-			if (status) {
-        const userid = naverLogin.user.getEmail()
-				const username = naverLogin.user.getName()
-        console.log(userid,username)
-			}
-		})     
-	}
+      if (status) {
+        const userid = naverLogin.user.getEmail();
+        const username = naverLogin.user.getName();
+        console.log(userid, username);
+      }
+    });
+  };
 
-	useEffect(() => {
-		initializeNaverLogin()
-	}, [])
+  useEffect(() => {
+    initializeNaverLogin();
+  }, []);
 
   const handleNaverLogin = () => {
-		naverRef.current.children[0].click()
-	}
-
+    naverRef.current.children[0].click();
+  };
 
   return (
     <>
-      <NaverIdLogin ref={naverRef} id="naverIdLogin" />
+      <NaverIdLogin ref={naverRef} id='naverIdLogin' />
       {/* <NaverButtonStyles>
         <div className="NaverLoginButton-wrapper" onClick={handleNaverLogin}>
           <div className="btn-naver">
@@ -66,25 +65,51 @@ export const NaverLoginButton = () => {
 
       {/* BE TEST */}
       <NaverButtonStyles>
-        <div className="NaverLoginButton-wrapper" onClick={NaverLogin}>
-          <div className="btn-naver">
-            <div className="Logo">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect x="0.5" y="0.0727539" width="5" height="15" fill="white"/>
-                <rect x="10.5" y="0.0727539" width="5" height="15" fill="white"/>
-                <rect x="2.51801" y="1.81" width="3.62" height="15.4" transform="rotate(-30 2.51801 1.81)" fill="white"/>
+        <div className='NaverLoginButton-wrapper' onClick={NaverLogin}>
+          <div className='btn-naver'>
+            <div className='Logo'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='16'
+                height='16'
+                viewBox='0 0 16 16'
+                fill='none'
+              >
+                <rect
+                  x='0.5'
+                  y='0.0727539'
+                  width='5'
+                  height='15'
+                  fill='white'
+                />
+                <rect
+                  x='10.5'
+                  y='0.0727539'
+                  width='5'
+                  height='15'
+                  fill='white'
+                />
+                <rect
+                  x='2.51801'
+                  y='1.81'
+                  width='3.62'
+                  height='15.4'
+                  transform='rotate(-30 2.51801 1.81)'
+                  fill='white'
+                />
               </svg>
             </div>
-            <span className="text">네이버 간편 가입</span>
+            <span className='text'>네이버 간편 가입</span>
           </div>
         </div>
       </NaverButtonStyles>
     </>
   );
-}
+};
 
 const NaverIdLogin = styled.div`
-	display: none`;
+  display: none;
+`;
 
 const NaverButtonStyles = styled.div`
   .NaverLoginButton-wrapper {
@@ -92,20 +117,20 @@ const NaverButtonStyles = styled.div`
     justify-content: space-between;
   }
 
-  .Logo{
+  .Logo {
     display: flex;
   }
 
   .btn-naver {
     flex: 1;
     height: 46px;
-    background: #03C75A;
+    background: #03c75a;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    transition: background-color 0.3s; 
+    transition: background-color 0.3s;
   }
 
   .text {

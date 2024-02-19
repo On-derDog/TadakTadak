@@ -1,24 +1,24 @@
 import { create } from 'zustand';
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from 'zustand/middleware';
 
 export interface RoomInfo {
- roomId: string;
- roomName: string;
- description: string;
- participation : string;
- capacity: number;
- owner: string;
- hashtag: string;
+  roomId: string;
+  roomName: string;
+  description: string;
+  participation: string;
+  capacity: number;
+  owner: string;
+  hashtag: string;
 
- updateRoomId: (roomId: RoomInfo['roomId']) => void;
- updateRoomName: (roomName: RoomInfo['roomName']) => void;
- updateDescription: (description: RoomInfo['description']) => void;
- updateParticipationn: (participation: RoomInfo['participation']) => void;
- updateCapacity: (capacity: RoomInfo['capacity']) => void;
- updateOwner: (owner: RoomInfo['owner']) => void;
- updateHashtag: (hashtag: string) => void;
+  updateRoomId: (roomId: RoomInfo['roomId']) => void;
+  updateRoomName: (roomName: RoomInfo['roomName']) => void;
+  updateDescription: (description: RoomInfo['description']) => void;
+  updateParticipationn: (participation: RoomInfo['participation']) => void;
+  updateCapacity: (capacity: RoomInfo['capacity']) => void;
+  updateOwner: (owner: RoomInfo['owner']) => void;
+  updateHashtag: (hashtag: string) => void;
 
- update: (field: string, value: string) => void;
+  update: (field: string, value: string) => void;
 }
 
 interface RoomsInfo {
@@ -55,7 +55,9 @@ const createRoomsStore = (set) => ({
 
 //devtools
 if (import.meta.env.DEV) {
-  roomInfoTemp = create<RoomInfo>()(devtools(createRoomStore, { name: 'roomInfo' }));
+  roomInfoTemp = create<RoomInfo>()(
+    devtools(createRoomStore, { name: 'roomInfo' })
+  );
 } else {
   roomInfoTemp = create<RoomInfo>()(createRoomStore);
 }

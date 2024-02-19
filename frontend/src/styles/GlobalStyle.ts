@@ -20,22 +20,22 @@ const colorOrient = '#02607E';
 const colorWildsand = '#F5F5F5';
 
 export const GlobalStyle = css`
-	:root {
-		--font-size-lg: ${fontSizeLg};
-		--font-size-md: ${fontSizeMd};
-		--font-size-sm: ${fontSizeSm};
-		--font-size-xs: ${fontSizeXs};
-		--font-size-xxs: ${fontSizeXxs};
+  :root {
+    --font-size-lg: ${fontSizeLg};
+    --font-size-md: ${fontSizeMd};
+    --font-size-sm: ${fontSizeSm};
+    --font-size-xs: ${fontSizeXs};
+    --font-size-xxs: ${fontSizeXxs};
 
-		--color-white: ${colorWhite};
-		--color-buttercap: ${colorButterCap};
-		--color-crusta: ${colorCrusta};
-		--color-pumpkin: ${colorPumpkin};
-		--color-mercury: ${colorMercury};
-		--color-shark: ${colorShark};
-		--color-rangoongreen: ${colorRangoonGreen};
-		--color-harlequin: ${colorHarlequin};
-		--color-orient: ${colorOrient};
-		--color-wildsand: ${colorWildsand}
-	}
+    --color-white: ${colorWhite};
+    --color-buttercap: ${colorButterCap};
+    --color-crusta: ${colorCrusta};
+    --color-pumpkin: ${colorPumpkin};
+    --color-mercury: ${colorMercury};
+    --color-shark: ${colorShark};
+    --color-rangoongreen: ${colorRangoonGreen};
+    --color-harlequin: ${colorHarlequin};
+    --color-orient: ${colorOrient};
+    --color-wildsand: ${colorWildsand};
+  }
 `;
