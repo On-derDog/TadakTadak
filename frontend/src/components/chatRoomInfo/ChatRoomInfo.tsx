@@ -17,7 +17,7 @@ const ChatRoomInfo = ({ roomName }: listDataProps) => {
 	useEffect(() => {
 		fetchRoomInfo();
 
-		const intervalId = setInterval(fetchRoomInfo, 5000);
+		const intervalId = setInterval(fetchRoomInfo, 3000);
 		setRefreshIntervalId(intervalId);
 
 		return () => clearInterval(intervalId);
