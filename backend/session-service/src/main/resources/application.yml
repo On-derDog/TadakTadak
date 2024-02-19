@@ -1,0 +1,10 @@
+server:
+  port: 8009
+spring:
+  profiles:
+    active: local
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+      discovery:
+        enabled: true
