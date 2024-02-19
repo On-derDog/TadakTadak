@@ -42,11 +42,11 @@ export const useLoginWebSocket = () => {
 		if (client.current) {
 			client.current.subscribe('/topic/users', (userlist: bodyMessage) => {
 				const receivedUserMap = JSON.parse(userlist.body);
-				const userListArray: UserList[] = Object.keys(receivedUserMap).map((key) => ({
-					username: key,
-					roomName: receivedUserMap[key].roomName,
-				}));
-				setUserList(userListArray);
+				// const userListArray: UserList[] = Object.keys(receivedUserMap).map((key) => ({
+				// 	username: key,
+				// 	roomName: receivedUserMap[key].roomName,
+				// }));
+				setUserList(receivedUserMap);
 			});
 		}
 	};
